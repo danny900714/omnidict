@@ -1,3 +1,3 @@
 # anki-cambridge-dictonary
 
-Anki-addon to integrate Cambridge dictionary into note creation process.
+Anki add-on to integrate Cambridge dictionary into the note creation process.
