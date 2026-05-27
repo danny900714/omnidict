@@ -1,13 +1,38 @@
-from aqt import gui_hooks
+import pprint
+
+from aqt import gui_hooks, mw
 from aqt.editor import Editor
+from aqt.utils import show_info, show_warning
 
 from .cambridge import Client
 
+# Init tasks
+client = Client()
 
 def fetch_definition(editor: Editor) -> None:
+    def after_save():
+        current_field = editor.currentField
+        if current_field is None or editor.note is None:
+            return
+        if current_field == 0:
+            show_info("Click the next field to fetch definition.")
+            return
+
+        vocabulary_field = editor.note.fields[current_field - 1]
+        definition_field = editor.note.fields[current_field]
+
+        if not vocabulary_field:
+            show_warning("Please enter a word in the field above to proceed.")
+            return
+        if definition_field:
+            show_warning("Current field is not empty.")
+            return
+
+        config = mw.addonManager.getConfig(__name__)
+        client.fetch_definition(config["dict_code"], vocabulary_field)
+
     print("fetch_definition")
-    client = Client()
-    pass
+    editor.call_after_note_saved(after_save)
 
 
 def add_fetch_definition_button(buttons: list[str], editor: Editor) -> None:
@@ -15,12 +40,12 @@ def add_fetch_definition_button(buttons: list[str], editor: Editor) -> None:
         icon=None,
         cmd="cambridge_dictionary.fetch_definition",
         func=fetch_definition,
+        id="fetch-definition-button",
         label="Fetch definition",
         tip="Fetch definition from Cambridge Dictionary",
         keys="Ctrl+Shift+C",
     )
     buttons.append(button)
-    pass
 
 
 gui_hooks.editor_did_init_buttons.append(add_fetch_definition_button)

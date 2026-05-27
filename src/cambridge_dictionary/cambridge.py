@@ -26,6 +26,7 @@ def _parse_supported_target_languages(html: str) -> dict[str, str]:
     return target_languages
 
 def _parse_definition(html: str):
+    print(html)
     pass
 
 
