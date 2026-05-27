@@ -25,6 +25,9 @@ def _parse_supported_target_languages(html: str) -> dict[str, str]:
 
     return target_languages
 
+def _parse_definition(html: str):
+    pass
+
 
 class Client:
     def __init__(self):
@@ -52,3 +55,8 @@ class Client:
     def fetch_supported_target_languages(self) -> dict[str, str]:
         response = self.session.get("https://dictionary.cambridge.org/")
         return _parse_supported_target_languages(response.text)
+
+    def fetch_definition(self, dict_code: str, vocabulary: str):
+        url = f"https://dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}"
+        response = self.session.get(url)
+        return _parse_definition(response.text)
