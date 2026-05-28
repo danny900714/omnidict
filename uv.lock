@@ -141,29 +141,25 @@ wheels = [
 name = "cambridge-dictionary"
 version = "0.1.0"
 source = { virtual = "." }
-dependencies = [
-    { name = "aqt", extra = ["qt"] },
-    { name = "beautifulsoup4" },
-    { name = "requests" },
-]
 
 [package.dev-dependencies]
 dev = [
+    { name = "aqt", extra = ["qt"] },
+    { name = "beautifulsoup4" },
     { name = "mypy" },
     { name = "pytest" },
+    { name = "requests" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "aqt", extras = ["qt"], specifier = ">=25.9.4" },
-    { name = "beautifulsoup4", specifier = "==4.14.3" },
-    { name = "requests", specifier = "==2.33.1" },
-]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "aqt", extras = ["qt"], specifier = ">=25.9.4" },
+    { name = "beautifulsoup4", specifier = "==4.14.3" },
     { name = "mypy", specifier = ">=2.1.0" },
     { name = "pytest", specifier = ">=9.0.3" },
+    { name = "requests", specifier = "==2.33.1" },
 ]
 
 [[package]]

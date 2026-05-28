@@ -4,14 +4,13 @@ version = "0.1.0"
 description = "Anki add-on to integrate Cambridge dictionary into the note creation process."
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = [
-    "aqt[qt]>=25.9.4",
-    "beautifulsoup4==4.14.3",
-    "requests==2.33.1",
-]
+dependencies = []
 
 [dependency-groups]
 dev = [
+    "aqt[qt]>=25.9.4",
+    "beautifulsoup4==4.14.3",
     "mypy>=2.1.0",
     "pytest>=9.0.3",
+    "requests==2.33.1",
 ]
