@@ -61,6 +61,10 @@ class Client:
         return _parse_supported_target_languages(response.text)
 
     def fetch_definition(self, dict_code: str, vocabulary: str) -> str:
+        """
         url = f"https://dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}"
         response = self.session.get(url)
-        return _parse_definition(response.text)
+        """
+        with open("testdata/dictionary.cambridge.org/dictionary/english-chinese-traditional/flash.html") as f:
+            html = f.read()
+            return _parse_definition(html)
