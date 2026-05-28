@@ -17,3 +17,4 @@ def test_parse_definition():
     with open("testdata/dictionary.cambridge.org/dictionary/english-chinese-traditional/flash.html") as html_file:
         html = html_file.read()
         definition = _parse_definition(html)
+        print(definition)

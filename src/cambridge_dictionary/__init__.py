@@ -18,18 +18,18 @@ def fetch_definition(editor: Editor) -> None:
             show_info("Click the next field to fetch definition.")
             return
 
-        vocabulary_field = editor.note.fields[current_field - 1]
-        definition_field = editor.note.fields[current_field]
+        vocabulary = editor.note.fields[current_field - 1]
 
-        if not vocabulary_field:
+        if not vocabulary:
             show_warning("Please enter a word in the field above to proceed.")
             return
-        if definition_field:
+        if editor.note.fields[current_field]:
             show_warning("Current field is not empty.")
             return
 
         config = mw.addonManager.getConfig(__name__)
-        client.fetch_definition(config["dict_code"], vocabulary_field)
+        editor.note.fields[current_field] = client.fetch_definition(config["dict_code"], vocabulary)
+        editor.loadNoteKeepingFocus()
 
     print("fetch_definition")
     editor.call_after_note_saved(after_save)

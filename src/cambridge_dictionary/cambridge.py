@@ -25,9 +25,12 @@ def _parse_supported_target_languages(html: str) -> dict[str, str]:
 
     return target_languages
 
-def _parse_definition(html: str):
-    print(html)
-    pass
+def _parse_definition(html: str) -> str:
+    soup = BeautifulSoup(html, "html.parser")
+    entry_body = soup.select_one("div.entry-body")
+    if entry_body is None:
+        raise ParseError("Failed to parse definition")
+    return str(entry_body)
 
 
 class Client:
@@ -57,7 +60,7 @@ class Client:
         response = self.session.get("https://dictionary.cambridge.org/")
         return _parse_supported_target_languages(response.text)
 
-    def fetch_definition(self, dict_code: str, vocabulary: str):
+    def fetch_definition(self, dict_code: str, vocabulary: str) -> str:
         url = f"https://dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}"
         response = self.session.get(url)
         return _parse_definition(response.text)
