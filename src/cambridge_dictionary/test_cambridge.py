@@ -4,7 +4,6 @@ from .cambridge import _parse_supported_target_languages, _parse_definition
 
 
 def test_parse_supported_target_languages():
-    print()
     with open("testdata/dictionary.cambridge.org/index.html") as f:
         html = f.read()
         target_languages = _parse_supported_target_languages(html)
