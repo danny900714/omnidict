@@ -29,6 +29,8 @@ def definition_test_cases(requests_session):
             "fuck",  # features in .pos-header (offensive)
             "man", # suffix (-man)
             "reborn", # only phrase block in sense body (be reborn)
+            "bug", # irreg-infls under phonemic transcription (-gg)
+            "CPU", # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
         ],
     }
 

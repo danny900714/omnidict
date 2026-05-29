@@ -1,0 +1,18 @@
+{
+  "word": "CPU",
+  "entries": [
+    {
+      "part_of_speech": "noun [ C ]",
+      "phonemic_transcription_us": "/ˌsiː.piːˈjuː/",
+      "phonemic_transcription_uk": "/ˌsiː.piːˈjuː/",
+      "senses": [
+        {
+          "features": null,
+          "definition": "abbreviation for central processing unit: the part of a computer that controls all the other parts",
+          "translation": "中央處理器（central processing unit的縮寫）",
+          "examples": []
+        }
+      ]
+    }
+  ]
+}

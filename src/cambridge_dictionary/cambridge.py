@@ -130,7 +130,7 @@ class Client:
     def fetch_definition(self, dict_code: str, vocabulary: str) -> Definition:
         url = f"https://dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}"
 
-        # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition
+        # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
 
         return _parse_definition(response.text)

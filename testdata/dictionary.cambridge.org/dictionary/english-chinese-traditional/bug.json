@@ -1,0 +1,90 @@
+{
+  "word": "bug",
+  "entries": [
+    {
+      "part_of_speech": "noun",
+      "phonemic_transcription_us": "/bʌɡ/",
+      "phonemic_transcription_uk": "/bʌɡ/",
+      "senses": [
+        {
+          "features": "[ C ]",
+          "definition": "a very small insect",
+          "translation": "小蟲子",
+          "examples": []
+        },
+        {
+          "features": "[ C ] informal",
+          "definition": "an illness that is usually not serious and is caused by bacteria or a virus ",
+          "translation": "（引起小毛病的）細菌;病毒",
+          "examples": [
+            {
+              "sentence": "I had a tummy/stomach bug last week.",
+              "translation": "上週我的腸胃出了點小毛病。"
+            },
+            {
+              "sentence": "There's a bug going around (= an illness that many people are getting).",
+              "translation": "有種細菌引起的疾病現正在流行。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "a mistake or problem in a computer program",
+          "translation": "（電腦程式中出現的）缺陷，漏洞",
+          "examples": [
+            {
+              "sentence": "A bug caused the company's computer system to crash.",
+              "translation": "程式缺陷導致公司的電腦系統崩潰。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "a very small device fixed on to a phone or hidden in a room, that allows you to listen to what people are saying without them knowing",
+          "translation": "竊聽器",
+          "examples": []
+        },
+        {
+          "features": "[ S ] informal",
+          "definition": "a very strong enthusiasm for something",
+          "translation": "熱衷；迷戀",
+          "examples": [
+            {
+              "sentence": "He's been bitten by the sailing bug.",
+              "translation": "他迷上了帆船運動。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_of_speech": "verb [ T ]",
+      "phonemic_transcription_us": "/bʌɡ/",
+      "phonemic_transcription_uk": "/bʌɡ/",
+      "senses": [
+        {
+          "features": "informal",
+          "definition": "to annoy or worry someone",
+          "translation": "煩擾;使…擔心",
+          "examples": [
+            {
+              "sentence": "He's been bugging me all morning.",
+              "translation": "他整個上午都在煩我。"
+            }
+          ]
+        },
+        {
+          "features": null,
+          "definition": "to place or hide a listening device inside something",
+          "translation": "秘密安裝竊聽裝置",
+          "examples": [
+            {
+              "sentence": "She suspected that her phone had been bugged.",
+              "translation": "她懷疑自己的電話被人竊聽了。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
