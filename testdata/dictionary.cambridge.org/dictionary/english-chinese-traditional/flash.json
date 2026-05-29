@@ -1,0 +1,175 @@
+{
+  "word": "flash",
+  "entries": [
+    {
+      "part_of_speech": "verb",
+      "phonemic_transcription_us": "/flæʃ/",
+      "phonemic_transcription_uk": "/flæʃ/",
+      "senses": [
+        {
+          "features": "[ I or T ]",
+          "definition": "to shine brightly and suddenly, or to make something shine in this way",
+          "translation": "（使）閃耀，（使）閃光",
+          "examples": [
+            {
+              "sentence": "Stop flashing that light in my eyes!",
+              "translation": "別拿那個手電筒晃我的眼睛了！"
+            },
+            {
+              "sentence": "The lightning flashed and distant thunder rolled.",
+              "translation": "電光閃過，遠處雷聲隆隆。"
+            },
+            {
+              "sentence": "You'd better slow down, that car was flashing its lights at you.",
+              "translation": "你最好減速，那輛車正朝你閃車燈呢。"
+            }
+          ]
+        },
+        {
+          "features": "[ I ] literary",
+          "definition": "If someone's eyes flash, they look bright because of the anger or excitement the person is feeling.",
+          "translation": "（眼睛因憤怒或激動而）發亮，閃耀",
+          "examples": []
+        },
+        {
+          "features": "[ I usually + adv/prep ]",
+          "definition": "to move very fast",
+          "translation": "飛馳，掠過",
+          "examples": [
+            {
+              "sentence": "They flashed past/by on a motorcycle.",
+              "translation": "他們騎著機車飛馳而過。"
+            }
+          ]
+        },
+        {
+          "features": "[ T ]",
+          "definition": "to show something for a short time",
+          "translation": "（快速）出示，顯示",
+          "examples": [
+            {
+              "sentence": "He flashed a smile and offered to buy me a drink.",
+              "translation": "他笑了一下，提出請我喝一杯。"
+            }
+          ]
+        },
+        {
+          "features": "[ I or T ] informal",
+          "definition": "If a man flashes, he shows his sexual organs in public.",
+          "translation": "露私，當衆暴露性器官",
+          "examples": [
+            {
+              "sentence": "He came out of the bushes and flashed me.",
+              "translation": "他從灌木中出來，向我暴露私處。"
+            }
+          ]
+        },
+        {
+          "features": "[ T usually + adv/prep ]",
+          "definition": "to communicate something quickly, especially using radio or light waves",
+          "translation": "（尤指用無線電或光波）通信，聯絡",
+          "examples": [
+            {
+              "sentence": "Within moments of an event happening, the news can be flashed around the world.",
+              "translation": "事件發生之後不久，消息就能迅速傳遍世界。"
+            }
+          ]
+        },
+        {
+          "features": "[ I + adv/prep ]",
+          "definition": "If something flashes through/across your mind, you suddenly or quickly think of it.",
+          "translation": "（想法等）突然閃現",
+          "examples": [
+            {
+              "sentence": "The thought suddenly flashed through my mind that she didn't want to be here.",
+              "translation": "我突然想到，她不想來這裡。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_of_speech": "noun",
+      "phonemic_transcription_us": "/flæʃ/",
+      "phonemic_transcription_uk": "/flæʃ/",
+      "senses": [
+        {
+          "features": "[ C ]",
+          "definition": "a sudden bright light that quickly disappears",
+          "translation": "閃光;閃耀",
+          "examples": [
+            {
+              "sentence": "a flash of lightning",
+              "translation": "一道閃電"
+            },
+            {
+              "sentence": "The bomb exploded in a flash of yellow light.",
+              "translation": "一道黃光，炸彈爆炸了。"
+            }
+          ]
+        },
+        {
+          "features": "[ C usually singular ]",
+          "definition": "a sudden, powerful emotional or mental experience",
+          "translation": "（情感的）突發；（想法的）突現",
+          "examples": [
+            {
+              "sentence": "The idea came to her in a flash of inspiration/genius.",
+              "translation": "靈光一閃，她便有了這個主意。"
+            }
+          ]
+        },
+        {
+          "features": "[ C or U ]",
+          "definition": "the device or system used to produce a bright light for a short time when taking a photograph",
+          "translation": "閃光燈;閃光操縱裝置",
+          "examples": [
+            {
+              "sentence": "Where's the flash for the camera?",
+              "translation": "照相機的閃光燈在哪裡？"
+            },
+            {
+              "sentence": "It's dark in here, I'll have to use the flash.",
+              "translation": "這裡很暗，我要用閃光燈。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ] UK",
+          "definition": "a small object or piece of material worn on a military uniform as a sign of rank, or (on clothing) a strip or mark of colour different from the main colour",
+          "translation": "（佩於軍服上的）徽章，肩章，臂章；（衣服上的）色條，色塊",
+          "examples": []
+        },
+        {
+          "features": "[ C ] humorous",
+          "definition": "a quick look at something",
+          "translation": "飛快的一瞥",
+          "examples": [
+            {
+              "sentence": "She leaned over and I caught a flash of pink underwear.",
+              "translation": "她屈身過來，我一眼瞥見了粉紅色的內衣。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_of_speech": "adjective",
+      "phonemic_transcription_us": "/flæʃ/",
+      "phonemic_transcription_uk": "/flæʃ/",
+      "senses": [
+        {
+          "features": null,
+          "definition": "looking expensive in a way that attracts attention",
+          "translation": "昂貴的;奢華的",
+          "examples": [
+            {
+              "sentence": "That's a very flash suit he's wearing.",
+              "translation": "他穿的那套西裝看上去十分昂貴。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -10,6 +10,7 @@ dependencies = []
 dev = [
     "aqt[qt]>=25.9.4",
     "beautifulsoup4==4.14.3",
+    "jsonpickle>=4.1.2",
     "mypy>=2.1.0",
     "pytest>=9.0.3",
     "requests==2.33.1",

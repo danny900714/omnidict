@@ -1,5 +1,3 @@
-import pprint
-
 from aqt import gui_hooks, mw
 from aqt.editor import Editor
 from aqt.utils import show_info, show_warning
@@ -8,6 +6,7 @@ from .cambridge import Client
 
 # Init tasks
 client = Client()
+
 
 def fetch_definition(editor: Editor) -> None:
     def after_save():
