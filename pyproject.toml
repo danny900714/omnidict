@@ -4,7 +4,9 @@ version = "0.1.0"
 description = "Anki add-on to integrate Cambridge dictionary into the note creation process."
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "browserforge[all]>=1.2.4",
+]
 
 [dependency-groups]
 dev = [

@@ -164,3 +164,7 @@ cython_debug/
 
 # Anki addon user configuration override
 src/*/meta.json
+
+# requirements files that only use for bundling dependencies
+requirements_prod.txt
+src/*/vendor/
