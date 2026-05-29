@@ -1,5 +1,6 @@
 import json
 import os.path
+from pathlib import Path
 from typing import Optional
 
 import jsonpickle
@@ -32,9 +33,12 @@ def definition_test_cases(requests_session):
             "bug", # irreg-infls under phonemic transcription (-gg)
             "CPU", # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
         ],
+        "english-chinese-simplified": [
+            "flash",
+        ],
     }
 
-    result: list[tuple[str, dict | str]] = []
+    result: list[tuple[str, str, dict | str]] = []
     for dict_code, vocabularies in test_cases.items():
         for vocabulary in vocabularies:
             html: str
@@ -53,13 +57,16 @@ def definition_test_cases(requests_session):
                 url = f"https://dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}"
                 response = requests_session.get(url)
                 html = response.text
+
+                if not Path(html_path).parent.exists():
+                    Path(html_path).parent.mkdir(parents=True, exist_ok=True)
                 with open(html_path, "w") as html_file:
                     html_file.write(html)
 
             if definition is None:
-                result.append((html, json_path))
+                result.append((dict_code, html, json_path))
             else:
-                result.append((html, definition))
+                result.append((dict_code, html, definition))
 
     return result
 
@@ -75,9 +82,9 @@ def test_parse_supported_target_languages():
 
 def test_parse_definition(definition_test_cases):
     for test_case in definition_test_cases:
-        html, definition = test_case
+        dict_code, html, definition = test_case
 
-        actual_definition = _parse_definition(html)
+        actual_definition = _parse_definition(dict_code, html)
         if isinstance(definition, str):
             definition_json = jsonpickle.encode(actual_definition, unpicklable=False, indent=2)
             with open(definition, "w") as json_file:

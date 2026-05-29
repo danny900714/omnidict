@@ -31,12 +31,17 @@ def _parse_supported_target_languages(html: str) -> dict[str, str]:
     return target_languages
 
 
-def _parse_definition(html: str) -> Definition:
+def _parse_definition(dict_code: str, html: str) -> Definition:
+    # Current implementation only supports english-chinese dictionary families, other dictionary support is welcome
+    supported_dict_codes = ["english-chinese-simplified", "english-chinese-traditional"]
+    if dict_code not in supported_dict_codes:
+        raise NotImplementedError(f"Dictionary code {dict_code} is not supported")
+
     soup = BeautifulSoup(html, "html.parser")
 
-    word = soup.select_one(".di-head h1 b")
+    word = soup.select_one("h1 b")
     if word is None:
-        raise ParseError("Failed to parse definition")
+        raise ParseError("Failed to parse word")
     word = word.get_text()
 
     # Limit the first entry to exclude prefix and sufix
@@ -133,4 +138,4 @@ class Client:
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
 
-        return _parse_definition(response.text)
+        return _parse_definition(dict_code, response.text)
