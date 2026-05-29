@@ -39,12 +39,17 @@ def _parse_definition(html: str) -> Definition:
         raise ParseError("Failed to parse definition")
     word = word.get_text()
 
+    # Limit the first entry to exclude prefix and sufix
+    entry_bodies = soup.select(".di-body > .entry:first-child .entry-body__el")
     entries: list[Entry] = []
-    entry_bodies = soup.select("div.entry-body__el")
     for entry in entry_bodies:
         # Parse part of speech
-        pos_element = entry.select_one(".pos-header > .posgram > span")
+        pos_element = entry.select_one(".pos-header > .posgram")
         pos = pos_element.get_text() if pos_element is not None else None
+
+        # Parse entry usage, which will be appended to features of all senses
+        usage_element = entry.select_one(".pos-header > span.lab > span.usage")
+        entry_features = usage_element.get_text() if usage_element is not None else None
 
         # Parse US and UK phonemic transcriptions
         pt_us_elem = entry.select_one("span.us.dpron-i > span.pron.dpron")
@@ -52,8 +57,9 @@ def _parse_definition(html: str) -> Definition:
         pt_uk_elem = entry.select_one("span.uk.dpron-i > span.pron.dpron")
         pt_uk = pt_uk_elem.get_text() if pt_uk_elem is not None else None
 
+        # to exclude phrase block
+        def_blocks = entry.select(".sense-body > .def-block")
         senses: list[Sense] = []
-        def_blocks = entry.select(".sense-body .def-block")
         for def_block in def_blocks:
             # Parse features
             features: Optional[str] = None
@@ -64,6 +70,13 @@ def _parse_definition(html: str) -> Definition:
                     epp.decompose()
                 features = def_info.get_text().strip()
                 features = features if features != "" else None
+
+            # Append entry features to features of all senses
+            if entry_features is not None:
+                if features is not None:
+                    features += f" {entry_features}"
+                else:
+                    features = entry_features
 
             # Parse definition (required)
             def_element = def_block.select_one("div.def")
@@ -93,9 +106,10 @@ def _parse_definition(html: str) -> Definition:
             sense = Sense(definition, features=features, translation=translation, examples=examples)
             senses.append(sense)
 
-        # Create entry object and append it to list
-        entry = Entry(senses, part_of_speech=pos, phonemic_transcription_us=pt_us, phonemic_transcription_uk=pt_uk)
-        entries.append(entry)
+        # Create entry object and append it to list if senses is not empty
+        if len(senses) > 0:
+            entry = Entry(senses, part_of_speech=pos, phonemic_transcription_us=pt_us, phonemic_transcription_uk=pt_uk)
+            entries.append(entry)
 
     # Create the definition object
     return Definition(word, entries)

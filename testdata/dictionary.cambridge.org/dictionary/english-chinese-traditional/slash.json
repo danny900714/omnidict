@@ -1,0 +1,105 @@
+{
+  "word": "slash",
+  "entries": [
+    {
+      "part_of_speech": "verb",
+      "phonemic_transcription_us": "/slæʃ/",
+      "phonemic_transcription_uk": "/slæʃ/",
+      "senses": [
+        {
+          "features": "[ I or T ]",
+          "definition": "to cut with a sharp blade using a quick, strong movement",
+          "translation": "（用利器）劈，砍，劃",
+          "examples": [
+            {
+              "sentence": "The museum was broken into last night and several paintings were slashed.",
+              "translation": "昨晚有人闖進了博物館，有幾幅畫被劃破了。"
+            },
+            {
+              "sentence": "She tried to commit suicide by slashing her wrists.",
+              "translation": "她試圖割腕自殺。"
+            },
+            {
+              "sentence": "We had to slash (our way) through the long grass to clear a path.",
+              "translation": "我們不得不在茂盛的草叢裡踩出一條通道。"
+            }
+          ]
+        },
+        {
+          "features": "[ T ] informal",
+          "definition": "to very much reduce something, such as money or jobs",
+          "translation": "大幅削減，大幅減少（金錢、工作等）",
+          "examples": [
+            {
+              "sentence": "Prices have been slashed by 50 percent!",
+              "translation": "價格直降50%！"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_of_speech": "noun",
+      "phonemic_transcription_us": "/slæʃ/",
+      "phonemic_transcription_uk": "/slæʃ/",
+      "senses": [
+        {
+          "features": "[ C ] (UK also oblique (stroke))",
+          "definition": "the symbol / used in writing to separate letters, numbers, or words",
+          "translation": "斜線",
+          "examples": [
+            {
+              "sentence": "You often write a slash between alternatives, for example, \"and/or\".",
+              "translation": "通常在選擇項之間會加斜線，比如「和／或」。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ] spoken (UK also oblique (stroke))",
+          "definition": "used to mean \"or\", or to show that something has two uses",
+          "translation": "原意為「斜線號」，表示「或者」",
+          "examples": [
+            {
+              "sentence": "The room functions as a guest bedroom slash study.",
+              "translation": "這間屋子用作客房或書房。"
+            }
+          ]
+        },
+        {
+          "features": null,
+          "definition": "a long, deep cut",
+          "translation": "（長而深的）劃痕，切口",
+          "examples": []
+        },
+        {
+          "features": "[ C ]",
+          "definition": "a fast, long movement to hit something",
+          "translation": "抽打;揮擊",
+          "examples": [
+            {
+              "sentence": "Ben took a wild slash at the ball and luckily managed to hit it.",
+              "translation": "班拼命地揮棒擊球，居然幸運地擊中了。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "a decorative opening in a piece of clothing, often with a different colour showing through it",
+          "translation": "（衣服上的）裝飾性開叉（常有不同的顏色透過開叉顯示出來）",
+          "examples": [
+            {
+              "sentence": "My new dress is pale blue, with a dark blue slash in the sleeves.",
+              "translation": "我的新衣服是淡藍色的，在袖口上有一個深藍色的裝飾性開叉。"
+            }
+          ]
+        },
+        {
+          "features": "[ S ] UK slang",
+          "definition": "the act of going to the toilet and urinating",
+          "translation": "撒尿",
+          "examples": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{
+  "word": "record",
+  "entries": [
+    {
+      "part_of_speech": "verb [ T ]",
+      "phonemic_transcription_us": "/rɪˈkɔːrd/",
+      "phonemic_transcription_uk": "/rɪˈkɔːd/",
+      "senses": [
+        {
+          "features": null,
+          "definition": "to store sounds or moving pictures using electronic equipment so that they can be heard or seen later",
+          "translation": "錄製;錄（音）;錄（像）",
+          "examples": [
+            {
+              "sentence": "Cliff Richard has recorded more number one hit songs than any other British pop star.",
+              "translation": "在英國流行樂歌星中，克利夫．理查錄製的歌曲榮登排行榜榜首的數量最多。"
+            },
+            {
+              "sentence": "We recorded their wedding on video.",
+              "translation": "我們給他們的婚禮錄了像。"
+            },
+            {
+              "sentence": "I tried to call her, but all I got was a recorded message saying that she was away for the weekend.",
+              "translation": "我每次給她打電話聽到的都是電話答錄機中說她外出度週末的錄音。"
+            },
+            {
+              "sentence": "Was the concert live or was it recorded (= made before being broadcast)?",
+              "translation": "音樂會是直播還是錄播的？"
+            }
+          ]
+        },
+        {
+          "features": null,
+          "definition": "to keep information for the future, by writing it down or storing it on a computer",
+          "translation": "記錄;記載;記下…備案",
+          "examples": [
+            {
+              "sentence": "She records everything that happens to her in her diary.",
+              "translation": "她把發生在自己身上的一切事情都記在了日記裡。"
+            },
+            {
+              "sentence": "Unemployment is likely to reach the highest total that has ever been recorded.",
+              "translation": "失業總人數很可能會創下有史以來的最高紀錄。"
+            },
+            {
+              "sentence": "In his journal, Captain Scott recorded that he and his companions were weakened by lack of food.",
+              "translation": "在日誌中，斯科特船長寫道，因缺少食物他和同伴們身體虛弱不堪。"
+            },
+            {
+              "sentence": "The coroner recorded (= decided) a verdict of accidental death.",
+              "translation": "驗屍官判定是意外死亡。"
+            }
+          ]
+        },
+        {
+          "features": null,
+          "definition": "If a device records a measurement, it shows that measurement.",
+          "translation": "（儀器）顯示，記錄，標明",
+          "examples": [
+            {
+              "sentence": "The thermometer recorded a temperature of 30 degrees Celsius.",
+              "translation": "溫度計顯示溫度是30攝氏度。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_of_speech": "noun",
+      "phonemic_transcription_us": "/ˈrek.ɚd/",
+      "phonemic_transcription_uk": "/ˈrek.ɔːd/",
+      "senses": [
+        {
+          "features": "[ C or U ]",
+          "definition": "a piece of information or a description of an event that is written on paper or stored on a computer",
+          "translation": "記錄;記載",
+          "examples": [
+            {
+              "sentence": "The weather centre keeps a record of the weather.",
+              "translation": "氣象中心對天氣情況都備有記錄。"
+            },
+            {
+              "sentence": "This summer has been the hottest on record (= the hottest summer known about).",
+              "translation": "今年夏天是有史以來最熱的。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "information about someone or something that is stored by the police or by a doctor",
+          "translation": "前科;病歷",
+          "examples": [
+            {
+              "sentence": "A person's medical records are confidential.",
+              "translation": "一個人的病歷是保密的。"
+            },
+            {
+              "sentence": "He is well known to the police and has a long criminal record (= a list kept by the police of his previous crimes).",
+              "translation": "他是警察局的常客，有一大堆的犯罪前科。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "the facts that are known about a person or a company and the actions they have done in the past",
+          "translation": "履歷;歷史;經歷",
+          "examples": [
+            {
+              "sentence": "I won't fly with an airline that has a bad safety record (= whose aircraft have often had accidents).",
+              "translation": "我可不願意搭乘安全紀錄很差的航空公司的航班。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "a flat plastic disc on which music is recorded",
+          "translation": "唱片",
+          "examples": [
+            {
+              "sentence": "Would you like to listen to some records?",
+              "translation": "你想聽些唱片嗎？"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "a song or music that has been recorded and is available for the public to buy",
+          "translation": "（錄製的）歌曲，單曲，樂曲",
+          "examples": [
+            {
+              "sentence": "The Beatles' first hit record was \"Love Me Do\".",
+              "translation": "披頭四樂隊的第一首走紅歌曲是〈請愛我〉。"
+            }
+          ]
+        },
+        {
+          "features": "[ C ]",
+          "definition": "the best or fastest ever done",
+          "translation": "最高紀錄；最佳成績",
+          "examples": [
+            {
+              "sentence": "He ran the 100 metres in 9.79 seconds and broke/smashed the world record.",
+              "translation": "他以9.79秒的成績跑完了100米，打破了世界紀錄。"
+            },
+            {
+              "sentence": "She set/established a new European record in the high jump.",
+              "translation": "她創造了歐洲跳高的新紀錄。"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "part_of_speech": "adjective",
+      "phonemic_transcription_us": "/ˈrek.ɚd/",
+      "phonemic_transcription_uk": "/ˈrek.ɔːd/",
+      "senses": [
+        {
+          "features": null,
+          "definition": "at a higher level than ever achieved before",
+          "translation": "創紀錄的；空前的",
+          "examples": [
+            {
+              "sentence": "The long hot summer has led to a record harvest this year.",
+              "translation": "這個夏天漫長而又炎熱，使得今年成為一個創紀錄的豐收年。"
+            },
+            {
+              "sentence": "Inflation has reached record levels.",
+              "translation": "通貨膨脹已創歷史最高。"
+            },
+            {
+              "sentence": "We finished the work in record time (= faster than had ever been done before).",
+              "translation": "我們以最短的時間完成了工作，這是以前從沒有過的。"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

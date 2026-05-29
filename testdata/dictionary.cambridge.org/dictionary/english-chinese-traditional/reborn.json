@@ -1,0 +1,34 @@
+{
+  "word": "reborn",
+  "entries": [
+    {
+      "part_of_speech": "adjective",
+      "phonemic_transcription_us": "/ˌriːˈbɔːrn/",
+      "phonemic_transcription_uk": "/ˌriːˈbɔːn/",
+      "senses": [
+        {
+          "features": null,
+          "definition": "existing or active again ",
+          "translation": "再度出現；再度活躍",
+          "examples": [
+            {
+              "sentence": "a reborn version of a 1978 series",
+              "translation": "1978年的系列劇的重拍版本"
+            }
+          ]
+        },
+        {
+          "features": null,
+          "definition": "having decided to accept a particular type of evangelical Christianity, especially after a deep spiritual experience ",
+          "translation": "（尤指在深度精神體驗後，決定接受某一派別的基督教）重生的",
+          "examples": [
+            {
+              "sentence": "reborn Christians",
+              "translation": "重生的基督教徒"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
