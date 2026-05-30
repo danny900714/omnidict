@@ -60,10 +60,10 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
         phonemic_transcriptions: Optional[dict[str, str]] = {}
         pt_uk_elem = entry.select_one("span.uk.dpron-i > span.pron.dpron")
         if pt_uk_elem is not None:
-            phonemic_transcriptions["uk"] = pt_uk_elem.get_text()
+            phonemic_transcriptions["UK"] = pt_uk_elem.get_text()
         pt_us_elem = entry.select_one("span.us.dpron-i > span.pron.dpron")
         if pt_us_elem is not None:
-            phonemic_transcriptions["us"] = pt_us_elem.get_text()
+            phonemic_transcriptions["US"] = pt_us_elem.get_text()
         if phonemic_transcriptions == {}:
             phonemic_transcriptions = None
 
