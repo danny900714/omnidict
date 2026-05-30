@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "verb",
-      "phonemic_transcription_us": "/slæʃ/",
-      "phonemic_transcription_uk": "/slæʃ/",
+      "phonemic_transcriptions": {
+        "uk": "/slæʃ/",
+        "us": "/slæʃ/"
+      },
       "senses": [
         {
           "features": "[ I or T ]",
@@ -40,8 +42,10 @@
     },
     {
       "part_of_speech": "noun",
-      "phonemic_transcription_us": "/slæʃ/",
-      "phonemic_transcription_uk": "/slæʃ/",
+      "phonemic_transcriptions": {
+        "uk": "/slæʃ/",
+        "us": "/slæʃ/"
+      },
       "senses": [
         {
           "features": "[ C ] (UK also oblique (stroke))",

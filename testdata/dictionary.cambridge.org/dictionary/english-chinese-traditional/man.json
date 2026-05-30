@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "noun",
-      "phonemic_transcription_us": "/mæn/",
-      "phonemic_transcription_uk": "/mæn/",
+      "phonemic_transcriptions": {
+        "uk": "/mæn/",
+        "us": "/mæn/"
+      },
       "senses": [
         {
           "features": "[ C ]",
@@ -133,8 +135,10 @@
     },
     {
       "part_of_speech": "verb [ T ]",
-      "phonemic_transcription_us": "/mæn/",
-      "phonemic_transcription_uk": "/mæn/",
+      "phonemic_transcriptions": {
+        "uk": "/mæn/",
+        "us": "/mæn/"
+      },
       "senses": [
         {
           "features": null,
@@ -155,8 +159,10 @@
     },
     {
       "part_of_speech": "exclamation",
-      "phonemic_transcription_us": "/mæn/",
-      "phonemic_transcription_uk": "/mæn/",
+      "phonemic_transcriptions": {
+        "uk": "/mæn/",
+        "us": "/mæn/"
+      },
       "senses": [
         {
           "features": "informal",

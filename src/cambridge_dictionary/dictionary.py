@@ -26,15 +26,12 @@ class Sense:
 
 class Entry:
     part_of_speech: Optional[str]
-    phonemic_transcription_us: Optional[str]
-    phonemic_transcription_uk: Optional[str]
+    phonemic_transcriptions: Optional[dict[str, str]]
     senses: list[Sense]
 
-    def __init__(self, senses: list[Sense], *, part_of_speech: Optional[str] = None, phonemic_transcription_us: Optional[str] = None,
-                 phonemic_transcription_uk: Optional[str] = None):
+    def __init__(self, senses: list[Sense], *, part_of_speech: Optional[str] = None, phonemic_transcriptions: Optional[dict[str, str]]):
         self.part_of_speech = part_of_speech
-        self.phonemic_transcription_us = phonemic_transcription_us
-        self.phonemic_transcription_uk = phonemic_transcription_uk
+        self.phonemic_transcriptions = phonemic_transcriptions
         self.senses = senses
 
 

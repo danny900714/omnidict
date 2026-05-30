@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "verb [ I or T ]",
-      "phonemic_transcription_us": "/fʌk/",
-      "phonemic_transcription_uk": "/fʌk/",
+      "phonemic_transcriptions": {
+        "uk": "/fʌk/",
+        "us": "/fʌk/"
+      },
       "senses": [
         {
           "features": "offensive",
@@ -16,8 +18,10 @@
     },
     {
       "part_of_speech": "exclamation",
-      "phonemic_transcription_us": "/fʌk/",
-      "phonemic_transcription_uk": "/fʌk/",
+      "phonemic_transcriptions": {
+        "uk": "/fʌk/",
+        "us": "/fʌk/"
+      },
       "senses": [
         {
           "features": "offensive",
@@ -42,8 +46,10 @@
     },
     {
       "part_of_speech": "noun",
-      "phonemic_transcription_us": "/fʌk/",
-      "phonemic_transcription_uk": "/fʌk/",
+      "phonemic_transcriptions": {
+        "uk": "/fʌk/",
+        "us": "/fʌk/"
+      },
       "senses": [
         {
           "features": "[ C ] offensive",

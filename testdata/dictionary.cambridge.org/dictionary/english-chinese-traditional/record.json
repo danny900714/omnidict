@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "verb [ T ]",
-      "phonemic_transcription_us": "/rɪˈkɔːrd/",
-      "phonemic_transcription_uk": "/rɪˈkɔːd/",
+      "phonemic_transcriptions": {
+        "uk": "/rɪˈkɔːd/",
+        "us": "/rɪˈkɔːrd/"
+      },
       "senses": [
         {
           "features": null,
@@ -67,8 +69,10 @@
     },
     {
       "part_of_speech": "noun",
-      "phonemic_transcription_us": "/ˈrek.ɚd/",
-      "phonemic_transcription_uk": "/ˈrek.ɔːd/",
+      "phonemic_transcriptions": {
+        "uk": "/ˈrek.ɔːd/",
+        "us": "/ˈrek.ɚd/"
+      },
       "senses": [
         {
           "features": "[ C or U ]",
@@ -152,8 +156,10 @@
     },
     {
       "part_of_speech": "adjective",
-      "phonemic_transcription_us": "/ˈrek.ɚd/",
-      "phonemic_transcription_uk": "/ˈrek.ɔːd/",
+      "phonemic_transcriptions": {
+        "uk": "/ˈrek.ɔːd/",
+        "us": "/ˈrek.ɚd/"
+      },
       "senses": [
         {
           "features": null,

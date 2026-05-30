@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "noun [ C ]",
-      "phonemic_transcription_us": "/ˌsiː.piːˈjuː/",
-      "phonemic_transcription_uk": "/ˌsiː.piːˈjuː/",
+      "phonemic_transcriptions": {
+        "uk": "/ˌsiː.piːˈjuː/",
+        "us": "/ˌsiː.piːˈjuː/"
+      },
       "senses": [
         {
           "features": null,

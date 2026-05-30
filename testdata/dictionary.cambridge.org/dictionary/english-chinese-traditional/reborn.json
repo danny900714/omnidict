@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "adjective",
-      "phonemic_transcription_us": "/ˌriːˈbɔːrn/",
-      "phonemic_transcription_uk": "/ˌriːˈbɔːn/",
+      "phonemic_transcriptions": {
+        "uk": "/ˌriːˈbɔːn/",
+        "us": "/ˌriːˈbɔːrn/"
+      },
       "senses": [
         {
           "features": null,

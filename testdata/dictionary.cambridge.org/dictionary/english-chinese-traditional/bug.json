@@ -3,8 +3,10 @@
   "entries": [
     {
       "part_of_speech": "noun",
-      "phonemic_transcription_us": "/bʌɡ/",
-      "phonemic_transcription_uk": "/bʌɡ/",
+      "phonemic_transcriptions": {
+        "uk": "/bʌɡ/",
+        "us": "/bʌɡ/"
+      },
       "senses": [
         {
           "features": "[ C ]",
@@ -59,8 +61,10 @@
     },
     {
       "part_of_speech": "verb [ T ]",
-      "phonemic_transcription_us": "/bʌɡ/",
-      "phonemic_transcription_uk": "/bʌɡ/",
+      "phonemic_transcriptions": {
+        "uk": "/bʌɡ/",
+        "us": "/bʌɡ/"
+      },
       "senses": [
         {
           "features": "informal",

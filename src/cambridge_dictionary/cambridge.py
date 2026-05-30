@@ -56,11 +56,16 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
         usage_element = entry.select_one(".pos-header > span.lab > span.usage")
         entry_features = usage_element.get_text() if usage_element is not None else None
 
-        # Parse US and UK phonemic transcriptions
-        pt_us_elem = entry.select_one("span.us.dpron-i > span.pron.dpron")
-        pt_us = pt_us_elem.get_text() if pt_us_elem is not None else None
+        # Parse UK and US phonemic transcriptions
+        phonemic_transcriptions: Optional[dict[str, str]] = {}
         pt_uk_elem = entry.select_one("span.uk.dpron-i > span.pron.dpron")
-        pt_uk = pt_uk_elem.get_text() if pt_uk_elem is not None else None
+        if pt_uk_elem is not None:
+            phonemic_transcriptions["uk"] = pt_uk_elem.get_text()
+        pt_us_elem = entry.select_one("span.us.dpron-i > span.pron.dpron")
+        if pt_us_elem is not None:
+            phonemic_transcriptions["us"] = pt_us_elem.get_text()
+        if phonemic_transcriptions == {}:
+            phonemic_transcriptions = None
 
         # to exclude phrase block
         def_blocks = entry.select(".sense-body > .def-block")
@@ -113,7 +118,7 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
 
         # Create entry object and append it to list if senses is not empty
         if len(senses) > 0:
-            entry = Entry(senses, part_of_speech=pos, phonemic_transcription_us=pt_us, phonemic_transcription_uk=pt_uk)
+            entry = Entry(senses, part_of_speech=pos, phonemic_transcriptions=phonemic_transcriptions)
             entries.append(entry)
 
     # Create the definition object
