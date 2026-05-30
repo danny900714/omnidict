@@ -35,7 +35,8 @@ def fetch_definition(editor: Editor) -> None:
             return
 
         config = mw.addonManager.getConfig(__name__)
-        editor.note.fields[current_field] = client.fetch_definition(config["dict_code"], vocabulary)
+        definition = client.fetch_definition(config["dict_code"], vocabulary)
+        editor.note.fields[current_field] = definition.render_html()
         editor.loadNoteKeepingFocus()
 
     print("fetch_definition")
