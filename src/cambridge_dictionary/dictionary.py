@@ -54,23 +54,26 @@ class Definition:
         soup.append(root)
 
         for entry in self.entries:
-            root.append(soup.new_tag("b", string=self.word))
+            root.append(soup.new_tag("b", style="text-wrap: nowrap", string=self.word))
 
             # Render phonemic transcriptions
             if include_phonemic_transcriptions and entry.phonemic_transcriptions is not None:
                 for i, (region, transcription) in enumerate(entry.phonemic_transcriptions.items()):
+                    transcription_span = soup.new_tag("span", style="text-wrap: nowrap")
+                    root.append(transcription_span)
+
                     margin_left = "1rem" if i == 0 else "0.75rem"
-                    root.append(
+                    transcription_span.append(
                         soup.new_tag("span", style=f"color: var(--fg-disabled); margin-left: {margin_left}",
                                      string=region))
-                    root.append(
+                    transcription_span.append(
                         soup.new_tag("span", style=f"color: var(--fg-subtle); margin-left: 0.375rem",
                                      string=transcription))
 
             # Render part of speech
             if entry.part_of_speech is not None:
                 root.append(
-                    soup.new_tag("i", style="color: var(--fg-subtle); margin-left: 1rem", string=entry.part_of_speech))
+                    soup.new_tag("i", style="color: var(--fg-subtle); margin-left: 1rem; text-wrap: nowrap", string=entry.part_of_speech))
 
             root.append(soup.new_tag("br"))
 
