@@ -3,8 +3,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from .dictionary import DefinitionNotFoundError
-
 vendor_path = str(Path(__file__).parent / "vendor")
 if vendor_path not in sys.path:
     sys.path.insert(0, vendor_path)
@@ -13,6 +11,7 @@ from aqt import gui_hooks, mw
 from aqt.editor import Editor
 from aqt.utils import show_info, show_warning, ask_user, show_critical
 
+from .dictionary import DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError
 from .cambridge import Client
 
 # Init tasks
@@ -28,6 +27,17 @@ def fetch_definition(editor: Editor) -> None:
             editor.loadNoteKeepingFocus()
         except DefinitionNotFoundError:
             show_critical(f'Failed to fetch definition for "{vocabulary}"')
+        except DefinitionRedirectedError as e:
+            redirected_word = e.redirected_word
+            ask_user(
+                f'Definition is redirected to "{e.redirected_word}". Would you like to fetch that definition?',
+                callback=lambda ok: fetch_and_set_definition(redirected_word, fields, current_field) if ok else None
+            )
+        except DefinitionParseError:
+            show_critical(
+                f'Failed to parse definition for "{vocabulary}". The website structure might have changed. Please report this issue to the developer.')
+        except Exception as e:
+            show_critical(f'An unexpected error occurred: {str(e)}')
 
     def after_save():
         current_field = editor.currentField

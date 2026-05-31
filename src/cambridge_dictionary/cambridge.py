@@ -1,15 +1,12 @@
-import pprint
 from typing import Optional
+from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
 from requests import Session
 
+from . import DefinitionParseError
 from .browser import header_generator
-from .dictionary import Definition, Entry, Sense, Example, DefinitionNotFoundError
-
-
-class ParseError(Exception):
-    pass
+from .dictionary import Definition, Entry, Sense, Example, DefinitionNotFoundError, DefinitionRedirectedError
 
 
 def _parse_supported_target_languages(html: str) -> dict[str, str]:
@@ -17,7 +14,7 @@ def _parse_supported_target_languages(html: str) -> dict[str, str]:
     bilingual_list = soup.select_one("amp-state#stateSidebarDictBi ~ ul")
     semi_bilingual_list = soup.select_one("amp-state#stateSidebarDictBi ~ div:last-child")
     if not bilingual_list or not semi_bilingual_list:
-        raise ParseError("Failed to parse supported target languages")
+        raise DefinitionParseError("Failed to parse supported target languages")
 
     target_languages = {}
     for list_element in [bilingual_list, semi_bilingual_list]:
@@ -25,7 +22,7 @@ def _parse_supported_target_languages(html: str) -> dict[str, str]:
         for button in buttons:
             code = button.attrs["data-dictcode"]
             if not isinstance(code, str):
-                raise ParseError("Failed to parse supported target languages")
+                raise DefinitionParseError("Failed to parse supported target languages")
             name = button.text.removeprefix("English–")
             target_languages[code] = name
 
@@ -42,7 +39,7 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
 
     word = soup.select_one("h1 b")
     if word is None:
-        raise ParseError("Failed to parse word")
+        raise DefinitionParseError("Failed to parse word")
     word = word.get_text()
 
     # Limit the first entry to exclude prefix and sufix
@@ -92,7 +89,7 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
             # Parse definition (required)
             def_element = def_block.select_one("div.def")
             if def_element is None:
-                raise ParseError("Failed to parse definition")
+                raise DefinitionParseError("Failed to parse definition")
             definition = def_element.get_text()
 
             # Parse translation
@@ -144,8 +141,23 @@ class Client:
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
         if response.status_code == 302:
-            if response.headers.get("location") == f"https://dictionary.cambridge.org/dictionary/{dict_code}/":
-                raise DefinitionNotFoundError(f"No definition found for {vocabulary}")
+            location = response.headers.get("location")
+            if location is not None:
+                location_url = urlsplit(location)
+                if location_url.path == f"/dictionary/{dict_code}/":
+                    raise DefinitionNotFoundError(f"No definition found for {vocabulary}")
+                elif location_url.path.startswith(
+                        f"/dictionary/{dict_code}/") and location_url.query == f"q={vocabulary}":
+                    redirected_word = location_url.path.split("/")[-1]
+
+                    # Check if the redirected word is the lowercase of the queried word due to wierd redirection made by Cambridge Dictionary (CPU -> cpu)
+                    if vocabulary.lower() == redirected_word:
+                        return self.fetch_definition(dict_code, redirected_word)
+
+                    raise DefinitionRedirectedError(redirected_word)
+
+            raise RuntimeError(f"Unexpected redirect response: {vars(response.headers)}")
+
         response.raise_for_status()
 
         return _parse_definition(dict_code, response.text)

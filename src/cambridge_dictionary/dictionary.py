@@ -112,12 +112,16 @@ class Definition:
 
 
 class DefinitionNotFoundError(RuntimeError):
-    """This error should be raised when a dictionary cannot find the definition for the given word."""
+    """This error should be raised when a dictionary cannot find the definition for the given word.
+
+    This error should only be raised when the dictionary doesn't have a definition for the queried word.
+    For more general errors like malformed response or connection issues, please raise custom exceptions.
+    """
     pass
 
 
 class DefinitionParseError(RuntimeError):
-    """This error should be raised when a dictionary gets the response but unable to parse it."""
+    """This error should be raised when a dictionary gets the definition but unable to parse it."""
     pass
 
 
@@ -134,3 +138,4 @@ class DefinitionRedirectedError(RuntimeError):
         if redirected_word is None:
             raise TypeError("redirected_word cannot be None")
         super().__init__(f"Definition is redirected to '{redirected_word}.")
+        self.redirected_word = redirected_word
