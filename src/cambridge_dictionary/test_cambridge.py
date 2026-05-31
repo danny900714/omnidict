@@ -32,6 +32,7 @@ def definition_test_cases(requests_session):
             "reborn", # only phrase block in sense body (be reborn)
             "bug", # irreg-infls under phonemic transcription (-gg)
             "CPU", # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
+            "corpus", # .ddivide cause extra spaces inside features (MEDICAL   specialized)
         ],
         "english-chinese-simplified": [
             "flash",

@@ -73,9 +73,16 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
             features: Optional[str] = None
             def_info = def_block.select_one("span.def-info")
             if def_info is not None:
+                # Exclude experience level capsule
                 epp = def_info.select_one("span.epp-xref")
                 if epp is not None:
                     epp.decompose()
+
+                # Exclude divider that will cause extra spaces
+                divider = def_info.select_one(".ddivide")
+                if divider is not None:
+                    divider.decompose()
+
                 features = def_info.get_text().strip()
                 features = features if features != "" else None
 
