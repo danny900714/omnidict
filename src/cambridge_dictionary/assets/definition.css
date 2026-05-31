@@ -1,3 +1,37 @@
-ol > li:not(:last-child) {
+.root {
+    text-align: start;
+}
+
+.root ol > li:not(:last-child) {
     margin-bottom: 0.25rem;
+}
+
+.root .header {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1rem;
+}
+
+.region {
+    margin-right: 0.375rem;
+}
+
+.nowrap {
+    text-wrap: nowrap;
+}
+
+.text-subtle {
+    color: var(--fg-subtle);
+}
+
+.text-disabled {
+    color: var(--fg-disabled);
+}
+
+.text-blue {
+    color: var(--flag-4);
+}
+
+.mr-3 {
+    margin-right: 0.75rem
 }

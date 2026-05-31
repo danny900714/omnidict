@@ -44,35 +44,31 @@ class Definition:
                     include_examples: bool = False) -> str:
         soup = BeautifulSoup("", "html.parser")
         soup.append(soup.new_tag("style", string=Definition._css()))
-        root = soup.new_tag("div", style="text-align: start")
+        root = soup.new_tag("div", attrs={"class": "root"})
         soup.append(root)
 
         for entry in self.entries:
-            root.append(soup.new_tag("b", style="text-wrap: nowrap", string=self.word))
+            header = soup.new_tag("div", attrs={"class": "header"})
+            root.append(header)
+            header.append(soup.new_tag("b", attrs={"class": "nowrap"}, string=self.word))
 
             # Render phonemic transcriptions
             if include_phonemic_transcriptions and entry.phonemic_transcriptions is not None:
-                for i, (region, transcription) in enumerate(entry.phonemic_transcriptions.items()):
-                    transcription_span = soup.new_tag("span", style="text-wrap: nowrap")
-                    root.append(transcription_span)
+                for region, transcription in entry.phonemic_transcriptions.items():
+                    transcription_span = soup.new_tag("span", attrs={"class": "nowrap"})
+                    header.append(transcription_span)
 
-                    margin_left = "1rem" if i == 0 else "0.75rem"
                     transcription_span.append(
-                        soup.new_tag("span", style=f"color: var(--fg-disabled); margin-left: {margin_left}",
-                                     string=region))
+                        soup.new_tag("span", attrs={"class": "region text-disabled"}, string=region))
                     transcription_span.append(
-                        soup.new_tag("span", style=f"color: var(--fg-subtle); margin-left: 0.375rem",
-                                     string=transcription))
+                        soup.new_tag("span", attrs={"class": "text-subtle"}, string=transcription))
 
             # Render part of speech
             if entry.part_of_speech is not None:
-                root.append(
-                    soup.new_tag("i", style="color: var(--fg-subtle); margin-left: 1rem; text-wrap: nowrap", string=entry.part_of_speech))
-
-            root.append(soup.new_tag("br"))
+                header.append(soup.new_tag("i", attrs={"class": "text-subtle nowrap"}, string=entry.part_of_speech))
 
             # Render senses list
-            ol = soup.new_tag("ol", style="gap: 0.5rem")
+            ol = soup.new_tag("ol")
             root.append(ol)
             for sense in entry.senses:
                 li = soup.new_tag("li", string=sense.definition)
@@ -80,14 +76,13 @@ class Definition:
 
                 # Insert features before the definition
                 if sense.features is not None:
-                    features_span = soup.new_tag("span", style="color: var(--fg-subtle); margin-right: 0.75rem",
-                                                 string=sense.features)
+                    features_span = soup.new_tag("span", attrs={"class": "text-subtle mr-3"}, string=sense.features)
                     li.insert(0, features_span)
 
                 # Append translation after the definition
                 if include_translation and sense.translation is not None:
                     li.append(soup.new_tag("br"))
-                    li.append(soup.new_tag("span", style="color: var(--flag-4)", string=sense.translation))
+                    li.append(soup.new_tag("span", attrs={"class": "text-blue"}, string=sense.translation))
 
                 # Append the example list
                 if include_examples and sense.examples is not None:
@@ -100,7 +95,7 @@ class Definition:
                         if include_translation and example.translation is not None:
                             li_example.append(soup.new_tag("br"))
                             li_example.append(
-                                soup.new_tag("span", style="color: var(--flag-4)", string=example.translation))
+                                soup.new_tag("span", attrs={"class": "text-blue"}, string=example.translation))
 
             root.append(soup.new_tag("br"))
 
