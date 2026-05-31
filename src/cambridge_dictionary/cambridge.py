@@ -83,7 +83,7 @@ def _parse_definition(dict_code: str, html: str) -> Definition:
                 if divider is not None:
                     divider.decompose()
 
-                features = def_info.get_text().strip()
+                features = def_info.get_text().strip().replace("\n", "")  # Remove all \n that comes before divider
                 features = features if features != "" else None
 
             # Append entry features to features of all senses

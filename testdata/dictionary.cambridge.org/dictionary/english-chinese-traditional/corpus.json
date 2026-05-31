@@ -1,0 +1,37 @@
+{
+  "word": "corpus",
+  "entries": [
+    {
+      "part_of_speech": "noun [ C ]",
+      "phonemic_transcriptions": {
+        "UK": "/ˈkɔː.pəs/",
+        "US": "/ˈkɔːr.pəs/"
+      },
+      "senses": [
+        {
+          "features": null,
+          "definition": "a collection of written or spoken material stored on a computer and used to find out how language is used",
+          "translation": "語料庫，詞料庫",
+          "examples": [
+            {
+              "sentence": "All the dictionary examples are taken from a corpus of billions of words.",
+              "translation": "字典中的所有例子都取自一個收錄了數十億詞彙的語料庫。"
+            }
+          ]
+        },
+        {
+          "features": null,
+          "definition": "a collection of a single writer's work, or of writing about a particular subject",
+          "translation": "文集，全集",
+          "examples": []
+        },
+        {
+          "features": "medical specialized",
+          "definition": "a body or the main part of an organ",
+          "translation": "身體，軀體",
+          "examples": []
+        }
+      ]
+    }
+  ]
+}
