@@ -1,10 +1,11 @@
+import pprint
 from typing import Optional
 
 from bs4 import BeautifulSoup
 from requests import Session
 
 from .browser import header_generator
-from .dictionary import Definition, Entry, Sense, Example
+from .dictionary import Definition, Entry, Sense, Example, DefinitionNotFoundError
 
 
 class ParseError(Exception):
@@ -142,5 +143,9 @@ class Client:
 
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
+        if response.status_code == 302:
+            if response.headers.get("location") == f"https://dictionary.cambridge.org/dictionary/{dict_code}/":
+                raise DefinitionNotFoundError(f"No definition found for {vocabulary}")
+        response.raise_for_status()
 
         return _parse_definition(dict_code, response.text)

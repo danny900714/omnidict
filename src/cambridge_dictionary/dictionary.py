@@ -61,13 +61,16 @@ class Definition:
                 for i, (region, transcription) in enumerate(entry.phonemic_transcriptions.items()):
                     margin_left = "1rem" if i == 0 else "0.75rem"
                     root.append(
-                        soup.new_tag("span", style=f"color: var(--fg-disabled); margin-left: {margin_left}", string=region))
+                        soup.new_tag("span", style=f"color: var(--fg-disabled); margin-left: {margin_left}",
+                                     string=region))
                     root.append(
-                        soup.new_tag("span", style=f"color: var(--fg-subtle); margin-left: 0.375rem", string=transcription))
+                        soup.new_tag("span", style=f"color: var(--fg-subtle); margin-left: 0.375rem",
+                                     string=transcription))
 
             # Render part of speech
             if entry.part_of_speech is not None:
-                root.append(soup.new_tag("i", style="color: var(--fg-subtle); margin-left: 1rem", string=entry.part_of_speech))
+                root.append(
+                    soup.new_tag("i", style="color: var(--fg-subtle); margin-left: 1rem", string=entry.part_of_speech))
 
             root.append(soup.new_tag("br"))
 
@@ -99,9 +102,35 @@ class Definition:
                         ul.append(li_example)
                         if include_translation and example.translation is not None:
                             li_example.append(soup.new_tag("br"))
-                            li_example.append(soup.new_tag("span", style="color: var(--flag-4)", string=example.translation))
+                            li_example.append(
+                                soup.new_tag("span", style="color: var(--flag-4)", string=example.translation))
 
             root.append(soup.new_tag("br"))
 
         soup.smooth()
         return str(soup)
+
+
+class DefinitionNotFoundError(RuntimeError):
+    """This error should be raised when a dictionary cannot find the definition for the given word."""
+    pass
+
+
+class DefinitionParseError(RuntimeError):
+    """This error should be raised when a dictionary gets the response but unable to parse it."""
+    pass
+
+
+class DefinitionRedirectedError(RuntimeError):
+    """This error should be raised when a dictionary redirects the user to another word.
+
+    For example, Cambridge Dictionary redirects the user to the present form of the past tense verb (clicked -> click).
+    Under that circumstance, the dictionary should raise this error and pass "click" to the constructor.
+    """
+
+    redirected_word: str
+
+    def __init__(self, redirected_word: str):
+        if redirected_word is None:
+            raise TypeError("redirected_word cannot be None")
+        super().__init__(f"Definition is redirected to '{redirected_word}.")

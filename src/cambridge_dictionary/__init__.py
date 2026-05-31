@@ -3,13 +3,15 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from .dictionary import DefinitionNotFoundError
+
 vendor_path = str(Path(__file__).parent / "vendor")
 if vendor_path not in sys.path:
     sys.path.insert(0, vendor_path)
 
 from aqt import gui_hooks, mw
-from aqt.editor import Editor, Note
-from aqt.utils import show_info, show_warning, ask_user
+from aqt.editor import Editor
+from aqt.utils import show_info, show_warning, ask_user, show_critical
 
 from .cambridge import Client
 
@@ -20,9 +22,12 @@ client = Client()
 def fetch_definition(editor: Editor) -> None:
     def fetch_and_set_definition(vocabulary: str, fields: list[Any], current_field: int) -> None:
         config = mw.addonManager.getConfig(__name__)
-        definition = client.fetch_definition(config["dict_code"], vocabulary)
-        fields[current_field] = definition.render_html()
-        editor.loadNoteKeepingFocus()
+        try:
+            definition = client.fetch_definition(config["dict_code"], vocabulary)
+            fields[current_field] = definition.render_html()
+            editor.loadNoteKeepingFocus()
+        except DefinitionNotFoundError:
+            show_critical(f'Failed to fetch definition for "{vocabulary}"')
 
     def after_save():
         current_field = editor.currentField
