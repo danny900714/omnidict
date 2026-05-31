@@ -1,3 +1,5 @@
+from functools import cache
+from pathlib import Path
 from typing import Optional
 
 from bs4 import BeautifulSoup
@@ -27,6 +29,13 @@ class Entry:
 
 
 class Definition:
+    @staticmethod
+    @cache
+    def _css():
+        path = Path(__file__).parent / "assets" / "definition.css"
+        with open(path) as f:
+            return f.read()
+
     def __init__(self, word: str, entries: list[Entry]):
         self.word = word
         self.entries = entries
@@ -34,7 +43,7 @@ class Definition:
     def render_html(self, *, include_phonemic_transcriptions: bool = True, include_translation: bool = True,
                     include_examples: bool = False) -> str:
         soup = BeautifulSoup("", "html.parser")
-        soup.append(soup.new_tag("style", string="ol > li:not(:last-child) { margin-bottom: 0.25rem; }"))
+        soup.append(soup.new_tag("style", string=Definition._css()))
         root = soup.new_tag("div", style="text-align: start")
         soup.append(root)
 
