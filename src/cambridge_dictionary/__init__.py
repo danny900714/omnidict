@@ -12,6 +12,7 @@ from aqt.editor import Editor
 from aqt.operations import QueryOp
 from aqt.utils import show_info, show_warning, ask_user, show_critical
 
+from .translation import _
 from .dictionary import DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError, Definition
 from .cambridge import Client
 
@@ -26,18 +27,20 @@ def on_fetch_definition_button_clicked(editor: Editor) -> None:
 
     def handle_fetch_definition_error(e: Any, word: str, fields: list[Any], current_field: int) -> None:
         if isinstance(e, DefinitionNotFoundError):
-            show_critical(f'Failed to fetch definition for "{word}"')
+            show_critical(_('No definition found for "{word}"').format(word=word))
         elif isinstance(e, DefinitionRedirectedError):
             redirected_word = e.redirected_word
             ask_user(
-                f'Definition is redirected to "{redirected_word}". Would you like to fetch that definition?',
+                _('"{word}" wasn\'t found. Would you like to use the definition for "{redirected_word}" instead?').format(
+                    word=word, redirected_word=redirected_word),
                 callback=lambda ok: fetch_and_set_definition(redirected_word, fields, current_field) if ok else None
             )
         elif isinstance(e, DefinitionParseError):
             show_critical(
-                f'Failed to parse definition for "{word}". The website structure might have changed. Please report this issue to the developer.')
+                _('Failed to parse the definition for "{word}". Please report this issue to the developer.').format(
+                    word=word))
         else:
-            show_critical(f'An unexpected error occurred: {str(e)}')
+            show_critical(_('An unexpected error occurred:\n{error}').format(error=e))
 
     def fetch_and_set_definition(vocabulary: str, fields: list[Any], current_field: int) -> None:
         config = mw.addonManager.getConfig(__name__)
@@ -55,17 +58,17 @@ def on_fetch_definition_button_clicked(editor: Editor) -> None:
         if current_field is None or editor.note is None:
             return
         if current_field == 0:
-            show_info("Click the next field to fetch definition.")
+            show_info(_("Click the next field to fetch definition."))
             return
 
         vocabulary = editor.note.fields[current_field - 1]
 
         if not vocabulary:
-            show_warning("Please enter a word in the field above to proceed.")
+            show_warning(_("Please enter a word in the field above to proceed."))
             return
         if editor.note.fields[current_field]:
             ask_user(
-                "Will overwrite existing content in the current field. Do you want to proceed?",
+                _("Will overwrite existing content in the current field. Do you want to proceed?"),
                 lambda ok: fetch_and_set_definition(vocabulary, editor.note.fields, current_field) if ok else None
             )
             return

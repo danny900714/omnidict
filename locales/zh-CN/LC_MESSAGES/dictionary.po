@@ -1,0 +1,57 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-02 10:37+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/cambridge_dictionary/__init__.py:30
+#, python-brace-format
+msgid "No definition found for \"{word}\""
+msgstr "找不到“{word}”的释义"
+
+#: src/cambridge_dictionary/__init__.py:34
+#, python-brace-format
+msgid ""
+"\"{word}\" wasn't found. Would you like to use the definition for "
+"\"{redirected_word}\" instead?"
+msgstr "找不到“{word}”。是否改用“{redirected_word}”的释义？"
+
+#: src/cambridge_dictionary/__init__.py:40
+#, python-brace-format
+msgid ""
+"Failed to parse the definition for \"{word}\". Please report this issue to "
+"the developer."
+msgstr "无法解析“{word}”的释义。请将此问题反馈给开发者。"
+
+#: src/cambridge_dictionary/__init__.py:43
+#, python-brace-format
+msgid ""
+"An unexpected error occurred:\n"
+"{error}"
+msgstr "发生意外错误：\n{error}"
+
+#: src/cambridge_dictionary/__init__.py:61
+msgid "Click the next field to fetch definition."
+msgstr "点击下一个字段以获取释义。"
+
+#: src/cambridge_dictionary/__init__.py:67
+msgid "Please enter a word in the field above to proceed."
+msgstr "请在上面的字段中输入单词。"
+
+#: src/cambridge_dictionary/__init__.py:71
+msgid ""
+"Will overwrite existing content in the current field. Do you want to proceed?"
+msgstr "将会覆盖当前字段的现有内容。是否继续？"
