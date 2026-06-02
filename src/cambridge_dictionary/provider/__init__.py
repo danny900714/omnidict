@@ -1,1 +1,2 @@
-from .cambridge import CambridgeDictionaryProvider
+from .common import Provider, Dictionary
+from .manager import ProviderManager

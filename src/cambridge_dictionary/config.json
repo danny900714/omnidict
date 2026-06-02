@@ -1,3 +1,9 @@
 {
-  "dict_code": "english-chinese-traditional"
+  "dict_code": "english-chinese-traditional",
+  "editor": {
+    "buttons": [
+      "cambridge-dictionary.english-chinese-traditional",
+      "cambridge-dictionary.english-chinese-simplified"
+    ]
+  }
 }

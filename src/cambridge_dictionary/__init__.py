@@ -1,7 +1,7 @@
 # Include vendor directory into sys.path
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, LiteralString, Optional
 
 vendor_path = str(Path(__file__).parent / "vendor")
 if vendor_path not in sys.path:
@@ -15,9 +15,12 @@ from aqt.utils import show_info, show_warning, ask_user, show_critical
 from .translation import _
 from .dictionary import DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError, Definition
 from .cambridge import Client
+from .provider import ProviderManager, Dictionary
 
 # Init tasks
 client = Client()
+config = mw.addonManager.getConfig(__name__)
+provider_registry = ProviderManager(config)
 
 
 def on_fetch_definition_button_clicked(editor: Editor) -> None:
@@ -43,7 +46,6 @@ def on_fetch_definition_button_clicked(editor: Editor) -> None:
             show_critical(_('An unexpected error occurred:\n{error}').format(error=e))
 
     def fetch_and_set_definition(vocabulary: str, fields: list[Any], current_field: int) -> None:
-        config = mw.addonManager.getConfig(__name__)
         op = QueryOp(
             parent=mw.app.activeWindow(),
             op=lambda _: client.fetch_definition(config["dict_code"], vocabulary).render_html(),
@@ -91,4 +93,41 @@ def add_fetch_definition_button(buttons: list[str], editor: Editor) -> None:
     buttons.append(button)
 
 
-gui_hooks.editor_did_init_buttons.append(add_fetch_definition_button)
+def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
+    if "editor" in config and "buttons" in config["editor"] and isinstance(config["editor"]["buttons"], list):
+        for provider_dictionary_id in config["editor"]["buttons"]:
+            split_ids: list[LiteralString] = provider_dictionary_id.split(".")
+            if len(split_ids) != 2:
+                print(f"Invalid provider dictionary id in config.editor.buttons: {provider_dictionary_id}")
+                continue
+
+            provider_id, dict_id = split_ids
+            provider = provider_registry.get_provider(provider_id)
+            if provider is None:
+                print(f"Provider not found: {provider_id}")
+                continue
+
+            dict_instance: Optional[Dictionary] = None
+            for d in provider.dictionaries:
+                if d.id() == dict_id:
+                    dict_instance = d
+                    break
+            if dict_instance is None:
+                print(f"Dictionary ({dict_id}) not found for provider ({provider_id})")
+                continue
+
+            dict_name = dict_instance.name()
+            button = editor.addButton(
+                icon=None,
+                cmd=provider_dictionary_id,
+                func=on_fetch_definition_button_clicked,
+                id=provider_dictionary_id,
+                label=dict_name,
+                tip=f"Fetch definition from {dict_name} ({provider.name()})",
+                keys="Ctrl+Shift+C",
+            )
+            buttons.append(button)
+
+
+# gui_hooks.editor_did_init_buttons.append(add_fetch_definition_button)
+gui_hooks.editor_did_init_buttons.append(add_editor_buttons)

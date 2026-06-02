@@ -5,7 +5,7 @@ from ..common import Provider, Dictionary
 class CambridgeDictionaryProvider(Provider):
     @classmethod
     def id(cls) -> str:
-        return "cambridge"
+        return "cambridge-dictionary"
 
     @classmethod
     def name(cls) -> str:
