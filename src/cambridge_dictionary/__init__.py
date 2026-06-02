@@ -12,13 +12,8 @@ from aqt.editor import Editor
 from aqt.operations import QueryOp
 from aqt.utils import show_info, show_warning, ask_user, show_critical
 
-from .translation import _
-from .provider import Definition, DefinitionNotFoundError, DefinitionParseError, DefinitionRedirectedError, Provider, \
-    ProviderManager
-
-# Init tasks
-config = mw.addonManager.getConfig(__name__)
-provider_registry = ProviderManager(config)
+from .globals import _, config, provider_manager
+from .provider import Definition, DefinitionNotFoundError, DefinitionParseError, DefinitionRedirectedError, Provider
 
 
 def make_fetch_definition_button_clicked_handler(editor: Editor, provider: Provider, dictionary_id: str):
@@ -90,7 +85,7 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
                 continue
 
             provider_id, dictionary_id = split_ids
-            provider = provider_registry.get_provider(provider_id)
+            provider = provider_manager.get_provider(provider_id)
             if provider is None:
                 print(f"Provider not found: {provider_id}")
                 continue
