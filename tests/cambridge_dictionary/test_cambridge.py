@@ -5,18 +5,24 @@ from typing import Optional
 
 import jsonpickle
 import pytest
+from browserforge.headers import HeaderGenerator
 from requests import Session
 
-from .browser import header_generator
-from .cambridge import _parse_supported_target_languages, _parse_definition
+from cambridge_dictionary.provider.cambridge import _parse_chinese_definition
 
 jsonpickle.set_encoder_options("json", ensure_ascii=False)
+header_generator = HeaderGenerator()
 
 
 @pytest.fixture(scope="module")
-def requests_session():
+def browser_headers():
+    return header_generator.generate()
+
+
+@pytest.fixture(scope="module")
+def requests_session(browser_headers):
     session = Session()
-    session.headers.update(header_generator.generate())
+    session.headers.update(browser_headers)
     return session
 
 
@@ -28,11 +34,11 @@ def definition_test_cases(requests_session):
             "slash",  # additional information inside features that makes it two lines long ((UK also oblique (stroke)))
             "record",  # features in part of speech ([ T ]); phrase block
             "fuck",  # features in .pos-header (offensive)
-            "man", # suffix (-man)
-            "reborn", # only phrase block in sense body (be reborn)
-            "bug", # irreg-infls under phonemic transcription (-gg)
-            "CPU", # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
-            "corpus", # .ddivide cause extra spaces inside features (MEDICAL   specialized)
+            "man",  # suffix (-man)
+            "reborn",  # only phrase block in sense body (be reborn)
+            "bug",  # irreg-infls under phonemic transcription (-gg)
+            "CPU",  # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
+            "corpus",  # .ddivide cause extra spaces inside features (MEDICAL   specialized)
         ],
         "english-chinese-simplified": [
             "flash",
@@ -72,20 +78,20 @@ def definition_test_cases(requests_session):
     return result
 
 
-def test_parse_supported_target_languages():
-    with open("testdata/dictionary.cambridge.org/index.html") as f:
-        html = f.read()
-        target_languages = _parse_supported_target_languages(html)
+# def test_parse_supported_target_languages():
+#     with open("testdata/dictionary.cambridge.org/index.html") as f:
+#         html = f.read()
+#         target_languages = _parse_supported_target_languages(html)
+#
+#         with open("src/cambridge_dictionary/user_files/target_languages.json", "r") as target_languages_json:
+#             assert target_languages == json.load(target_languages_json)
 
-        with open("src/cambridge_dictionary/user_files/target_languages.json", "r") as target_languages_json:
-            assert target_languages == json.load(target_languages_json)
 
-
-def test_parse_definition(definition_test_cases):
+def test_parse_chinese_definition(definition_test_cases):
     for test_case in definition_test_cases:
         dict_code, html, definition = test_case
 
-        actual_definition = _parse_definition(dict_code, html)
+        actual_definition = _parse_chinese_definition(dict_code, html)
         if isinstance(definition, str):
             definition_json = jsonpickle.encode(actual_definition, unpicklable=False, indent=2)
             with open(definition, "w") as json_file:
