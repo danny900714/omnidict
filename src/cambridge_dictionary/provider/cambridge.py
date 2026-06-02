@@ -1,16 +1,13 @@
-from typing import Optional
 from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
 from requests import Session
 
-from ..common import Dictionary
-from ...browser import header_generator
-from ...dictionary import Definition, Entry, DefinitionParseError, Sense, Example, DefinitionNotFoundError, \
-    DefinitionRedirectedError
+from .common import Provider, DictionaryInfo, Example, Sense, Entry, Definition, DefinitionNotFoundError, \
+    DefinitionParseError, DefinitionRedirectedError
 
 
-def _parse_definition(html: str) -> Definition:
+def _parse_chinese_definition(html: str) -> Definition:
     soup = BeautifulSoup(html, "html.parser")
 
     word = soup.select_one("h1 b")
@@ -31,7 +28,7 @@ def _parse_definition(html: str) -> Definition:
         entry_features = usage_element.get_text() if usage_element is not None else None
 
         # Parse UK and US phonemic transcriptions
-        phonemic_transcriptions: Optional[dict[str, str]] = {}
+        phonemic_transcriptions: dict[str, str] | None = {}
         pt_uk_elem = entry.select_one("span.uk.dpron-i > span.pron.dpron")
         if pt_uk_elem is not None:
             phonemic_transcriptions["UK"] = pt_uk_elem.get_text()
@@ -46,7 +43,7 @@ def _parse_definition(html: str) -> Definition:
         senses: list[Sense] = []
         for def_block in def_blocks:
             # Parse features
-            features: Optional[str] = None
+            features: str | None = None
             def_info = def_block.select_one("span.def-info")
             if def_info is not None:
                 # Exclude experience level capsule
@@ -106,22 +103,23 @@ def _parse_definition(html: str) -> Definition:
     return Definition(word, entries)
 
 
-class ChineseDictionary(Dictionary):
-    def __init__(self, id: str, name: str):
-        self._id = id
-        self._name = name
+class CambridgeDictionaryProvider(Provider):
+    _ID = "cambridge-dictionary"
+    _NAME = "Cambridge Dictionary"
+    _DICTIONARIES = {
+        "english-chinese-simplified": DictionaryInfo("English–Chinese (Simplified)"),
+        "english-chinese-traditional": DictionaryInfo("English-Chinese (Traditional)"),
+    }
 
+    def __init__(self):
         self.session = Session()
-        self.session.headers.update(header_generator.generate())
+        self.session.headers.update(self.browser_headers())
 
-    def id(self) -> str:
-        return self._id
+    def __del__(self):
+        self.session.close()
 
-    def name(self) -> str:
-        return self._name
-
-    def fetch_definition(self, word: str) -> Definition:
-        url = f"https://dictionary.cambridge.org/dictionary/{self.id()}/{word}"
+    def fetch_definition(self, dictionary_id: str, word: str) -> Definition:
+        url = f"https://dictionary.cambridge.org/dictionary/{dictionary_id}/{word}"
 
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
@@ -129,15 +127,15 @@ class ChineseDictionary(Dictionary):
             location = response.headers.get("location")
             if location is not None:
                 location_url = urlsplit(location)
-                if location_url.path == f"/dictionary/{self.id()}/":
+                if location_url.path == f"/dictionary/{dictionary_id}/":
                     raise DefinitionNotFoundError(f"No definition found for {word}")
                 elif location_url.path.startswith(
-                        f"/dictionary/{self.id()}/") and location_url.query == f"q={word}":
+                        f"/dictionary/{dictionary_id}/") and location_url.query == f"q={word}":
                     redirected_word = location_url.path.split("/")[-1]
 
                     # Check if the redirected word is the lowercase of the queried word due to wierd redirection made by Cambridge Dictionary (CPU -> cpu)
                     if word.lower() == redirected_word:
-                        return self.fetch_definition(redirected_word)
+                        return self.fetch_definition(dictionary_id, redirected_word)
 
                     raise DefinitionRedirectedError(redirected_word)
 
@@ -145,4 +143,7 @@ class ChineseDictionary(Dictionary):
 
         response.raise_for_status()
 
-        return _parse_definition(response.text)
+        if dictionary_id in ["english-chinese-simplified", "english-chinese-traditional"]:
+            return _parse_chinese_definition(response.text)
+        else:
+            raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")

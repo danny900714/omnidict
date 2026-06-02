@@ -1,7 +1,7 @@
 # Include vendor directory into sys.path
 import sys
 from pathlib import Path
-from typing import Any, LiteralString, Optional
+from typing import Any, LiteralString
 
 vendor_path = str(Path(__file__).parent / "vendor")
 if vendor_path not in sys.path:
@@ -13,9 +13,9 @@ from aqt.operations import QueryOp
 from aqt.utils import show_info, show_warning, ask_user, show_critical
 
 from .translation import _
-from .dictionary import DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError, Definition
+from .provider import Definition, DefinitionNotFoundError, DefinitionParseError, DefinitionRedirectedError, Provider, \
+    ProviderManager
 from .cambridge import Client
-from .provider import ProviderManager, Dictionary
 
 # Init tasks
 client = Client()
@@ -101,29 +101,24 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
                 print(f"Invalid provider dictionary id in config.editor.buttons: {provider_dictionary_id}")
                 continue
 
-            provider_id, dict_id = split_ids
+            provider_id, dictionary_id = split_ids
             provider = provider_registry.get_provider(provider_id)
             if provider is None:
                 print(f"Provider not found: {provider_id}")
                 continue
 
-            dict_instance: Optional[Dictionary] = None
-            for d in provider.dictionaries:
-                if d.id() == dict_id:
-                    dict_instance = d
-                    break
-            if dict_instance is None:
-                print(f"Dictionary ({dict_id}) not found for provider ({provider_id})")
+            dictionary_info = provider.get_dictionary_info(dictionary_id)
+            if dictionary_info is None:
+                print(f"{provider.name()} doesn't support dictionary: {dictionary_id}")
                 continue
 
-            dict_name = dict_instance.name()
             button = editor.addButton(
                 icon=None,
                 cmd=provider_dictionary_id,
                 func=on_fetch_definition_button_clicked,
                 id=provider_dictionary_id,
-                label=dict_name,
-                tip=f"Fetch definition from {dict_name} ({provider.name()})",
+                label=dictionary_info.name,
+                tip=f"Fetch definition from {dictionary_info.name} ({provider.name()})",
                 keys="Ctrl+Shift+C",
             )
             buttons.append(button)

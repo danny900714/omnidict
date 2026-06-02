@@ -1,2 +1,2 @@
-from .common import Provider, Dictionary
+from .common import *
 from .manager import ProviderManager

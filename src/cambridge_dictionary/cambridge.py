@@ -4,9 +4,9 @@ from urllib.parse import urlsplit
 from bs4 import BeautifulSoup
 from requests import Session
 
-from . import DefinitionParseError
+from . import DefinitionParseError, Definition, DefinitionNotFoundError, DefinitionRedirectedError
 from .browser import header_generator
-from .dictionary import Definition, Entry, Sense, Example, DefinitionNotFoundError, DefinitionRedirectedError
+from .provider.common import Example, Sense, Entry
 
 
 def _parse_supported_target_languages(html: str) -> dict[str, str]:
