@@ -1,0 +1,1 @@
+from .cambridge import CambridgeDictionaryProvider
