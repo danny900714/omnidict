@@ -15,20 +15,18 @@ from aqt.utils import show_info, show_warning, ask_user, show_critical
 from .translation import _
 from .provider import Definition, DefinitionNotFoundError, DefinitionParseError, DefinitionRedirectedError, Provider, \
     ProviderManager
-from .cambridge import Client
 
 # Init tasks
-client = Client()
 config = mw.addonManager.getConfig(__name__)
 provider_registry = ProviderManager(config)
 
 
-def on_fetch_definition_button_clicked(editor: Editor) -> None:
-    def set_definition(fields: list[Any], current_field: int, definition_html: str) -> None:
-        fields[current_field] = definition_html
+def make_fetch_definition_button_clicked_handler(editor: Editor, provider: Provider, dictionary_id: str):
+    def set_definition(fields: list[Any], current_field: int, html: str) -> None:
+        fields[current_field] = html
         editor.loadNoteKeepingFocus()
 
-    def handle_fetch_definition_error(e: Any, word: str, fields: list[Any], current_field: int) -> None:
+    def handle_fetch_definition_error(e: Exception, word: str, fields: list[Any], current_field: int) -> None:
         if isinstance(e, DefinitionNotFoundError):
             show_critical(_('No definition found for "{word}"').format(word=word))
         elif isinstance(e, DefinitionRedirectedError):
@@ -45,14 +43,14 @@ def on_fetch_definition_button_clicked(editor: Editor) -> None:
         else:
             show_critical(_('An unexpected error occurred:\n{error}').format(error=e))
 
-    def fetch_and_set_definition(vocabulary: str, fields: list[Any], current_field: int) -> None:
+    def fetch_and_set_definition(word: str, fields: list[Any], current_field: int) -> None:
         op = QueryOp(
             parent=mw.app.activeWindow(),
-            op=lambda _: client.fetch_definition(config["dict_code"], vocabulary).render_html(),
-            success=lambda definition: set_definition(fields, current_field, definition),
+            op=lambda _: provider.fetch_definition(dictionary_id, word).render_html(),
+            success=lambda html: set_definition(fields, current_field, html),
         )
         op.failure(
-            lambda e: handle_fetch_definition_error(e, vocabulary, fields, current_field)
+            lambda e: handle_fetch_definition_error(e, word, fields, current_field)
         ).without_collection().with_progress().run_in_background()
 
     def after_save():
@@ -63,34 +61,24 @@ def on_fetch_definition_button_clicked(editor: Editor) -> None:
             show_info(_("Click the next field to fetch definition."))
             return
 
-        vocabulary = editor.note.fields[current_field - 1]
+        word = editor.note.fields[current_field - 1]
 
-        if not vocabulary:
+        if not word:
             show_warning(_("Please enter a word in the field above to proceed."))
             return
         if editor.note.fields[current_field]:
             ask_user(
                 _("Will overwrite existing content in the current field. Do you want to proceed?"),
-                lambda ok: fetch_and_set_definition(vocabulary, editor.note.fields, current_field) if ok else None
+                lambda ok: fetch_and_set_definition(word, editor.note.fields, current_field) if ok else None
             )
             return
 
-        fetch_and_set_definition(vocabulary, editor.note.fields, current_field)
+        fetch_and_set_definition(word, editor.note.fields, current_field)
 
-    editor.call_after_note_saved(after_save)
+    def handle_fetch_definition_button_clicked(_: Editor):
+        editor.call_after_note_saved(after_save)
 
-
-def add_fetch_definition_button(buttons: list[str], editor: Editor) -> None:
-    button = editor.addButton(
-        icon=None,
-        cmd="cambridge_dictionary.fetch_definition",
-        func=on_fetch_definition_button_clicked,
-        id="fetch-definition-button",
-        label="Fetch definition",
-        tip="Fetch definition from Cambridge Dictionary",
-        keys="Ctrl+Shift+C",
-    )
-    buttons.append(button)
+    return handle_fetch_definition_button_clicked
 
 
 def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
@@ -115,7 +103,7 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
             button = editor.addButton(
                 icon=None,
                 cmd=provider_dictionary_id,
-                func=on_fetch_definition_button_clicked,
+                func=make_fetch_definition_button_clicked_handler(editor, provider, dictionary_id),
                 id=provider_dictionary_id,
                 label=dictionary_info.name,
                 tip=f"Fetch definition from {dictionary_info.name} ({provider.name()})",
@@ -124,5 +112,4 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
             buttons.append(button)
 
 
-# gui_hooks.editor_did_init_buttons.append(add_fetch_definition_button)
 gui_hooks.editor_did_init_buttons.append(add_editor_buttons)
