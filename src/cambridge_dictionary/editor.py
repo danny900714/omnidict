@@ -5,11 +5,12 @@ from aqt.editor import Editor
 from aqt.operations import QueryOp
 from aqt.utils import show_critical, ask_user, show_info, show_warning
 
-from .globals import _, config, provider_manager
 from .provider import Provider, DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError
 
 
 def make_fetch_definition_button_clicked_handler(editor: Editor, provider: Provider, dictionary_id: str):
+    from .globals import _
+
     def set_definition(fields: list[Any], current_field: int, html: str) -> None:
         fields[current_field] = html
         editor.loadNoteKeepingFocus()
@@ -70,6 +71,8 @@ def make_fetch_definition_button_clicked_handler(editor: Editor, provider: Provi
 
 
 def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
+    from .globals import config, provider_manager
+
     if "editor" in config and "buttons" in config["editor"] and isinstance(config["editor"]["buttons"], list):
         for provider_dictionary_id in config["editor"]["buttons"]:
             split_ids: list[LiteralString] = provider_dictionary_id.split(".")

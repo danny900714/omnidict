@@ -17,3 +17,8 @@ dev = [
     "pytest>=9.0.3",
     "requests==2.33.1",
 ]
+
+[tool.pytest]
+strict = true
+pythonpath = ["src"]
+addopts = ["--import-mode=importlib"]

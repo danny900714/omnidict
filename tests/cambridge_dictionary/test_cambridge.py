@@ -50,7 +50,7 @@ def definition_test_cases(requests_session):
         for vocabulary in vocabularies:
             html: str
             definition: Optional[dict] = None
-            html_path = f"testdata/dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}.html"
+            html_path = f"tests/data/dictionary.cambridge.org/dictionary/{dict_code}/{vocabulary}.html"
             json_path = html_path.replace(".html", ".json")
 
             if os.path.exists(html_path):
@@ -78,20 +78,11 @@ def definition_test_cases(requests_session):
     return result
 
 
-# def test_parse_supported_target_languages():
-#     with open("testdata/dictionary.cambridge.org/index.html") as f:
-#         html = f.read()
-#         target_languages = _parse_supported_target_languages(html)
-#
-#         with open("src/cambridge_dictionary/user_files/target_languages.json", "r") as target_languages_json:
-#             assert target_languages == json.load(target_languages_json)
-
-
 def test_parse_chinese_definition(definition_test_cases):
     for test_case in definition_test_cases:
         dict_code, html, definition = test_case
 
-        actual_definition = _parse_chinese_definition(dict_code, html)
+        actual_definition = _parse_chinese_definition(html)
         if isinstance(definition, str):
             definition_json = jsonpickle.encode(actual_definition, unpicklable=False, indent=2)
             with open(definition, "w") as json_file:
