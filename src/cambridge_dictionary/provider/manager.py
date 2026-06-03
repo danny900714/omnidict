@@ -1,6 +1,5 @@
 import inspect
 from dataclasses import dataclass
-from typing import Optional
 
 from . import _providers
 from .common import Provider, DictionaryInfo
@@ -15,7 +14,7 @@ class _ProviderInfo:
 
 
 class ProviderManager:
-    def __init__(self, config: dict | None = None):
+    def __init__(self):
         self._providers: dict[str, Provider] = {}
 
         self._provider_catalog: dict[str, _ProviderInfo] = {}
@@ -28,10 +27,6 @@ class ProviderManager:
                 self._provider_catalog[provider_id] = _ProviderInfo(klass, provider_name, provider_dictionaries,
                                                                     provider_icon)
 
-        self._providers_config: Optional[dict] = None
-        if config is not None and "providers" in config:
-            self._providers_config = config
-
     def get_provider(self, provider_id: str) -> Provider | None:
         if provider_id not in self._providers:
             if provider_id in self._provider_catalog:
@@ -39,9 +34,16 @@ class ProviderManager:
 
         return self._providers.get(provider_id)
 
-    def _instantiate_provider(self, klass: type[Provider]) -> Provider:
+    def clear_providers(self):
+        self._providers.clear()
+
+    @staticmethod
+    def _instantiate_provider(klass: type[Provider]) -> Provider:
+        from ..globals import config
+
         provider = klass()
-        if self._providers_config is not None and klass.id() in self._providers_config:
-            provider.config = self._providers_config[klass.id()]
+        if config is not None:
+            provider_config = config.get("providers", {}).get(klass.id())
+            provider.config = provider_config
 
         return provider

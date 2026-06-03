@@ -44,7 +44,7 @@ class Definition:
         self.word = word
         self.entries = entries
 
-    def render_html(self, *, include_phonemic_transcriptions: bool = True, include_translation: bool = True,
+    def render_html(self, *, include_phonemic_transcriptions: bool = True, include_translations: bool = True,
                     include_examples: bool = False) -> str:
         soup = BeautifulSoup("", "html.parser")
         soup.append(soup.new_tag("style", string=Definition._css()))
@@ -84,7 +84,7 @@ class Definition:
                     li.insert(0, features_span)
 
                 # Append translation after the definition
-                if include_translation and sense.translation is not None:
+                if include_translations and sense.translation is not None:
                     li.append(soup.new_tag("br"))
                     li.append(soup.new_tag("span", attrs={"class": "text-blue"}, string=sense.translation))
 
@@ -96,7 +96,7 @@ class Definition:
                     for example in sense.examples:
                         li_example = soup.new_tag("li", string=example.sentence)
                         ul.append(li_example)
-                        if include_translation and example.translation is not None:
+                        if include_translations and example.translation is not None:
                             li_example.append(soup.new_tag("br"))
                             li_example.append(
                                 soup.new_tag("span", attrs={"class": "text-blue"}, string=example.translation))
@@ -147,7 +147,7 @@ class Provider(ABC):
     _DICTIONARIES: dict[str, DictionaryInfo] = {}
     _ICON: str | None = None
 
-    config: dict
+    config: dict | None
 
     @staticmethod
     def browser_headers() -> dict[str, str]:

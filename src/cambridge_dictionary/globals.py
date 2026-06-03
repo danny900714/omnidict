@@ -11,8 +11,21 @@ localedir = Path(__file__).parent / "locales"
 translation = gettext.translation("dictionary", localedir, languages=[current_lang], fallback=True)
 _ = translation.gettext
 
+provider_manager = ProviderManager()
+
 # Addon information
 addon_module = __name__.rsplit(".", 1)[0]
 config = mw.addonManager.getConfig(addon_module)
 
-provider_manager = ProviderManager(config)
+def on_config_updated(new_config: dict):
+    # Update global config
+    global config
+    config = new_config
+
+    # Remove all instantiated provider so that providers get the updated config
+    global provider_manager
+    provider_manager.clear_providers()
+
+
+# Handle config update
+mw.addonManager.setConfigUpdatedAction(addon_module, on_config_updated)

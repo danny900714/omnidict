@@ -1,4 +1,9 @@
 {
+  "definition": {
+    "include_phonemic_transcriptions": true,
+    "include_translations": true,
+    "include_examples": false
+  },
   "editor": {
     "buttons": [
       "cambridge-dictionary.english-chinese-traditional"
