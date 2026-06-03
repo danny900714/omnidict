@@ -11,6 +11,7 @@ localedir = Path(__file__).parent / "locales"
 translation = gettext.translation("dictionary", localedir, languages=[current_lang], fallback=True)
 _ = translation.gettext
 
+# Addon information
 addon_module = __name__.rsplit(".", 1)[0]
 config = mw.addonManager.getConfig(addon_module)
 

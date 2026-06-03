@@ -3,12 +3,12 @@ from typing import Any, LiteralString
 from aqt import mw, gui_hooks
 from aqt.editor import Editor
 from aqt.operations import QueryOp
-from aqt.utils import show_critical, ask_user, show_info, show_warning
+from aqt.utils import show_critical, ask_user, show_info, show_warning, shortcut
 
 from .provider import Provider, DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError
 
 
-def make_fetch_definition_button_clicked_handler(editor: Editor, provider: Provider, dictionary_id: str):
+def make_dictionary_button_clicked_handler(editor: Editor, provider: Provider, dictionary_id: str):
     from .globals import _
 
     def set_definition(fields: list[Any], current_field: int, html: str) -> None:
@@ -91,14 +91,16 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
                 print(f"{provider.name()} doesn't support dictionary: {dictionary_id}")
                 continue
 
+            icon = dictionary_info.icon if dictionary_info.icon is not None else provider.icon()
+            keys = "Ctrl+Shift+D"
             button = editor.addButton(
-                icon=None,
+                icon=icon,
                 cmd=provider_dictionary_id,
-                func=make_fetch_definition_button_clicked_handler(editor, provider, dictionary_id),
+                func=make_dictionary_button_clicked_handler(editor, provider, dictionary_id),
                 id=provider_dictionary_id,
-                label=dictionary_info.name,
-                tip=f"Fetch definition from {dictionary_info.name} ({provider.name()})",
-                keys="Ctrl+Shift+C",
+                label="" if icon else dictionary_info.name,
+                tip=f"{dictionary_info.name} ({shortcut(keys)})",
+                keys=keys,
             )
             buttons.append(button)
 

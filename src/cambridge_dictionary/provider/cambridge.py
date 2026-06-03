@@ -1,3 +1,4 @@
+from pathlib import Path
 from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
@@ -106,9 +107,10 @@ def _parse_chinese_definition(html: str) -> Definition:
 class CambridgeDictionaryProvider(Provider):
     _ID = "cambridge-dictionary"
     _NAME = "Cambridge Dictionary"
+    _ICON = str(Path(__file__).parent.parent.joinpath("assets", "icons", "cambridge-dictionary.svg").absolute())
     _DICTIONARIES = {
-        "english-chinese-simplified": DictionaryInfo("English–Chinese (Simplified)"),
-        "english-chinese-traditional": DictionaryInfo("English-Chinese (Traditional)"),
+        "english-chinese-simplified": DictionaryInfo("Cambridge English–Chinese (Simplified) Dictionary"),
+        "english-chinese-traditional": DictionaryInfo("Cambridge English-Chinese (Traditional) Dictionary"),
     }
 
     def __init__(self):
