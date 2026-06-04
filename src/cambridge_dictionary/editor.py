@@ -74,7 +74,7 @@ def make_dictionary_button_clicked_handler(
                 )
                 op.failure(
                     lambda e: handle_fetch_definition_error(e, word)
-                ).without_collection().with_progress().run_in_background()
+                ).with_progress().run_in_background()
 
             ########################### Callbacks End ###########################
 
