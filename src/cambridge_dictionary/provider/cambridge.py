@@ -1,20 +1,30 @@
 from pathlib import Path
-from urllib.parse import urlsplit
+from typing import cast, Callable
+from urllib.parse import urlsplit, urljoin, unquote
 
 from bs4 import BeautifulSoup
 from requests import Session
 
 from .common import Provider, DictionaryInfo, Example, Sense, Entry, Definition, DefinitionNotFoundError, \
-    DefinitionParseError, DefinitionRedirectedError
+    DefinitionParseError, DefinitionRedirectedError, Pronunciation
+
+ORIGIN = "https://dictionary.cambridge.org"
 
 
-def _parse_chinese_definition(html: str) -> Definition:
+def _url_to_filename(url: str) -> str:
+    return Path(unquote(urlsplit(url).path)).name
+
+
+def _parse_chinese_definition(html: str, download_audio: Callable[[str], bytes]) -> Definition:
     soup = BeautifulSoup(html, "html.parser")
 
     word = soup.select_one("h1 b")
     if word is None:
         raise DefinitionParseError("Failed to parse word")
     word = word.get_text()
+
+    # ASSUMPTION: the basename of the url path is unique within the webpage
+    audio_files: dict[str, bytes] = {}
 
     # Limit the first entry to exclude prefix and sufix
     entry_bodies = soup.select(".di-body > .entry:first-child .entry-body__el")
@@ -28,16 +38,39 @@ def _parse_chinese_definition(html: str) -> Definition:
         usage_element = entry.select_one(".pos-header > span.lab > span.usage")
         entry_features = usage_element.get_text() if usage_element is not None else None
 
-        # Parse UK and US phonemic transcriptions
-        phonemic_transcriptions: dict[str, str] | None = {}
-        pt_uk_elem = entry.select_one("span.uk.dpron-i > span.pron.dpron")
-        if pt_uk_elem is not None:
-            phonemic_transcriptions["UK"] = pt_uk_elem.get_text()
-        pt_us_elem = entry.select_one("span.us.dpron-i > span.pron.dpron")
-        if pt_us_elem is not None:
-            phonemic_transcriptions["US"] = pt_us_elem.get_text()
-        if phonemic_transcriptions == {}:
-            phonemic_transcriptions = None
+        # Parse pronunciations
+        pronunciations: list[Pronunciation] = []
+        pronunciation_spans = entry.select("span.dpron-i")
+        for pronunciation_span in pronunciation_spans:
+            # Parse region
+            region_span = pronunciation_span.select_one("span.region")
+            region = region_span.get_text().upper() if region_span is not None else None
+
+            # Parse audio URL
+            audio_source = pronunciation_span.select_one(".daud audio source")
+            audio_url = urljoin(ORIGIN, cast(str | None, audio_source.get("src"))) if audio_source is not None else None
+
+            # Parse phonemic transcription
+            transcription_span = pronunciation_span.select_one("span.pron.dpron")
+            transcription = transcription_span.get_text() if transcription_span is not None else None
+
+            # Download audio file if audio file not in audio_files map
+            audio_file_name: str | None = None
+            if audio_url is not None:
+                audio_file_name: str = _url_to_filename(audio_url)
+                if audio_file_name not in audio_files:
+                    try:
+                        audio = download_audio(audio_url)
+                        audio_files[audio_file_name] = audio
+                    except Exception as e:
+                        print(f"Failed to download audio from {audio_url}:\n{e}")
+
+            pronunciation = Pronunciation(
+                region=region,
+                audio_file_name=audio_file_name,
+                phonemic_transcription=transcription
+            )
+            pronunciations.append(pronunciation)
 
         # to exclude phrase block
         def_blocks = entry.select(".sense-body > .def-block")
@@ -97,11 +130,15 @@ def _parse_chinese_definition(html: str) -> Definition:
 
         # Create entry object and append it to list if senses is not empty
         if len(senses) > 0:
-            entry = Entry(senses, part_of_speech=pos, phonemic_transcriptions=phonemic_transcriptions)
+            entry = Entry(
+                senses,
+                part_of_speech=pos,
+                pronunciations=pronunciations if len(pronunciation_spans) > 0 else None
+            )
             entries.append(entry)
 
     # Create the definition object
-    return Definition(word, entries)
+    return Definition(word, entries, audio_files=audio_files if audio_files else None)
 
 
 class CambridgeDictionaryProvider(Provider):
@@ -121,7 +158,7 @@ class CambridgeDictionaryProvider(Provider):
         self.session.close()
 
     def fetch_definition(self, dictionary_id: str, word: str) -> Definition:
-        url = f"https://dictionary.cambridge.org/dictionary/{dictionary_id}/{word}"
+        url = f"{ORIGIN}/dictionary/{dictionary_id}/{word}"
 
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
@@ -146,6 +183,11 @@ class CambridgeDictionaryProvider(Provider):
         response.raise_for_status()
 
         if dictionary_id in ["english-chinese-simplified", "english-chinese-traditional"]:
-            return _parse_chinese_definition(response.text)
+            return _parse_chinese_definition(response.text, self._download_file)
         else:
             raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")
+
+    def _download_file(self, url: str) -> bytes:
+        response = self.session.get(url)
+        response.raise_for_status()
+        return response.content

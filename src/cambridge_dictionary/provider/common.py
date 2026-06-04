@@ -1,38 +1,55 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
 
+from anki.collection import Collection
 from browserforge.headers import HeaderGenerator
 from bs4 import BeautifulSoup
 
 _header_generator = HeaderGenerator()
 
 
+@dataclass
 class Example:
-    def __init__(self, sentence: str, *, translation: str | None = None):
-        self.sentence = sentence
-        self.translation = translation
+    sentence: str
+    translation: str | None = field(default_factory=None)
 
 
+@dataclass
 class Sense:
-    def __init__(self, definition: str, *, features: str | None = None, translation: str | None = None,
-                 examples: list[Example] | None = None):
-        self.features = features
-        self.definition = definition
-        self.translation = translation
-        self.examples = examples
+    definition: str
+    features: str | None = field(default_factory=None)
+    translation: str | None = field(default_factory=None)
+    examples: list[Example] | None = field(default_factory=None)
 
 
+@dataclass
+class Pronunciation:
+    region: str | None = field(default_factory=None)
+    audio_file_name: str | None = field(default_factory=None)
+    phonemic_transcription: str | None = field(default_factory=None)
+
+    def __post_init__(self):
+        if self.audio_file_name is None and self.phonemic_transcription is None:
+            raise ValueError("At least one of audio_file_name and phonemic_transcription must be provided.")
+
+
+@dataclass
 class Entry:
-    def __init__(self, senses: list[Sense], *, part_of_speech: str | None = None,
-                 phonemic_transcriptions: dict[str, str] | None = None):
-        self.part_of_speech = part_of_speech
-        self.phonemic_transcriptions = phonemic_transcriptions
-        self.senses = senses
+    senses: list[Sense]
+    pronunciations: list[Pronunciation] | None = field(default_factory=None)
+    part_of_speech: str | None = field(default_factory=None)
 
 
+@dataclass
 class Definition:
+    word: str
+    entries: list[Entry]
+    audio_files: dict[str, bytes] | None = field(default_factory=None)
+
+    _saved_audio_files: dict[str, str] = field(default_factory=dict, init=False)
+
     @staticmethod
     @cache
     def _css():
@@ -40,11 +57,17 @@ class Definition:
         with open(path) as f:
             return f.read()
 
-    def __init__(self, word: str, entries: list[Entry]):
-        self.word = word
-        self.entries = entries
+    def save_audio_files(self, col: Collection):
+        if self.audio_files is None:
+            return
 
-    def render_html(self, *, include_phonemic_transcriptions: bool = True, include_translations: bool = True,
+        # Only save audio files when self._saved_audio_files is not empty
+        if not self._saved_audio_files:
+            for filename, data in self.audio_files.items():
+                self._saved_audio_files[filename] = col.media.write_data(filename, data)
+
+    def render_html(self, *, include_audio: bool = False, include_phonemic_transcriptions: bool = True,
+                    include_translations: bool = True,
                     include_examples: bool = False) -> str:
         soup = BeautifulSoup("", "html.parser")
         soup.append(soup.new_tag("style", string=Definition._css()))
@@ -56,16 +79,33 @@ class Definition:
             root.append(header)
             header.append(soup.new_tag("b", attrs={"class": "nowrap"}, string=self.word))
 
-            # Render phonemic transcriptions
-            if include_phonemic_transcriptions and entry.phonemic_transcriptions is not None:
-                for region, transcription in entry.phonemic_transcriptions.items():
-                    transcription_span = soup.new_tag("span", attrs={"class": "nowrap"})
-                    header.append(transcription_span)
+            # Render pronunciations
+            if entry.pronunciations is not None and (include_audio or include_phonemic_transcriptions):
+                for pronunciation in entry.pronunciations:
+                    pronunciation_span = soup.new_tag("span", attrs={"class": "nowrap"})
+                    header.append(pronunciation_span)
 
-                    transcription_span.append(
-                        soup.new_tag("span", attrs={"class": "region text-disabled"}, string=region))
-                    transcription_span.append(
-                        soup.new_tag("span", attrs={"class": "text-subtle"}, string=transcription))
+                    if pronunciation.region is not None:
+                        pronunciation_span.append(
+                            soup.new_tag("span", attrs={"class": "region text-disabled"}, string=pronunciation.region))
+                    if include_audio and pronunciation.audio_file_name is not None:
+                        audio_fname = self._saved_audio_files.get(pronunciation.audio_file_name)
+                        if audio_fname is not None:
+                            pronunciation_span.append(f"[sound:{audio_fname}]")
+                    if include_phonemic_transcriptions and pronunciation.phonemic_transcription is not None:
+                        pronunciation_span.append(soup.new_tag("span", attrs={"class": "text-subtle"},
+                                                               string=pronunciation.phonemic_transcription))
+
+            # Render phonemic transcriptions
+            # if include_phonemic_transcriptions and entry.phonemic_transcriptions is not None:
+            #     for region, transcription in entry.phonemic_transcriptions.items():
+            #         transcription_span = soup.new_tag("span", attrs={"class": "nowrap"})
+            #         header.append(transcription_span)
+            #
+            #         transcription_span.append(
+            #             soup.new_tag("span", attrs={"class": "region text-disabled"}, string=region))
+            #         transcription_span.append(
+            #             soup.new_tag("span", attrs={"class": "text-subtle"}, string=transcription))
 
             # Render part of speech
             if entry.part_of_speech is not None:
@@ -169,6 +209,7 @@ class Provider(ABC):
     def icon(cls) -> str | None:
         return cls._ICON
 
+    # TODO: consider adding download_audio: bool keyword argument to signify provider whether it should download audio files
     @abstractmethod
     def fetch_definition(self, dictionary_id: str, word: str) -> Definition:
         raise NotImplementedError
