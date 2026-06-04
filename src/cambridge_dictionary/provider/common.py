@@ -201,7 +201,7 @@ class Provider(ABC):
         return cls._ICON
 
     @abstractmethod
-    def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool = False) -> Definition:
+    def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool) -> Definition:
         raise NotImplementedError
 
     def get_dictionary_info(self, dictionary_id: str) -> DictionaryInfo | None:

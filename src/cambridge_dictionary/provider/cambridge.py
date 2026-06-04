@@ -31,7 +31,7 @@ class CambridgeDictionaryProvider(Provider):
     def __del__(self):
         self.session.close()
 
-    def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool = False) -> Definition:
+    def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool) -> Definition:
         url = f"{ORIGIN}/dictionary/{dictionary_id}/{word}"
 
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
@@ -46,9 +46,9 @@ class CambridgeDictionaryProvider(Provider):
                         f"/dictionary/{dictionary_id}/") and location_url.query == f"q={word}":
                     redirected_word = location_url.path.split("/")[-1]
 
-                    # Check if the redirected word is the lowercase of the queried word due to wierd redirection made by Cambridge Dictionary (CPU -> cpu)
+                    # Check if the redirected word is the lowercase of the queried word due to weird redirection made by Cambridge Dictionary (CPU -> cpu)
                     if word.lower() == redirected_word:
-                        return self.fetch_definition(dictionary_id, redirected_word)
+                        return self.fetch_definition(dictionary_id, redirected_word, download_audio=download_audio)
 
                     raise DefinitionRedirectedError(redirected_word)
 
