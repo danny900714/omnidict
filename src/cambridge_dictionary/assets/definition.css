@@ -12,12 +12,31 @@
     column-gap: 1rem;
 }
 
-.region {
-    margin-right: 0.375rem;
+.pronunciation {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 0.375rem;
 }
 
-.nowrap {
-    text-wrap: nowrap;
+.pronunciation .replay-button {
+    height: 100%;
+    align-items: center;
+    vertical-align: unset;
+    margin: unset;
+}
+
+.pronunciation .replay-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.pronunciation .replay-button svg circle {
+    fill: var(--button-bg);
+    stroke: var(--fg)
+}
+
+.pronunciation .replay-button svg path {
+    fill: var(--fg-subtle)
 }
 
 .text-subtle {

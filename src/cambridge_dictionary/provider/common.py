@@ -78,39 +78,29 @@ class Definition:
         for entry in self.entries:
             header = soup.new_tag("div", attrs={"class": "header"})
             root.append(header)
-            header.append(soup.new_tag("b", attrs={"class": "nowrap"}, string=self.word))
+            header.append(soup.new_tag("b", string=self.word))
 
             # Render pronunciations
             if entry.pronunciations is not None and (include_audio or include_phonemic_transcriptions):
                 for pronunciation in entry.pronunciations:
-                    pronunciation_span = soup.new_tag("span", attrs={"class": "nowrap"})
+                    pronunciation_span = soup.new_tag("span", attrs={"class": "pronunciation"})
                     header.append(pronunciation_span)
 
                     if pronunciation.region is not None:
                         pronunciation_span.append(
-                            soup.new_tag("span", attrs={"class": "region text-disabled"}, string=pronunciation.region))
+                            soup.new_tag("span", attrs={"class": "text-disabled"}, string=pronunciation.region))
                     if include_audio and pronunciation.audio_file_name is not None:
                         audio_fname = self._saved_audio_files.get(pronunciation.audio_file_name)
                         if audio_fname is not None:
-                            pronunciation_span.append(f"[sound:{audio_fname}]")
+                            pronunciation_span.append(
+                                soup.new_tag("span", attrs={"class": "text-subtle"}, string=f"[sound:{audio_fname}]"))
                     if include_phonemic_transcriptions and pronunciation.phonemic_transcription is not None:
                         pronunciation_span.append(soup.new_tag("span", attrs={"class": "text-subtle"},
                                                                string=pronunciation.phonemic_transcription))
 
-            # Render phonemic transcriptions
-            # if include_phonemic_transcriptions and entry.phonemic_transcriptions is not None:
-            #     for region, transcription in entry.phonemic_transcriptions.items():
-            #         transcription_span = soup.new_tag("span", attrs={"class": "nowrap"})
-            #         header.append(transcription_span)
-            #
-            #         transcription_span.append(
-            #             soup.new_tag("span", attrs={"class": "region text-disabled"}, string=region))
-            #         transcription_span.append(
-            #             soup.new_tag("span", attrs={"class": "text-subtle"}, string=transcription))
-
             # Render part of speech
             if entry.part_of_speech is not None:
-                header.append(soup.new_tag("i", attrs={"class": "text-subtle nowrap"}, string=entry.part_of_speech))
+                header.append(soup.new_tag("i", attrs={"class": "text-subtle"}, string=entry.part_of_speech))
 
             # Render senses list
             ol = soup.new_tag("ol")
