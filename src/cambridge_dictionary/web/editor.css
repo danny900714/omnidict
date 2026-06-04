@@ -1,0 +1,4 @@
+/* Disable filter invert in night mode for addon editor buttons */
+#addons img.topbut {
+    filter: none;
+}

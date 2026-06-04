@@ -15,7 +15,9 @@ provider_manager = ProviderManager()
 
 # Addon information
 addon_module = __name__.rsplit(".", 1)[0]
+addon_package = mw.addonManager.addonFromModule(addon_module)
 config = mw.addonManager.getConfig(addon_module)
+mw.addonManager.setWebExports(addon_module, r"web/.*(css|js)")
 
 def on_config_updated(new_config: dict):
     # Update global config

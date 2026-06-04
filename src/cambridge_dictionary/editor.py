@@ -5,8 +5,16 @@ from aqt import gui_hooks
 from aqt.editor import Editor
 from aqt.operations import QueryOp
 from aqt.utils import show_critical, ask_user, show_info, show_warning, shortcut
+from aqt.webview import WebContent
 
 from .provider import Provider, DefinitionNotFoundError, DefinitionRedirectedError, DefinitionParseError
+
+
+def add_editor_stylesheet(web_content: WebContent, context: object | None):
+    from .globals import addon_package
+
+    if isinstance(context, Editor):
+        web_content.css.append(f"/_addons/{addon_package}/web/editor.css")
 
 
 def make_dictionary_button_clicked_handler(
@@ -138,4 +146,5 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
             buttons.append(button)
 
 
+gui_hooks.webview_will_set_content.append(add_editor_stylesheet)
 gui_hooks.editor_did_init_buttons.append(add_editor_buttons)
