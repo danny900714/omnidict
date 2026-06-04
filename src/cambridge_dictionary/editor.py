@@ -1,6 +1,6 @@
 from typing import LiteralString
 
-from aqt import mw, gui_hooks
+from aqt import gui_hooks
 from aqt.editor import Editor
 from aqt.operations import QueryOp
 from aqt.utils import show_critical, ask_user, show_info, show_warning, shortcut
@@ -57,14 +57,11 @@ def make_dictionary_button_clicked_handler(
 
             def fetch_definition(word: str) -> None:
                 op = QueryOp(
-                    parent=mw.app.activeWindow(),
-                    op=lambda _: provider
+                    parent=editor.parentWindow,
+                    op=lambda col: provider
                     .fetch_definition(dictionary_id, word)
-                    .render_html(
-                        include_phonemic_transcriptions=definition_config["include_phonemic_transcriptions"],
-                        include_translations=definition_config["include_translations"],
-                        include_examples=definition_config["include_examples"],
-                    ),
+                    .save_audio_files(col)
+                    .render_html(**definition_config),
                     success=set_definition,
                 )
                 op.failure(
@@ -114,6 +111,7 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
             definition_config = {}
             if config is not None and "definition" in config and isinstance(config["definition"], dict):
                 definition_config: dict = config["definition"]
+                definition_config.setdefault("include_audio", False)
                 definition_config.setdefault("include_phonemic_transcriptions", True)
                 definition_config.setdefault("include_translations", True)
                 definition_config.setdefault("include_examples", False)

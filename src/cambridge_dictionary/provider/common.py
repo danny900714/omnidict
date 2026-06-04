@@ -57,14 +57,17 @@ class Definition:
         with open(path) as f:
             return f.read()
 
-    def save_audio_files(self, col: Collection):
-        if self.audio_files is None:
-            return
+    def has_unsaved_audio_files(self) -> bool:
+        return self.audio_files is not None and len(self._saved_audio_files) < len(self.audio_files)
 
-        # Only save audio files when self._saved_audio_files is not empty
-        if not self._saved_audio_files:
+    def save_audio_files(self, col: Collection):
+        if self.has_unsaved_audio_files():
             for filename, data in self.audio_files.items():
-                self._saved_audio_files[filename] = col.media.write_data(filename, data)
+                # Only save audio file if it hasn't been saved before
+                if filename not in self._saved_audio_files:
+                    self._saved_audio_files[filename] = col.media.write_data(filename, data)
+
+        return self
 
     def render_html(self, *, include_audio: bool = False, include_phonemic_transcriptions: bool = True,
                     include_translations: bool = True,
