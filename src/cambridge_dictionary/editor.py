@@ -15,9 +15,9 @@ def make_dictionary_button_clicked_handler(
         definition_config: dict[str, bool]
 ):
     # Function call stack:
-    # handle_fetch_definition_button_clicked -> after_save -> fetch_definition -> set_definition
-    #                                                                           \
-    #                                                                            -> handle_fetch_definition_error (if error occurs)
+    # handle_fetch_definition_button_clicked -> after_save -> fetch_definition -> fetch_definition_op -> set_definition
+    #                                                                                                 \
+    #                                                                                                  -> handle_fetch_definition_error (if error occurs)
     from .globals import _
 
     def handle_fetch_definition_button_clicked(editor: Editor):
@@ -57,7 +57,11 @@ def make_dictionary_button_clicked_handler(
                     show_critical(_('An unexpected error occurred:\n{error}').format(error=e))
 
             def fetch_definition_op(col: Collection, word: str) -> str:
-                definition = provider.fetch_definition(dictionary_id, word)
+                definition = provider.fetch_definition(
+                    dictionary_id,
+                    word,
+                    download_audio=definition_config["include_audio"]
+                )
                 if definition_config["include_audio"]:
                     definition.save_audio_files(col)
                 return definition.render_html(**definition_config)

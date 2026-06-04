@@ -200,9 +200,8 @@ class Provider(ABC):
     def icon(cls) -> str | None:
         return cls._ICON
 
-    # TODO: consider adding download_audio: bool keyword argument to signify provider whether it should download audio files
     @abstractmethod
-    def fetch_definition(self, dictionary_id: str, word: str) -> Definition:
+    def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool = False) -> Definition:
         raise NotImplementedError
 
     def get_dictionary_info(self, dictionary_id: str) -> DictionaryInfo | None:
