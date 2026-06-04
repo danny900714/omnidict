@@ -67,8 +67,6 @@ class Definition:
                 if filename not in self._saved_audio_files:
                     self._saved_audio_files[filename] = col.media.write_data(filename, data)
 
-        return self
-
     def render_html(self, *, include_audio: bool = False, include_phonemic_transcriptions: bool = True,
                     include_translations: bool = True,
                     include_examples: bool = False) -> str:

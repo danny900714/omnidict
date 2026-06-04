@@ -1,5 +1,6 @@
 from typing import LiteralString
 
+from anki.collection import Collection
 from aqt import gui_hooks
 from aqt.editor import Editor
 from aqt.operations import QueryOp
@@ -55,13 +56,16 @@ def make_dictionary_button_clicked_handler(
                 else:
                     show_critical(_('An unexpected error occurred:\n{error}').format(error=e))
 
+            def fetch_definition_op(col: Collection, word: str) -> str:
+                definition = provider.fetch_definition(dictionary_id, word)
+                if definition_config["include_audio"]:
+                    definition.save_audio_files(col)
+                return definition.render_html(**definition_config)
+
             def fetch_definition(word: str) -> None:
                 op = QueryOp(
                     parent=editor.parentWindow,
-                    op=lambda col: provider
-                    .fetch_definition(dictionary_id, word)
-                    .save_audio_files(col)
-                    .render_html(**definition_config),
+                    op=lambda col: fetch_definition_op(col, word),
                     success=set_definition,
                 )
                 op.failure(
