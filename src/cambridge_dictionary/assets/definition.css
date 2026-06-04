@@ -25,6 +25,11 @@
     margin: unset;
 }
 
+/* AnkiDroid style fix: AnkiDroid inserts a span around the svg element */
+.pronunciation .replay-button span {
+    display: inline-flex;
+}
+
 .pronunciation .replay-button svg {
     width: 20px;
     height: 20px;
