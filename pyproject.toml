@@ -1,7 +1,7 @@
 [project]
-name = "cambridge-dictionary"
+name = "omnidict"
 version = "0.1.0"
-description = "Anki add-on to integrate Cambridge dictionary into the note creation process."
+description = "The only one Anki dictionary add-on you'll ever need."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

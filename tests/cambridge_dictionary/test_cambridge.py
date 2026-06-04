@@ -8,7 +8,7 @@ import pytest
 from browserforge.headers import HeaderGenerator
 from requests import Session
 
-from cambridge_dictionary.provider.cambridge import _parse_chinese_definition
+from omnidict.provider.cambridge import _parse_chinese_definition
 
 jsonpickle.set_encoder_options("json", ensure_ascii=False)
 header_generator = HeaderGenerator()

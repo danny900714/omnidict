@@ -1,3 +1,3 @@
-# anki-cambridge-dictonary
+# OmniDict
 
-Anki add-on to integrate Cambridge dictionary into the note creation process.
+The only one Anki dictionary add-on you'll ever need.
