@@ -14,11 +14,17 @@ dev = [
     "beautifulsoup4==4.14.3",
     "jsonpickle>=4.1.2",
     "mypy>=2.1.0",
+    "orjson>=3.11.9",
     "pytest>=9.0.3",
+    "pyyaml>=6.0.3",
     "requests==2.33.1",
 ]
 
 [tool.pytest]
 strict = true
 pythonpath = ["src"]
+testpaths = ["tests"]
 addopts = ["--import-mode=importlib"]
+markers = [
+    "generatetestdata: mark a test as one that generates test data",
+]

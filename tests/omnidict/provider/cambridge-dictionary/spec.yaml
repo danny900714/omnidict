@@ -1,0 +1,26 @@
+mode: local-unless-ci
+interval: 3
+dictionaries:
+  english-chinese-traditional:
+    words:
+      - flash
+#      - slash   # additional information inside features that makes it two lines long ((UK also oblique (stroke)))
+#      - record  # features in part of speech ([ T ]); phrase block
+#      - fuck    # features in .pos-header (offensive)
+#      - man     # suffix (-man)
+#      - reborn  # only phrase block in sense body (be reborn)
+#      - bug     # irreg-infls under phonemic transcription (-gg)
+#      - CPU     # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
+#      - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized)
+      - back to square one # phrase containing spaces, Cambridge replace spaces with hyphens in URL
+      - word: asdf
+        error:
+          type: DefinitionNotFoundError
+      - word: clicked
+        error:
+          type: DefinitionRedirectError
+          attributes:
+            redirected_word: click
+  english-chinese-simplified:
+    words:
+      - flash
