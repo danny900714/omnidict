@@ -1,7 +1,9 @@
 import base64
 import time
+import warnings
 from pydoc import locate
 from typing import Any, cast
+from urllib.parse import urlsplit
 
 import orjson
 import pytest
@@ -91,7 +93,7 @@ class TestProvider:
         When saving definitions into JSON files, the generator will only save the file if it doesn't exist.
         This is to prevent overwriting the correct definition when generating test data after a problematic change.
 
-        For the cached response data, the generator will always remove the old ones and save the new ones.
+        For the cached response data, the generator will always overrite the old ones.
         """
 
         original_request = requests.sessions.Session.request
@@ -103,11 +105,16 @@ class TestProvider:
             if not dictionary_dir.exists():
                 dictionary_dir.mkdir(parents=True, exist_ok=True)
 
+            # Create data directory if it doesn't exist and request mode is not online (requires saving local cache).
+            data_dir = request.path.parent.joinpath(provider_id, "data")
+            if spec["mode"] != "online" and not data_dir.exists():
+                data_dir.mkdir(parents=True, exist_ok=True)
+
             last_request_time = time.perf_counter() - spec["interval"]
             words = spec.get("words", [])
             for item in words:
                 # Parse word specs
-                expected_error: type[Exception] | None = None
+                expected_error: tuple[type[Exception]] = tuple()
                 expected_error_attrs: dict[str, Any] | None = None
                 if isinstance(item, str):
                     # short syntax
@@ -119,7 +126,7 @@ class TestProvider:
                     if error_spec is not None:
                         error_type = cast(type | None, locate(f"omnidict.provider.common.{error_spec["type"]}"))
                         if error_type is not None and issubclass(error_type, Exception):
-                            expected_error = error_type
+                            expected_error = (error_type,)
                             expected_error_attrs = error_spec.get("attributes")
                 else:
                     raise TypeError(f"Invalid dictionaries.*.words item: {item}")
@@ -143,7 +150,22 @@ class TestProvider:
                         last_request_time = time.perf_counter()
                         definition = provider.fetch_definition(dictionary_id, word, download_audio=True)
                     except expected_error as e:
-                        print(f"Failed to fetch definition for {word}: {e}")
+                        # Try to catch error as the spec specified. If the error mismatches, fire a warning and not saving the test data.
+                        if expected_error_attrs is not None:
+                            attr_mismatch = False
+                            for expected_attr_name, expected_attr_value in expected_error_attrs.items():
+                                actual_attr_value = getattr(e, expected_attr_name)
+                                if actual_attr_value != expected_attr_value:
+                                    warnings.warn(
+                                        f"[{dictionary_id}] ({word}) Expected error attribute {expected_attr_name} with value {expected_attr_value}, but got {actual_attr_value}")
+                                    attr_mismatch = True
+
+                            if attr_mismatch:
+                                continue
+                    except Exception as e:
+                        # Catch all other errors and skip saving data for this word
+                        warnings.warn(f"[{dictionary_id}] ({word}) Unexpected error. The test data is not saved for that word\n{e}")
+                        continue
 
                 # Write the definition to json file if not exists
                 word_json = dictionary_dir.joinpath(f"{word}.json")
@@ -152,3 +174,29 @@ class TestProvider:
                         json = orjson.dumps(definition, default=_bytes_encode,
                                             option=orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2)
                         json_file.write(json)
+
+                # Write the recorded responses to data directory
+                for response in recorded_responses:
+                    split_url = urlsplit(response.url)
+
+                    # Create host directory if not exists
+                    if split_url.hostname is None:
+                        continue
+                    host_directory = data_dir.joinpath(cast(str, split_url.hostname))
+                    if not host_directory.exists():
+                        host_directory.mkdir(parents=True, exist_ok=True)
+
+                    # Recreate the directory structure based on URL path
+                    path_dir = host_directory
+                    path_parts = split_url.path.split("/")
+                    for i, part in enumerate(path_parts):
+                        if i < len(path_parts) - 1:
+                            path_dir = path_dir.joinpath(part)
+                    if not path_dir.exists():
+                        path_dir.mkdir(parents=True, exist_ok=True)
+
+                    # Write the response to file if response has body
+                    if response.content:
+                        response_path = path_dir.joinpath(path_parts[-1])
+                        with open(response_path, "wb") as response_file:
+                            response_file.write(response.content)
