@@ -12,7 +12,7 @@ dictionaries:
       - bug     # irreg-infls under phonemic transcription (-gg)
       - CPU     # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
       - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized)
-      - word: back to square one # phrase containing spaces, Cambridge replace spaces with hyphens in URL
+      - word: back to square one # phrase containing spaces, Cambridge replace spaces with hyphens in URL. The entry is not found since it is an idiom.
         error:
           type: DefinitionParseError
       - word: asdf
