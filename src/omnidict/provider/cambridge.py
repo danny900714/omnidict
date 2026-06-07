@@ -32,7 +32,7 @@ class CambridgeDictionaryProvider(Provider):
         self.session.close()
 
     def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool) -> Definition:
-        url = f"{ORIGIN}/dictionary/{dictionary_id}/{word}"
+        url = f"{ORIGIN}/dictionary/{dictionary_id}/{word.replace(" ", "-")}"  # Cambridge Dictionary replaces spaces with hyphens in URL
 
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
@@ -57,7 +57,9 @@ class CambridgeDictionaryProvider(Provider):
         response.raise_for_status()
 
         if dictionary_id in ["english-chinese-simplified", "english-chinese-traditional"]:
-            return self._parse_chinese_definition(response.text, download_audio)
+            definition = self._parse_chinese_definition(response.text, download_audio)
+            print(definition)
+            return definition
         else:
             raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")
 
@@ -188,6 +190,9 @@ class CambridgeDictionaryProvider(Provider):
                     pronunciations=pronunciations if len(pronunciation_spans) > 0 else None
                 )
                 entries.append(entry)
+
+        if len(entries) == 0:
+            raise DefinitionParseError("Failed to parse definition")
 
         # Create the definition object
         return Definition(word, entries, audio_files=audio_files if audio_files else None)
