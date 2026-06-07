@@ -57,9 +57,7 @@ class CambridgeDictionaryProvider(Provider):
         response.raise_for_status()
 
         if dictionary_id in ["english-chinese-simplified", "english-chinese-traditional"]:
-            definition = self._parse_chinese_definition(response.text, download_audio)
-            print(definition)
-            return definition
+            return self._parse_chinese_definition(response.text, download_audio)
         else:
             raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")
 
