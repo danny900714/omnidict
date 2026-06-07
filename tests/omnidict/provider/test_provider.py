@@ -1,4 +1,5 @@
 import base64
+import os
 import time
 import warnings
 from pydoc import locate
@@ -9,6 +10,7 @@ import orjson
 import pytest
 import requests.sessions
 from pytest import Metafunc, Config, FixtureRequest, MonkeyPatch
+from requests import Response
 
 from omnidict.provider import Provider
 from omnidict.provider.common import DictionaryInfo, Definition
@@ -39,6 +41,28 @@ def _build_test_cases(provider_id: str, config: Config) -> list[tuple[Provider, 
     return test_cases
 
 
+def _parse_word_spec(word_spec: Any) -> tuple[str, type[type[Exception]], dict[str, Any] | None]:
+    # Parse word specs
+    expected_error: tuple[type[Exception]] = tuple()
+    expected_error_attrs: dict[str, Any] | None = None
+    if isinstance(word_spec, str):
+        # short syntax
+        word: str = word_spec
+    elif isinstance(word_spec, dict):
+        # long syntax
+        word = word_spec["word"]
+        error_spec: dict[str, Any] | None = word_spec.get("error")
+        if error_spec is not None:
+            error_type = cast(type | None, locate(f"omnidict.provider.common.{error_spec["type"]}"))
+            if error_type is not None and issubclass(error_type, Exception):
+                expected_error = (error_type,)
+                expected_error_attrs = error_spec.get("attributes")
+    else:
+        raise TypeError(f"Invalid dictionaries.*.words item: {word_spec}")
+
+    return word, expected_error, expected_error_attrs
+
+
 def _bytes_encode(obj: Any) -> Any:
     if isinstance(obj, bytes):
         return base64.b64encode(obj).decode("ascii")
@@ -49,7 +73,7 @@ def pytest_generate_tests(metafunc: Metafunc):
     if metafunc.cls and issubclass(metafunc.cls, TestProvider):
         if metafunc.fixturenames == ["klass"]:
             metafunc.parametrize("klass", metafunc.config.stash[providers_key].values())
-        elif metafunc.fixturenames == ["provider", "dictionary_id", "spec"]:
+        elif metafunc.fixturenames == ["provider", "dictionary_id", "spec", "monkeypatch", "request"]:
             specs = metafunc.config.stash[specs_key]
 
             params = []
@@ -84,8 +108,61 @@ class TestProvider:
         icon = klass.icon()
         assert icon is None or isinstance(icon, str) and icon != ""
 
-    def test_fetch_definition(self, provider: Provider, dictionary_id: str, spec: dict[str, Any]):
-        print(spec)
+    def test_fetch_definition(self, provider: Provider, dictionary_id: str, spec: dict[str, Any],
+                              monkeypatch: MonkeyPatch, request: FixtureRequest):
+        use_local_cache = spec["mode"] == "local" or spec["mode"] == "local-unless-ci" and os.getenv("CI") is None
+        dictionary_dir = request.path.parent.joinpath(provider.id(), dictionary_id)
+        last_request_time = time.perf_counter() - spec["interval"]
+
+        with monkeypatch.context() as m:
+            # Use local cache when mode is local or local-unless-ci and not running in CI environment
+            if use_local_cache:
+                def return_local_cache(*args, **kwargs):
+                    url = args[2]
+                    split_result = urlsplit(url)
+                    data_dir = request.path.parent.joinpath(provider.id(), "data")
+                    response_path = data_dir.joinpath(split_result.hostname, *split_result.path.split("/"))
+                    if response_path.exists():
+                        with open(response_path, "rb") as response_file:
+                            response_content = response_file.read()
+                            response = Response()
+                            response.status_code = 200
+                            response._content = response_content
+                            response.url = url
+                            return response
+                    raise ConnectionError(f"No local cache found for {url}")
+
+                m.setattr(requests.sessions.Session, "request", return_local_cache)
+
+            words = spec.get("words", [])
+            for item in words:
+                # Parse word specs
+                word, expected_error, expected_error_attrs = _parse_word_spec(item)
+
+                # Sleep to make sure the interval between requests is respected.
+                # Only apply when not using local caches
+                if not use_local_cache and time.perf_counter() - last_request_time < spec["interval"]:
+                    time.sleep(spec["interval"] - (time.perf_counter() - last_request_time))
+
+                def check_error_attrs(e: Exception):
+                    if expected_error_attrs is not None:
+                        for expected_attr_name, expected_attr_value in expected_error_attrs.items():
+                            if getattr(e, expected_attr_name) != expected_attr_value:
+                                return False
+                    return True
+
+                last_request_time = time.perf_counter()
+                if len(expected_error) == 0:
+                    definition = provider.fetch_definition(dictionary_id, word, download_audio=True)
+
+                    # Assert definition
+                    actual_definition_dict = orjson.loads(orjson.dumps(definition, default=_bytes_encode))
+                    with open(dictionary_dir.joinpath(f"{word}.json"), "rb") as json_file:
+                        expected_definition_dict = orjson.loads(json_file.read())
+                    assert actual_definition_dict == expected_definition_dict
+                else:
+                    with pytest.raises(expected_error, check=check_error_attrs):
+                        provider.fetch_definition(dictionary_id, word, download_audio=True)
 
     @pytest.mark.generatetestdata
     def test_generate_test_cases(self, request: FixtureRequest, pytestconfig: Config, monkeypatch: MonkeyPatch):
@@ -114,22 +191,7 @@ class TestProvider:
             words = spec.get("words", [])
             for item in words:
                 # Parse word specs
-                expected_error: tuple[type[Exception]] = tuple()
-                expected_error_attrs: dict[str, Any] | None = None
-                if isinstance(item, str):
-                    # short syntax
-                    word: str = item
-                elif isinstance(item, dict):
-                    # long syntax
-                    word = item["word"]
-                    error_spec: dict[str, Any] | None = item.get("error")
-                    if error_spec is not None:
-                        error_type = cast(type | None, locate(f"omnidict.provider.common.{error_spec["type"]}"))
-                        if error_type is not None and issubclass(error_type, Exception):
-                            expected_error = (error_type,)
-                            expected_error_attrs = error_spec.get("attributes")
-                else:
-                    raise TypeError(f"Invalid dictionaries.*.words item: {item}")
+                word, expected_error, expected_error_attrs = _parse_word_spec(item)
 
                 # Sleep to make sure the interval between requests is respected.
                 if time.perf_counter() - last_request_time < spec["interval"]:
@@ -164,7 +226,8 @@ class TestProvider:
                                 continue
                     except Exception as e:
                         # Catch all other errors and skip saving data for this word
-                        warnings.warn(f"[{dictionary_id}] ({word}) Unexpected error. The test data is not saved for that word\n{e}")
+                        warnings.warn(
+                            f"[{dictionary_id}] ({word}) Unexpected error. The test data is not saved for that word\n{e}")
                         continue
 
                 # Write the definition to json file if not exists
