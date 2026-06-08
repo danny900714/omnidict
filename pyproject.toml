@@ -18,6 +18,7 @@ dev = [
     "pytest>=9.0.3",
     "pyyaml>=6.0.3",
     "requests==2.33.1",
+    "vcrpy>=8.1.1",
 ]
 
 [tool.pytest]

@@ -4,17 +4,18 @@ import time
 import warnings
 from pydoc import locate
 from typing import Any, cast
-from urllib.parse import urlsplit
 
 import orjson
 import pytest
-import requests.sessions
-from pytest import Metafunc, Config, FixtureRequest, MonkeyPatch
-from requests import Response
+from pytest import Metafunc, Config, FixtureRequest
+from vcr import VCR
 
 from omnidict.provider import Provider
 from omnidict.provider.common import DictionaryInfo, Definition
 from .conftest import providers_key, specs_key
+
+VCR_MATCH_ON = ["uri", "body"]
+VCR_FILTER_HEADERS = ["authorization"]
 
 
 def _build_dictionary_specs(spec: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -73,7 +74,7 @@ def pytest_generate_tests(metafunc: Metafunc):
     if metafunc.cls and issubclass(metafunc.cls, TestProvider):
         if metafunc.fixturenames == ["klass"]:
             metafunc.parametrize("klass", metafunc.config.stash[providers_key].values())
-        elif metafunc.fixturenames == ["provider", "dictionary_id", "spec", "monkeypatch", "request"]:
+        elif metafunc.fixturenames == ["provider", "dictionary_id", "spec", "request"]:
             specs = metafunc.config.stash[specs_key]
 
             params = []
@@ -109,71 +110,62 @@ class TestProvider:
         assert icon is None or isinstance(icon, str) and icon != ""
 
     def test_fetch_definition(self, provider: Provider, dictionary_id: str, spec: dict[str, Any],
-                              monkeypatch: MonkeyPatch, request: FixtureRequest):
+                              request: FixtureRequest):
         use_local_cache = spec["mode"] == "local" or spec["mode"] == "local-unless-ci" and os.getenv("CI") is None
         dictionary_dir = request.path.parent.joinpath(provider.id(), dictionary_id)
-        last_request_time = time.perf_counter() - spec["interval"]
+        cassettes_dir = dictionary_dir.joinpath("cassettes")
+        vcr = VCR(
+            cassette_library_dir=str(cassettes_dir.absolute()),
+            record_mode="none",
+            match_on=VCR_MATCH_ON,
+            filter_headers=VCR_FILTER_HEADERS
+        )
 
-        with monkeypatch.context() as m:
-            # Use local cache when mode is local or local-unless-ci and not running in CI environment
+        def _check_error_attrs(e: Exception):
+            if expected_error_attrs is not None:
+                for expected_attr_name, expected_attr_value in expected_error_attrs.items():
+                    if getattr(e, expected_attr_name) != expected_attr_value:
+                        return False
+            return True
+
+        def _fetch_definition(word: str) -> Definition:
             if use_local_cache:
-                def return_local_cache(*args, **kwargs):
-                    url = args[2]
-                    split_result = urlsplit(url)
-                    data_dir = request.path.parent.joinpath(provider.id(), "data")
-                    response_path = data_dir.joinpath(split_result.hostname, *split_result.path.split("/"))
-                    if response_path.exists():
-                        with open(response_path, "rb") as response_file:
-                            response_content = response_file.read()
-                            response = Response()
-                            response.status_code = 200
-                            response._content = response_content
-                            response.url = url
-                            return response
-                    raise ConnectionError(f"No local cache found for {url}")
+                with vcr.use_cassette(f"{word}.yaml"):
+                    return provider.fetch_definition(dictionary_id, word, download_audio=True)
+            return provider.fetch_definition(dictionary_id, word, download_audio=True)
 
-                m.setattr(requests.sessions.Session, "request", return_local_cache)
+        last_request_time = time.perf_counter() - spec["interval"]
+        words = spec.get("words", [])
+        for item in words:
+            # Parse word specs
+            word, expected_error, expected_error_attrs = _parse_word_spec(item)
 
-            words = spec.get("words", [])
-            for item in words:
-                # Parse word specs
-                word, expected_error, expected_error_attrs = _parse_word_spec(item)
+            # Sleep to make sure the interval between requests is respected.
+            # Only apply when not using local caches
+            if not use_local_cache and time.perf_counter() - last_request_time < spec["interval"]:
+                time.sleep(spec["interval"] - (time.perf_counter() - last_request_time))
 
-                # Sleep to make sure the interval between requests is respected.
-                # Only apply when not using local caches
-                if not use_local_cache and time.perf_counter() - last_request_time < spec["interval"]:
-                    time.sleep(spec["interval"] - (time.perf_counter() - last_request_time))
+            last_request_time = time.perf_counter()
+            if len(expected_error) == 0:
+                definition = _fetch_definition(word)
 
-                def check_error_attrs(e: Exception):
-                    if expected_error_attrs is not None:
-                        for expected_attr_name, expected_attr_value in expected_error_attrs.items():
-                            if getattr(e, expected_attr_name) != expected_attr_value:
-                                return False
-                    return True
-
-                last_request_time = time.perf_counter()
-                if len(expected_error) == 0:
-                    definition = provider.fetch_definition(dictionary_id, word, download_audio=True)
-
-                    # Assert definition
-                    actual_definition_dict = orjson.loads(orjson.dumps(definition, default=_bytes_encode))
-                    with open(dictionary_dir.joinpath(f"{word}.json"), "rb") as json_file:
-                        expected_definition_dict = orjson.loads(json_file.read())
-                    assert actual_definition_dict == expected_definition_dict
-                else:
-                    with pytest.raises(expected_error, check=check_error_attrs):
-                        provider.fetch_definition(dictionary_id, word, download_audio=True)
+                # Assert definition
+                actual_definition_dict = orjson.loads(orjson.dumps(definition, default=_bytes_encode))
+                with open(dictionary_dir.joinpath(f"{word}.json"), "rb") as json_file:
+                    expected_definition_dict = orjson.loads(json_file.read())
+                assert actual_definition_dict == expected_definition_dict
+            else:
+                with pytest.raises(expected_error, check=_check_error_attrs):
+                    _fetch_definition(word)
 
     @pytest.mark.generatetestdata
-    def test_generate_test_cases(self, request: FixtureRequest, pytestconfig: Config, monkeypatch: MonkeyPatch):
+    def test_generate_test_cases(self, request: FixtureRequest, pytestconfig: Config):
         """
         When saving definitions into JSON files, the generator will only save the file if it doesn't exist.
         This is to prevent overwriting the correct definition when generating test data after a problematic change.
 
         For the cached response data, the generator will always overrite the old ones.
         """
-
-        original_request = requests.sessions.Session.request
 
         provider_id: str = pytestconfig.getoption("generate_test_data")
         for (provider, dictionary_id, spec) in _build_test_cases(provider_id, pytestconfig):
@@ -182,10 +174,10 @@ class TestProvider:
             if not dictionary_dir.exists():
                 dictionary_dir.mkdir(parents=True, exist_ok=True)
 
-            # Create data directory if it doesn't exist and request mode is not online (requires saving local cache).
-            data_dir = request.path.parent.joinpath(provider_id, "data")
-            if spec["mode"] != "online" and not data_dir.exists():
-                data_dir.mkdir(parents=True, exist_ok=True)
+            # Create cassettes directory if it doesn't exist and request mode is not online (requires saving local cache).
+            cassettes_dir = dictionary_dir.joinpath("cassettes")
+            if spec["mode"] != "online" and not cassettes_dir.exists():
+                cassettes_dir.mkdir(parents=True, exist_ok=True)
 
             last_request_time = time.perf_counter() - spec["interval"]
             words = spec.get("words", [])
@@ -197,17 +189,14 @@ class TestProvider:
                 if time.perf_counter() - last_request_time < spec["interval"]:
                     time.sleep(spec["interval"] - (time.perf_counter() - last_request_time))
 
-                recorded_responses: list[requests.Response] = []
+                recording_vcr = VCR(
+                    cassette_library_dir=str(cassettes_dir.absolute()),
+                    record_mode="all",
+                    match_on=VCR_MATCH_ON,
+                    filter_headers=VCR_FILTER_HEADERS
+                )
                 definition: Definition | None = None
-                with monkeypatch.context() as m:
-                    if spec["mode"] != "online":
-                        def record_requests(*args, **kwargs):
-                            response = original_request(*args, **kwargs)
-                            recorded_responses.append(response)
-                            return response
-
-                        m.setattr(requests.sessions.Session, "request", record_requests)
-
+                with recording_vcr.use_cassette(f"{word}.yaml"):
                     try:
                         last_request_time = time.perf_counter()
                         definition = provider.fetch_definition(dictionary_id, word, download_audio=True)
@@ -221,7 +210,6 @@ class TestProvider:
                                     warnings.warn(
                                         f"[{dictionary_id}] ({word}) Expected error attribute {expected_attr_name} with value {expected_attr_value}, but got {actual_attr_value}")
                                     attr_mismatch = True
-
                             if attr_mismatch:
                                 continue
                     except Exception as e:
@@ -237,29 +225,3 @@ class TestProvider:
                         json = orjson.dumps(definition, default=_bytes_encode,
                                             option=orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2)
                         json_file.write(json)
-
-                # Write the recorded responses to data directory
-                for response in recorded_responses:
-                    split_url = urlsplit(response.url)
-
-                    # Create host directory if not exists
-                    if split_url.hostname is None:
-                        continue
-                    host_directory = data_dir.joinpath(cast(str, split_url.hostname))
-                    if not host_directory.exists():
-                        host_directory.mkdir(parents=True, exist_ok=True)
-
-                    # Recreate the directory structure based on URL path
-                    path_dir = host_directory
-                    path_parts = split_url.path.split("/")
-                    for i, part in enumerate(path_parts):
-                        if i < len(path_parts) - 1:
-                            path_dir = path_dir.joinpath(part)
-                    if not path_dir.exists():
-                        path_dir.mkdir(parents=True, exist_ok=True)
-
-                    # Write the response to file if response has body
-                    if response.content:
-                        response_path = path_dir.joinpath(path_parts[-1])
-                        with open(response_path, "wb") as response_file:
-                            response_file.write(response.content)

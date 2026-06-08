@@ -1,4 +1,4 @@
-mode: online
+mode: local-unless-ci
 interval: 3
 dictionaries:
   english-chinese-traditional:

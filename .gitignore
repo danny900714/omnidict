@@ -169,6 +169,6 @@ src/*/meta.json
 requirements_prod.txt
 src/*/vendor/
 
-# By default test data is ignored.
-# If the mode is set to "local", please add a .gitignore file in the provider directory to exclude the data folder from exclusion.
-tests/omnidict/provider/*/data/
+# By default cassetes are ignored.
+# If the mode is set to "local", please add a .gitignore file in the provider directory to exclude the cassetes folder from exclusion.
+tests/omnidict/provider/*/*/cassettes
