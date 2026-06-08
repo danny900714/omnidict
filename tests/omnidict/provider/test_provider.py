@@ -5,14 +5,15 @@ import warnings
 from pydoc import locate
 from typing import Any, cast
 
-import orjson
 import pytest
+import yaml
 from pytest import Metafunc, Config, FixtureRequest
 from vcr import VCR
 
 from omnidict.provider import Provider
 from omnidict.provider.common import DictionaryInfo, Definition
 from .conftest import providers_key, specs_key
+from .definition import DefinitionDumper, DefinitionLoader
 
 VCR_MATCH_ON = ["uri", "body"]
 VCR_FILTER_HEADERS = ["authorization"]
@@ -150,10 +151,9 @@ class TestProvider:
                 definition = _fetch_definition(word)
 
                 # Assert definition
-                actual_definition_dict = orjson.loads(orjson.dumps(definition, default=_bytes_encode))
-                with open(dictionary_dir.joinpath(f"{word}.json"), "rb") as json_file:
-                    expected_definition_dict = orjson.loads(json_file.read())
-                assert actual_definition_dict == expected_definition_dict
+                with open(dictionary_dir.joinpath(f"{word}.yaml"), "r") as yaml_file:
+                    expected_definition = yaml.load(yaml_file, DefinitionLoader)
+                assert definition == expected_definition
             else:
                 with pytest.raises(expected_error, check=_check_error_attrs):
                     _fetch_definition(word)
@@ -218,10 +218,8 @@ class TestProvider:
                             f"[{dictionary_id}] ({word}) Unexpected error. The test data is not saved for that word\n{e}")
                         continue
 
-                # Write the definition to json file if not exists
-                word_json = dictionary_dir.joinpath(f"{word}.json")
-                if definition is not None and not word_json.exists():
-                    with open(word_json, "wb") as json_file:
-                        json = orjson.dumps(definition, default=_bytes_encode,
-                                            option=orjson.OPT_APPEND_NEWLINE | orjson.OPT_INDENT_2)
-                        json_file.write(json)
+                # Write the definition to yaml file if not exists
+                word_yaml = dictionary_dir.joinpath(f"{word}.yaml")
+                if definition is not None and not word_yaml.exists():
+                    with open(word_yaml, "w") as yaml_file:
+                        yaml.dump(definition, yaml_file, DefinitionDumper, allow_unicode=True)
