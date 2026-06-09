@@ -16,23 +16,30 @@ jobs:
   package:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - &checkout
+        name: Checkout
         uses: actions/checkout@v6
-      - name: Install dependencies
+      - &install-deps
+        name: Install dependencies
         run: sudo apt update && sudo apt install -y gettext libegl1
-      - name: Setup Python
+      - &setup-python
+        name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version-file: .python-version
-      - name: Install uv
+      - &install-uv
+        name: Install uv
         uses: astral-sh/setup-uv@v8.2.0
       - name: Sync dependencies
         run: uv sync --locked
-      - name: Export runtime dependencies
+      - &export-runtime-deps
+        name: Export runtime dependencies
         run: uv export --no-dev --format requirements.txt -o requirements_prod.txt
-      - name: Install runtime dependencies into add-on's vendor directory
+      - &install-runtime-deps
+        name: Install runtime dependencies into add-on's vendor directory
         run: uv pip install -r requirements_prod.txt -t src/omnidict/vendor
-      - name: Compile gettext portable objects
+      - &compile-po
+        name: Compile gettext portable objects
         run: uv run scripts/compile_portable_objects.py
       - name: Package add-on
         working-directory: src/omnidict
@@ -47,24 +54,15 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-      - name: Install dependencies
-        run: sudo apt update && sudo apt install -y gettext libegl1
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version-file: .python-version
-      - name: Install uv
-        uses: astral-sh/setup-uv@v8.2.0
+      - *checkout
+      - *install-deps
+      - *setup-python
+      - *install-uv
       - name: Sync dependencies
         run: uv sync --locked --all-extras
-      - name: Export runtime dependencies
-        run: uv export --no-dev --format requirements.txt -o requirements_prod.txt
-      - name: Install runtime dependencies into add-on's vendor directory
-        run: uv pip install -r requirements_prod.txt -t src/omnidict/vendor
-      - name: Compile gettext portable objects
-        run: uv run scripts/compile_portable_objects.py
+      - *export-runtime-deps
+      - *install-runtime-deps
+      - *compile-po
       - name: Run tests
         run: uv run pytest --junit-xml=pytest-junit.xml
       - name: Upload test report

@@ -5,14 +5,11 @@ on:
     workflows: [ "CI" ]
     types:
       - completed
-    branches:
-      - gh-actions
 
 permissions:
   contents: read
   actions: read
   checks: write
-
 
 jobs:
   report:
