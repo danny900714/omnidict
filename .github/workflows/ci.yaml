@@ -18,6 +18,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Install gettext
+        run: sudo apt update && sudo apt install -y gettext
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
@@ -47,6 +49,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+      - name: Install gettext
+        run: sudo apt update && sudo apt install -y gettext
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
