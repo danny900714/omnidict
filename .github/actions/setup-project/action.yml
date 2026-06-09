@@ -4,8 +4,6 @@ description: Setup project environment for GitHub workflows
 runs:
   using: composite
   steps:
-    - name: Checkout
-      uses: actions/checkout@v6
     - name: Install dependencies
       run: sudo apt update && sudo apt install -y gettext libegl1
     - name: Setup Python
