@@ -1,0 +1,24 @@
+name: Setup Project
+author: danny900714
+description: Setup project environment for GitHub workflows
+runs:
+  using: composite
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+    - name: Install dependencies
+      run: sudo apt update && sudo apt install -y gettext libegl1
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version-file: .python-version
+    - name: Install uv
+      uses: astral-sh/setup-uv@v8.2.0
+    - name: Sync dependencies
+      run: uv sync --locked --all-extras
+    - name: Export runtime dependencies
+      run: uv export --no-dev --format requirements.txt -o requirements_prod.txt
+    - name: Install runtime dependencies into add-on's vendor directory
+      run: uv pip install -r requirements_prod.txt -t src/omnidict/vendor
+    - name: Compile gettext portable objects
+      run: uv run scripts/compile_portable_objects.py
