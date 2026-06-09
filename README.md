@@ -19,7 +19,7 @@ The created cards are working on all platforms.
         - Cambridge English-Chinese (Traditional) Dictionary
     - more to come, contributions welcomed!
 
-## Demo
+## Screenshot
 
 ![Review card on Anki](images/review.png)
 
