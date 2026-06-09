@@ -10,6 +10,7 @@ class DefinitionDumper(Dumper):
 def _make_representer():
     def representer(dumper, obj):
         return dumper.represent_mapping("tag:yaml.org,2002:map", obj.__dict__)
+
     return representer
 
 
@@ -20,7 +21,7 @@ def _definition_representer(dumper: DefinitionDumper, definition: Definition):
             "word": definition.word,
             "entries": definition.entries,
             "audio_files": definition.audio_files,
-        }
+        },
     )
 
 
@@ -42,15 +43,16 @@ def _make_constructor(cls, deep=False):
     def constructor(loader, node):
         data = loader.construct_mapping(node, deep=deep)
         return cls(**data)
+
     return constructor
 
 
 _CONSTRUCTORS = [
-    ("!example",       Example,       False),
-    ("!sense",         Sense,         True),
+    ("!example", Example, False),
+    ("!sense", Sense, True),
     ("!pronunciation", Pronunciation, False),
-    ("!entry",         Entry,         True),
-    ("!definition",    Definition,    True),
+    ("!entry", Entry, True),
+    ("!definition", Definition, True),
 ]
 for _tag, _cls, _deep in _CONSTRUCTORS:
     DefinitionLoader.add_constructor(_tag, _make_constructor(_cls, _deep))

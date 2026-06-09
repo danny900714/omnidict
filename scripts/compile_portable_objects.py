@@ -4,7 +4,9 @@ from pathlib import Path
 
 def main():
     locales_dir = Path(__file__).parent.parent.joinpath("locales")
-    addon_locales_dir = Path(__file__).parent.parent.joinpath("src", "omnidict", "locales")
+    addon_locales_dir = Path(__file__).parent.parent.joinpath(
+        "src", "omnidict", "locales"
+    )
 
     for language_dir in locales_dir.iterdir():
         if language_dir.is_dir():

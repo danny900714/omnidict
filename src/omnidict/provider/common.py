@@ -32,7 +32,9 @@ class Pronunciation:
 
     def __post_init__(self):
         if self.audio_file_name is None and self.phonemic_transcription is None:
-            raise ValueError("At least one of audio_file_name and phonemic_transcription must be provided.")
+            raise ValueError(
+                "At least one of audio_file_name and phonemic_transcription must be provided."
+            )
 
 
 @dataclass
@@ -58,18 +60,27 @@ class Definition:
             return f.read()
 
     def has_unsaved_audio_files(self) -> bool:
-        return self.audio_files is not None and len(self._saved_audio_files) < len(self.audio_files)
+        return self.audio_files is not None and len(self._saved_audio_files) < len(
+            self.audio_files
+        )
 
     def save_audio_files(self, col: Collection):
         if self.has_unsaved_audio_files():
             for filename, data in self.audio_files.items():
                 # Only save audio file if it hasn't been saved before
                 if filename not in self._saved_audio_files:
-                    self._saved_audio_files[filename] = col.media.write_data(filename, data)
+                    self._saved_audio_files[filename] = col.media.write_data(
+                        filename, data
+                    )
 
-    def render_html(self, *, include_audio: bool = False, include_phonemic_transcriptions: bool = True,
-                    include_translations: bool = True,
-                    include_examples: bool = False) -> str:
+    def render_html(
+        self,
+        *,
+        include_audio: bool = False,
+        include_phonemic_transcriptions: bool = True,
+        include_translations: bool = True,
+        include_examples: bool = False,
+    ) -> str:
         soup = BeautifulSoup("", "html.parser")
         soup.append(soup.new_tag("style", string=Definition._css()))
         root = soup.new_tag("div", attrs={"class": "root"})
@@ -81,26 +92,54 @@ class Definition:
             header.append(soup.new_tag("b", string=self.word))
 
             # Render pronunciations
-            if entry.pronunciations is not None and (include_audio or include_phonemic_transcriptions):
+            if entry.pronunciations is not None and (
+                include_audio or include_phonemic_transcriptions
+            ):
                 for pronunciation in entry.pronunciations:
-                    pronunciation_span = soup.new_tag("span", attrs={"class": "pronunciation"})
+                    pronunciation_span = soup.new_tag(
+                        "span", attrs={"class": "pronunciation"}
+                    )
                     header.append(pronunciation_span)
 
                     if pronunciation.region is not None:
                         pronunciation_span.append(
-                            soup.new_tag("span", attrs={"class": "text-disabled"}, string=pronunciation.region))
+                            soup.new_tag(
+                                "span",
+                                attrs={"class": "text-disabled"},
+                                string=pronunciation.region,
+                            )
+                        )
                     if include_audio and pronunciation.audio_file_name is not None:
-                        audio_fname = self._saved_audio_files.get(pronunciation.audio_file_name)
+                        audio_fname = self._saved_audio_files.get(
+                            pronunciation.audio_file_name
+                        )
                         if audio_fname is not None:
                             pronunciation_span.append(
-                                soup.new_tag("span", attrs={"class": "text-subtle"}, string=f"[sound:{audio_fname}]"))
-                    if include_phonemic_transcriptions and pronunciation.phonemic_transcription is not None:
-                        pronunciation_span.append(soup.new_tag("span", attrs={"class": "text-subtle"},
-                                                               string=pronunciation.phonemic_transcription))
+                                soup.new_tag(
+                                    "span",
+                                    attrs={"class": "text-subtle"},
+                                    string=f"[sound:{audio_fname}]",
+                                )
+                            )
+                    if (
+                        include_phonemic_transcriptions
+                        and pronunciation.phonemic_transcription is not None
+                    ):
+                        pronunciation_span.append(
+                            soup.new_tag(
+                                "span",
+                                attrs={"class": "text-subtle"},
+                                string=pronunciation.phonemic_transcription,
+                            )
+                        )
 
             # Render part of speech
             if entry.part_of_speech is not None:
-                header.append(soup.new_tag("i", attrs={"class": "text-subtle"}, string=entry.part_of_speech))
+                header.append(
+                    soup.new_tag(
+                        "i", attrs={"class": "text-subtle"}, string=entry.part_of_speech
+                    )
+                )
 
             # Render senses list
             ol = soup.new_tag("ol")
@@ -111,13 +150,23 @@ class Definition:
 
                 # Insert features before the definition
                 if sense.features is not None:
-                    features_span = soup.new_tag("span", attrs={"class": "text-subtle mr-3"}, string=sense.features)
+                    features_span = soup.new_tag(
+                        "span",
+                        attrs={"class": "text-subtle mr-3"},
+                        string=sense.features,
+                    )
                     li.insert(0, features_span)
 
                 # Append translation after the definition
                 if include_translations and sense.translation is not None:
                     li.append(soup.new_tag("br"))
-                    li.append(soup.new_tag("span", attrs={"class": "text-blue"}, string=sense.translation))
+                    li.append(
+                        soup.new_tag(
+                            "span",
+                            attrs={"class": "text-blue"},
+                            string=sense.translation,
+                        )
+                    )
 
                 # Append the example list
                 if include_examples and sense.examples is not None:
@@ -130,7 +179,12 @@ class Definition:
                         if include_translations and example.translation is not None:
                             li_example.append(soup.new_tag("br"))
                             li_example.append(
-                                soup.new_tag("span", attrs={"class": "text-blue"}, string=example.translation))
+                                soup.new_tag(
+                                    "span",
+                                    attrs={"class": "text-blue"},
+                                    string=example.translation,
+                                )
+                            )
 
             root.append(soup.new_tag("br"))
 
@@ -144,11 +198,13 @@ class DefinitionNotFoundError(RuntimeError):
     This error should only be raised when the dictionary doesn't have a definition for the queried word.
     For more general errors like malformed response or connection issues, please raise custom exceptions.
     """
+
     pass
 
 
 class DefinitionParseError(RuntimeError):
     """This error should be raised when a dictionary gets the definition but unable to parse it."""
+
     pass
 
 
@@ -201,7 +257,9 @@ class Provider(ABC):
         return cls._ICON
 
     @abstractmethod
-    def fetch_definition(self, dictionary_id: str, word: str, *, download_audio: bool) -> Definition:
+    def fetch_definition(
+        self, dictionary_id: str, word: str, *, download_audio: bool
+    ) -> Definition:
         raise NotImplementedError
 
     def get_dictionary_info(self, dictionary_id: str) -> DictionaryInfo | None:

@@ -45,3 +45,15 @@ jobs:
         with:
           name: test-results
           path: pytest-junit.xml
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Run linter
+        run: uv run ruff check --output-format=github
+      - name: Run formatter
+        run: uv run ruff format --check --preview --output-format=github
