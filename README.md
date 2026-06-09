@@ -27,7 +27,7 @@ The created cards are working on all platforms.
 
 ### AnkiWeb
 
-The easiest way to install Review Heatmap is through AnkiWeb.
+The easiest way to install OmniDict is through AnkiWeb.
 
 ### Manual installation
 
