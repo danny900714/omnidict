@@ -13,12 +13,28 @@ _header_generator = HeaderGenerator()
 
 @dataclass
 class Example:
+    """A usage example for a word sense.
+
+    Attributes:
+        sentence: The example sentence.
+        translation: Optional translation of the sentence.
+    """
+
     sentence: str
     translation: str | None = field(default_factory=None)
 
 
 @dataclass
 class Sense:
+    """One meaning of a word.
+
+    Attributes:
+        definition: The definition text.
+        features: Optional grammatical features (e.g. "[ C ]", "[ usually plural ]").
+        translation: Optional translation of the definition.
+        examples: Optional list of usage examples.
+    """
+
     definition: str
     features: str | None = field(default_factory=None)
     translation: str | None = field(default_factory=None)
@@ -27,6 +43,16 @@ class Sense:
 
 @dataclass
 class Pronunciation:
+    """Pronunciation data for a word.
+
+    At least one of `audio_file_name` or `phonemic_transcription` must be provided.
+
+    Attributes:
+        region: Optional region label (e.g. "US", "UK").
+        audio_file_name: Optional filename of the audio clip in the Anki media collection.
+        phonemic_transcription: Optional IPA or phonemic transcription string.
+    """
+
     region: str | None = field(default_factory=None)
     audio_file_name: str | None = field(default_factory=None)
     phonemic_transcription: str | None = field(default_factory=None)
@@ -40,6 +66,14 @@ class Pronunciation:
 
 @dataclass
 class Entry:
+    """A single dictionary entry grouping senses that share a part of speech and pronunciation.
+
+    Attributes:
+        senses: One or more meanings belonging to this entry.
+        pronunciations: Optional list of pronunciations for this entry.
+        part_of_speech: Optional part-of-speech label (e.g. "noun", "verb").
+    """
+
     senses: list[Sense]
     pronunciations: list[Pronunciation] | None = field(default_factory=None)
     part_of_speech: str | None = field(default_factory=None)
@@ -47,6 +81,14 @@ class Entry:
 
 @dataclass
 class Definition:
+    """The complete dictionary result for a word.
+
+    Attributes:
+        word: The looked-up word.
+        entries: One or more dictionary entries for the word.
+        audio_files: Optional mapping of filename to raw audio bytes.
+    """
+
     word: str
     entries: list[Entry]
     audio_files: dict[str, bytes] | None = field(default_factory=None)
@@ -225,11 +267,24 @@ class DefinitionRedirectedError(RuntimeError):
 
 @dataclass
 class DictionaryInfo:
+    """Display metadata for a dictionary exposed by a provider.
+
+    Attributes:
+        name: Human-readable name of the dictionary.
+        icon: Optional icon identifier or path for the dictionary.
+    """
+
     name: str
     icon: str | None = None
 
 
 class Provider(ABC):
+    """Abstract base class for dictionary providers.
+
+    Subclasses must set the class-level `_ID`, `_NAME`, and `_DICTIONARIES` attributes and implement
+    `fetch_definition`.
+    """
+
     _ID: str = ""
     _NAME: str = ""
     _DICTIONARIES: dict[str, DictionaryInfo] = {}
@@ -261,7 +316,22 @@ class Provider(ABC):
     def fetch_definition(
         self, dictionary_id: str, word: str, *, download_audio: bool
     ) -> Definition:
-        raise NotImplementedError
+        """Fetch the definition of a word from the specified dictionary.
+
+        Args:
+            dictionary_id: ID of the dictionary to query, must be a key in `supported_dictionaries()`.
+            word: The word to look up.
+            download_audio: Whether to download audio files and populate `Definition.audio_files`.
+
+        Returns:
+            A `Definition` containing all entries for the word.
+
+        Raises:
+            DefinitionNotFoundError: If the dictionary has no entry for `word`.
+            DefinitionRedirectedError: If the dictionary redirects to a different word.
+            DefinitionParseError: If the response cannot be parsed.
+        """
+        pass
 
     def get_dictionary_info(self, dictionary_id: str) -> DictionaryInfo | None:
         return self.supported_dictionaries().get(dictionary_id)
