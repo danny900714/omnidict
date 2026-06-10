@@ -57,3 +57,5 @@ jobs:
         run: uv run ruff check --output-format=github
       - name: Run formatter
         run: uv run ruff format --check --preview --output-format=github
+      - name: Run type checker
+        run: uv run ty check --output-format=github

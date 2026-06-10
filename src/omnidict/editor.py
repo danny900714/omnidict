@@ -4,14 +4,14 @@ from anki.collection import Collection
 from aqt import gui_hooks
 from aqt.editor import Editor
 from aqt.operations import QueryOp
-from aqt.utils import show_critical, ask_user, show_info, show_warning, shortcut
+from aqt.utils import ask_user, shortcut, show_critical, show_info, show_warning
 from aqt.webview import WebContent
 
 from .provider import (
-    Provider,
     DefinitionNotFoundError,
-    DefinitionRedirectedError,
     DefinitionParseError,
+    DefinitionRedirectedError,
+    Provider,
 )
 
 
@@ -47,7 +47,8 @@ def make_dictionary_button_clicked_handler(
 
             ########################### Callbacks Start ###########################
             def set_definition(html: str) -> None:
-                editor.note.fields[current_field] = html
+                if editor.note is not None:
+                    editor.note.fields[current_field] = html
                 editor.loadNoteKeepingFocus()
 
             def handle_fetch_definition_error(e: Exception, word: str) -> None:
@@ -118,7 +119,8 @@ def add_editor_buttons(buttons: list[str], editor: Editor) -> None:
     from .globals import config, provider_manager
 
     if (
-        "editor" in config
+        config is not None
+        and "editor" in config
         and "buttons" in config["editor"]
         and isinstance(config["editor"]["buttons"], list)
     ):

@@ -7,11 +7,12 @@ from typing import Any, cast
 
 import pytest
 import yaml
-from pytest import Metafunc, Config, FixtureRequest
+from pytest import Config, FixtureRequest, Metafunc
 from vcr import VCR
 
 from omnidict.provider import Provider
-from omnidict.provider.common import DictionaryInfo, Definition
+from omnidict.provider.common import Definition, DictionaryInfo
+
 from .conftest import providers_key, specs_key
 from .definition import DefinitionDumper, DefinitionLoader
 
@@ -49,7 +50,7 @@ def _parse_word_spec(
     word_spec: Any,
 ) -> tuple[str, type[type[Exception]], dict[str, Any] | None]:
     # Parse word specs
-    expected_error: tuple[type[Exception]] = tuple()
+    expected_error: tuple[type[Exception]] | tuple[()] = tuple()
     expected_error_attrs: dict[str, Any] | None = None
     if isinstance(word_spec, str):
         # short syntax

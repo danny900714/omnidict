@@ -1,3 +1,4 @@
+# ty: ignore[no-matching-overload]
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import cache
@@ -66,7 +67,7 @@ class Definition:
 
     def save_audio_files(self, col: Collection):
         if self.has_unsaved_audio_files():
-            for filename, data in self.audio_files.items():
+            for filename, data in self.audio_files.items():  # ty:ignore[unresolved-attribute] because we have checked it in has_unsaved_audio_files
                 # Only save audio file if it hasn't been saved before
                 if filename not in self._saved_audio_files:
                     self._saved_audio_files[filename] = col.media.write_data(
