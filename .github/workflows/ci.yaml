@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Package add-on
+        working-directory: src/omnidict
+        run: zip -r ../../OmniDict.ankiaddon *
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          path : src/omnidict
+          output-file: ./sbom.spdx.json
+      # Will comment out artifact attestation after turning this project into a public repository
+      # - name: Generate artifact attestation
+      #   uses: actions/attest@v4
+      #   with:
+      #     subject-path: ./OmniDict.ankiaddon
+      #     sbom-path: ./sbom.spdx.json
+      - name: Upload artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: OmniDict.ankiaddon
+          path: OmniDict.ankiaddon
+          archive: false
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Run tests
+        run: uv run pytest --junit-xml=pytest-junit.xml
+      - name: Upload test report
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: test-results
+          path: pytest-junit.xml
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+      - name: Run linter
+        run: uv run ruff check --output-format=github
+      - name: Run formatter
+        run: uv run ruff format --check --preview --output-format=github
+      - name: Run type checker
+        run: uv run ty check --output-format=github
