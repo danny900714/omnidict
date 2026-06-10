@@ -15,6 +15,10 @@ permissions:
 jobs:
   package:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -23,6 +27,16 @@ jobs:
       - name: Package add-on
         working-directory: src/omnidict
         run: zip -r ../../OmniDict.ankiaddon *
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          file: ./OmniDict.ankiaddon
+          output-file: ./sbom.spdx.json
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: ./OmniDict.ankiaddon
+          sbom-path: ./sbom.spdx.json
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
