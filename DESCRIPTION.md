@@ -1,3 +1,6 @@
+[![Latest release](https://badgen.net/github/release/danny900714/omnidict?label=Version&color=green)](https://github.com/danny900714/omnidict/releases/latest)
+[![Anki version](https://badgen.net/static/Anki/25.07-25.09.4+?icon=Anki)](https://github.com/ankitects/anki/releases)
+
 **Omnidict is the only Anki dictionary add-on you'll ever need.**
 
 It seamlessly integrates multiple dictionaries, letting you create definition cards effortlessly.
