@@ -225,7 +225,7 @@ Follow the steps below to implement your own provider:
    `src/omnidict/provider/my_provider.py`:
     ```python
     from .common import Provider, DictionaryInfo, Definition
-    
+
     class MyProvider(Provider):
         _ID = "my-id"
         _NAME = "My Provider"
@@ -244,7 +244,7 @@ Follow the steps below to implement your own provider:
     ```python
     # Other imports
     from .my_provider import MyProvider
-    
+
     # Append your provider class to __all__
     __all__ = [
         # Other provider classes
