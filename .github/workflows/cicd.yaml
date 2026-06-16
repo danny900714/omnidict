@@ -1,9 +1,11 @@
-name: CI
+name: CI/CD
 
 on:
   push:
     branches:
       - main
+    tags:
+      - v*
   pull_request:
     branches:
       - main
@@ -29,7 +31,7 @@ jobs:
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
         with:
-          path : src/omnidict
+          path: src/omnidict
           output-file: ./sbom.spdx.json
       # Will comment out artifact attestation after turning this project into a public repository
       # - name: Generate artifact attestation
@@ -73,3 +75,38 @@ jobs:
         run: uv run ruff format --check --preview --output-format=github
       - name: Run type checker
         run: uv run ty check --output-format=github
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [ package, test, lint ]
+    if: github.ref_type == 'tag'
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: OmniDict.ankiaddon
+          skip-decompress: true
+      - name: Generate release name
+        id: release-name
+        env:
+          TAG_NAME: ${{ github.ref_name }}
+        run: echo "release-name=${TAG_NAME#v}" >> "$GITHUB_OUTPUT"
+      - name: Create release
+        uses: softprops/action-gh-release@v3
+        with:
+          name: ${{ steps.release-name.outputs.release-name }}
+          files: OmniDict.ankiaddon
+          generate_release_notes: true
+      - name: Upload add-on to AnkiWeb
+        uses: danny900714/upload-anki-addon@v1
+        with:
+          username: ${{ secrets.ANKIWEB_USERNAME }}
+          password: ${{ secrets.ANKIWEB_PASSWORD }}
+          title: OmniDict - All Dictionaries in one add-on
+          tags: dictionary AnkiDroid AnkiMobile Chinese Cambridge
+          support-page: ${{ format('{0}/{1}', github.server_url, github.repository) }}
+          description-file: DESCRIPTION.md
+          branches: 25.07-25.09.4+
+          addon-files: OmniDict.ankiaddon
