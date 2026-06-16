@@ -108,6 +108,7 @@ jobs:
         with:
           username: ${{ secrets.ANKIWEB_USERNAME }}
           password: ${{ secrets.ANKIWEB_PASSWORD }}
+          addon-id: ${{ vars.ANKIWEB_ADDON_ID }}
           title: OmniDict - All Dictionaries in one add-on
           tags: dictionary AnkiDroid AnkiMobile Chinese Cambridge
           support-page: ${{ format('{0}/{1}', github.server_url, github.repository) }}
