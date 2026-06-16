@@ -10,7 +10,7 @@ Cards created by this add-on work on all platforms.
 
 **The source code of this add-on is hosted on [GitHub](https://github.com/danny900714/omnidict).**
 
-![Review card on Anki](https://i.postimg.cc/cChXcJXp/review.png)
+![Review card on Anki](https://raw.githubusercontent.com/danny900714/omnidict/refs/heads/main/images/review.png)
 
 ### ✨ Features
 
