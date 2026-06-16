@@ -122,7 +122,7 @@ type(scope)!: subject
   For changes to providers, the scope should be the provider id:
 
   - ✅ `fix(cambridge): commit subject`
-  - ❌ `fix(provider/agnoster): commit subject`
+  - ❌ `fix(provider/cambridge): commit subject`
 
 - `!`: this goes after the `scope` (or the `type` if scope is empty), to indicate that the commit
   introduces breaking changes.
