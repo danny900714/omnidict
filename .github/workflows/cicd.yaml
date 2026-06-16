@@ -25,6 +25,8 @@ jobs:
         uses: actions/checkout@v6
       - name: Setup project
         uses: ./.github/actions/setup-project
+      - name: Copy LICENSE file to add-on directory
+        run: cp LICENSE src/omnidict/
       - name: Package add-on
         working-directory: src/omnidict
         run: zip -r ../../OmniDict.ankiaddon *
