@@ -6,19 +6,18 @@ Before submitting your contribution, please make sure to take a moment and read 
 
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Reporting Issues](#reporting-issues)
-  - [You have a problem](#you-have-a-problem)
-  - [You have a suggestion](#you-have-a-suggestion)
+    - [You have a problem](#you-have-a-problem)
+    - [You have a suggestion](#you-have-a-suggestion)
 - [Submitting Pull Requests](#submitting-pull-requests)
-  - [Getting started](#getting-started)
-  - [You have a solution](#you-have-a-solution)
+    - [Getting started](#getting-started)
+    - [You have a solution](#you-have-a-solution)
 - [Commit Guidelines](#commit-guidelines)
-  - [Format](#format)
+    - [Format](#format)
 - [AI/LLM Contributions Policy](#aillm-contributions-policy)
 - [Project Overview](#project-overview)
-  - [Set Up the Development Environment](#set-up-the-development-environment)
-  - [Anki Add-on Development](#anki-add-on-development)
-  - [Integrate a New Dictionary Provider](#integrate-a-new-dictionary-provider)
-
+    - [Set Up the Development Environment](#set-up-the-development-environment)
+    - [Anki Add-on Development](#anki-add-on-development)
+    - [Integrate a New Dictionary Provider](#integrate-a-new-dictionary-provider)
 
 ## Reporting Issues
 
@@ -92,37 +91,37 @@ type(scope)!: subject
 
 - `type`: the type of the commit is one of the following:
 
-  - `feat`: new features.
-  - `fix`: bug fixes.
-  - `docs`: documentation changes.
-  - `refactor`: refactor of a particular code section without introducing
-    new features or bug fixes.
-  - `style`: code style improvements.
-  - `perf`: performance improvements.
-  - `test`: changes to the test suite.
-  - `ci`: changes to the CI system.
-  - `build`: changes to the build system.
-  - `chore`: for other changes that don't match previous types. This doesn't appear
-    in the changelog.
+    - `feat`: new features.
+    - `fix`: bug fixes.
+    - `docs`: documentation changes.
+    - `refactor`: refactor of a particular code section without introducing
+      new features or bug fixes.
+    - `style`: code style improvements.
+    - `perf`: performance improvements.
+    - `test`: changes to the test suite.
+    - `ci`: changes to the CI system.
+    - `build`: changes to the build system.
+    - `chore`: for other changes that don't match previous types. This doesn't appear
+      in the changelog.
 
 - `scope`: section of the codebase that the commit makes changes to. If it makes changes to
   many sections, or if no section in particular is modified, leave blank without the parentheses.
   Examples:
 
-  - Commit that changes the `cambridge` provider:
+    - Commit that changes the `cambridge` provider:
   ```
   feat(cambridge): support English-Chenise (Traditional) Dictionary
   ```
 
-  - Commit that changes many providers:
+    - Commit that changes many providers:
   ```
   style: fix inline declaration of arrays
   ```
 
   For changes to providers, the scope should be the provider id:
 
-  - ✅ `fix(cambridge): commit subject`
-  - ❌ `fix(provider/cambridge): commit subject`
+    - ✅ `fix(cambridge): commit subject`
+    - ❌ `fix(provider/cambridge): commit subject`
 
 - `!`: this goes after the `scope` (or the `type` if scope is empty), to indicate that the commit
   introduces breaking changes.
@@ -151,16 +150,16 @@ type(scope)!: subject
 
   Formatting tricks: the commit subject may contain:
 
-  - Links to related issues or PRs by writing `#issue`. This will be highlighted by the changelog tool:
-    ```
-    ci: run release job when pushing tags (#3)
-    ```
+    - Links to related issues or PRs by writing `#issue`. This will be highlighted by the changelog tool:
+      ```
+      ci: run release job when pushing tags (#3)
+      ```
 
-  - Formatted inline code by using backticks: the text between backticks will also be highlighted by
-    the changelog tool:
-    ```
-    docs: add `CONTRIBUTING.md`
-    ```
+    - Formatted inline code by using backticks: the text between backticks will also be highlighted by
+      the changelog tool:
+      ```
+      docs: add `CONTRIBUTING.md`
+      ```
 
 ## AI/LLM Contributions Policy
 
@@ -168,7 +167,8 @@ AI tools can be pretty helpful for coding tasks, and we're not here to gatekeep 
 But here's the thing—this project is maintained by volunteers who do this in their spare time.
 We want to make sure we're spending our limited time effectively.
 
-If you used AI tools meaningfully in your contribution (code generation, agentic coding assistants, etc.), please mention it in your PR description.
+If you used AI tools meaningfully in your contribution (code generation, agentic coding assistants, etc.), please
+mention it in your PR description.
 Basic autocomplete doesn't count, but if an AI wrote substantial parts of your code, just let us know.
 
 **Examples of good disclosure:**
@@ -182,10 +182,12 @@ Here's what we're looking for:
   We want to collaborate with humans who are invested in the project.
 - **Context matters**: Tell us what problem you're solving, how you tested it, and link to relevant docs.
   Small, incremental changes work better than massive generated overhauls.
-- **Quality over quantity**: We'd rather have one thoughtful, well-tested contribution than ten AI-generated PRs that need extensive review.
+- **Quality over quantity**: We'd rather have one thoughtful, well-tested contribution than ten AI-generated PRs that
+  need extensive review.
 
 As always, we reserve the right to decline any contribution.
-Any submission that is in violation of this policy will be closed, and the submitter may be blocked from this repository without warning.
+Any submission that is in violation of this policy will be closed, and the submitter may be blocked from this repository
+without warning.
 
 ## Project Overview
 
@@ -196,11 +198,13 @@ This project is an Anki add-on that provides a dictionary lookup feature.
 1. [Fork](https://github.com/danny900714/omnidict/fork) and clone the repository.
 2. Install dependencies with `uv sync`.
 3. Export runtime dependencies with `uv export --no-dev --format requirements.txt -o requirements_prod.txt`.
-4. Install runtime dependencies into the add-on's vendor directory with `uv pip install -r requirements_prod.txt -t src/omnidict/vendor`.
+4. Install runtime dependencies into the add-on's vendor directory with
+   `uv pip install -r requirements_prod.txt -t src/omnidict/vendor`.
 5. Compile gettext portable objects with `uv run scripts/compile_portable_objects.py`.
 6. Create a symbolic link in Anki's add-on directory that points to the `src/omnidict` directory.
 
-For an up-to-date example of how to set up the development environment, please refer to the [`setup-project`](.github/actions/setup-project/action.yml) custom GitHub Action.
+For an up-to-date example of how to set up the development environment, please refer to the [
+`setup-project`](.github/actions/setup-project/action.yml) custom GitHub Action.
 
 ### Anki Add-on Development
 
@@ -217,8 +221,8 @@ Follow the steps below to implement your own provider:
 
 1. Create a Python file in the [`src/omnidict/provider`](./src/omnidict/provider) directory.
 2. Derive a new class from `omnidict.provider.common.Provider` and implement the required class variables and methods.
-    
-    `src/omnidict/provider/my_provider.py`:
+
+   `src/omnidict/provider/my_provider.py`:
     ```python
     from .common import Provider, DictionaryInfo, Definition
     
@@ -286,8 +290,10 @@ Follow the steps below to implement your own provider:
                 redirected_word: click
     ```
 
-5. If `mode` is set to `local-unless-ci` or `local`, generate the test data by running `uv run pytest --generate-test-data <provider-id>`.
-   When `mode` is set to `local`, also commit the generated test data to git and add a `.gitignore` file in the `tests/omnidict/provider/<provider-id>` directory.
+5. If `mode` is set to `local-unless-ci` or `local`, generate the test data by running
+   `uv run pytest --generate-test-data <provider-id>`.
+   When `mode` is set to `local`, also commit the generated test data to git and add a `.gitignore` file in the
+   `tests/omnidict/provider/<provider-id>` directory.
 
 6. Run `uv run pytest` to test your provider.
 
