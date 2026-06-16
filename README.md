@@ -1,27 +1,25 @@
 # OmniDict
 
-**Omnidict is the only one Anki dictionary add-on you'll ever need.**
+**Omnidict is the only Anki dictionary add-on you'll ever need.**
 
-It provides a seamless integration of multiple dictionaries, allowing you to create definition cards effortlessly.
-What's inside the definition field is fully customizable, so you can choose whether to include *pronunciation audios*,
+It seamlessly integrates multiple dictionaries, letting you create definition cards effortlessly.
+The definition field is fully customizable — choose whether to include *pronunciation audio*,
 *phonemic transcriptions*, *translations* and *examples*.
-The created cards are working on all platforms.
+Cards created by this add-on work on all platforms.
+
+![Review card on Anki](images/review.png)
 
 ## Features
 
-- Include definition, translation, pronunciation audio, phonemic transcriptions and examples in your card (customizable).
-- Multiple dialects support (e.g., British and American English).
+- Add definitions, translations, pronunciation audio, phonemic transcriptions, and examples to your cards (fully customizable).
+- Multiple dialect support (e.g., British and American English).
 - Dark mode support.
-- Cards are working on Anki, AnkiDroid, Anki Mobile, even on AnkiWeb.
+- Cards work on Anki, AnkiDroid, Anki Mobile, and AnkiWeb.
 - Dictionary support
-    - Cambridge Dictionary
-        - Cambridge English–Chinese (Simplified) Dictionary
-        - Cambridge English-Chinese (Traditional) Dictionary
-    - more to come, contributions welcomed!
-
-## Screenshot
-
-![Review card on Anki](images/review.png)
+      - Cambridge Dictionary
+          - Cambridge English–Chinese (Simplified) Dictionary
+          - Cambridge English-Chinese (Traditional) Dictionary
+      - more to come, contributions welcomed!
 
 ## Installation
 
