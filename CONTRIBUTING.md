@@ -226,16 +226,17 @@ Follow the steps below to implement your own provider:
     ```python
     from .common import Provider, DictionaryInfo, Definition
 
+
     class MyProvider(Provider):
         _ID = "my-id"
         _NAME = "My Provider"
         _DICTIONARIES = {
-            "english-chinese": DictionaryInfo(
-                "English–Chinese Dictionary"
-            ),
+            "english-chinese": DictionaryInfo("English–Chinese Dictionary"),
         }
-    
-        def fetch_definitions(self, dictionary_id: str, word: str, *, download_audio: bool) -> Definition:
+
+        def fetch_definitions(
+            self, dictionary_id: str, word: str, *, download_audio: bool
+        ) -> Definition:
             # Fetch data from the dictionary and convert it into a Definition
             pass
     ```
