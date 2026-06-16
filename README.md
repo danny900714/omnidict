@@ -37,7 +37,5 @@ The easiest way to install OmniDict is through AnkiWeb.
 
 Contributions are always welcome!
 
-See `contributing.md` for ways to get started.
-
-Please adhere to this project's `code of conduct`.
+See [CONTRIUBTING.md](./CONTRIBUTING.md) for ways to get started.
 
