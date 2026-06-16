@@ -35,12 +35,11 @@ jobs:
         with:
           path: src/omnidict
           output-file: ./sbom.spdx.json
-      # Will comment out artifact attestation after turning this project into a public repository
-      # - name: Generate artifact attestation
-      #   uses: actions/attest@v4
-      #   with:
-      #     subject-path: ./OmniDict.ankiaddon
-      #     sbom-path: ./sbom.spdx.json
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: ./OmniDict.ankiaddon
+          sbom-path: ./sbom.spdx.json
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
