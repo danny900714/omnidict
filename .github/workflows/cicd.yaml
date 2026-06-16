@@ -37,6 +37,7 @@ jobs:
           output-file: ./sbom.spdx.json
       - name: Generate artifact attestation
         uses: actions/attest@v4
+        if: github.ref_type == 'tag'  # Only generate attestation for tagged commits (releases)
         with:
           subject-path: ./OmniDict.ankiaddon
           sbom-path: ./sbom.spdx.json
