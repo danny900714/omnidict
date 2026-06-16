@@ -16,10 +16,10 @@ Cards created by this add-on work on all platforms.
 - Dark mode support.
 - Cards work on Anki, AnkiDroid, Anki Mobile, and AnkiWeb.
 - Dictionary support
-    - Cambridge Dictionary
-        - Cambridge English–Chinese (Simplified) Dictionary
-        - Cambridge English-Chinese (Traditional) Dictionary
-    - more to come, contributions welcomed!
+  - Cambridge Dictionary
+    - Cambridge English–Chinese (Simplified) Dictionary
+    - Cambridge English-Chinese (Traditional) Dictionary
+  - more to come, contributions welcomed!
 
 ### 📝 Usage
 
