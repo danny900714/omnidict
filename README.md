@@ -25,11 +25,12 @@ Cards created by this add-on work on all platforms.
 
 ### AnkiWeb
 
-The easiest way to install OmniDict is through AnkiWeb.
+The easiest way to install OmniDict is through [AnkiWeb](https://ankiweb.net/shared/info/702300994).
 
 ### Manual installation
 
-1. Download the latest `.ankiaddon` file from the releases tab (you might need to click on Assets below the description to reveal the download links)
+1. Download the latest `.ankiaddon` file from the [release tab](https://github.com/danny900714/omnidict/releases/latest)
+(you might need to click on Assets below the description to reveal the download links)
 2. Open the folder where your downloads are located and double-click on the downloaded .ankiaddon file.
 3. Follow the installation prompt and restart Anki if it asks you to
 
