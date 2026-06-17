@@ -22,13 +22,6 @@ from .common import (
 ORIGIN = "https://dictionary.cambridge.org"
 
 
-class _DiBodyChildType(Enum):
-    ENTRY = "entry"
-    IDIOM = "idiom"
-    PHRASE = "phrase"
-    PHRASAL_VERB = "phrasal verb"
-
-
 class CambridgeDictionaryProvider(Provider):
     _ID = "cambridge-dictionary"
     _NAME = "Cambridge Dictionary"
