@@ -153,7 +153,8 @@ audio_files:
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
     qqqqqqqqqqqqqqqqqqqq
 entries:
-- part_of_speech: noun
+- headword: bug
+  part_of_speech: noun
   pronunciations:
   - audio_file_name: ukbuddh018.mp3
     phonemic_transcription: /bʌɡ/
@@ -192,7 +193,8 @@ entries:
       translation: 他迷上了帆船運動。
     features: '[ S ] informal'
     translation: 熱衷；迷戀
-- part_of_speech: verb [ T ]
+- headword: bug
+  part_of_speech: verb [ T ]
   pronunciations:
   - audio_file_name: ukbuddh018.mp3
     phonemic_transcription: /bʌɡ/
@@ -213,4 +215,3 @@ entries:
       translation: 她懷疑自己的電話被人竊聽了。
     features: null
     translation: 秘密安裝竊聽裝置
-word: bug

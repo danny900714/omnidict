@@ -1,21 +1,21 @@
 from pathlib import Path
 from typing import cast
-from urllib.parse import urlsplit, urljoin, unquote
+from urllib.parse import unquote, urljoin, urlsplit
 
 from bs4 import BeautifulSoup
 from requests import Session
 
 from .common import (
-    Provider,
-    DictionaryInfo,
-    Example,
-    Sense,
-    Entry,
     Definition,
     DefinitionNotFoundError,
     DefinitionParseError,
     DefinitionRedirectedError,
+    DictionaryInfo,
+    Entry,
+    Example,
     Pronunciation,
+    Provider,
+    Sense,
 )
 
 ORIGIN = "https://dictionary.cambridge.org"
@@ -100,11 +100,6 @@ class CambridgeDictionaryProvider(Provider):
     def _parse_chinese_definition(self, html: str, download_audio: bool) -> Definition:
         soup = BeautifulSoup(html, "html.parser")
 
-        word = soup.select_one("h1 b")
-        if word is None:
-            raise DefinitionParseError("Failed to parse word")
-        word = word.get_text()
-
         # ASSUMPTION: the basename of the url path is unique within the webpage
         audio_files: dict[str, bytes] = {}
 
@@ -112,6 +107,14 @@ class CambridgeDictionaryProvider(Provider):
         entry_bodies = soup.select(".di-body > .entry:first-child .entry-body__el")
         entries: list[Entry] = []
         for entry in entry_bodies:
+            # Parse headword of entry
+            headword_element = entry.select_one("span.headword span.hw")
+            headword = (
+                headword_element.get_text() if headword_element is not None else None
+            )
+            if headword is None:
+                raise DefinitionParseError("Failed to parse entry headword")
+
             # Parse part of speech
             pos_element = entry.select_one(".pos-header > .posgram")
             pos = pos_element.get_text() if pos_element is not None else None
@@ -251,6 +254,7 @@ class CambridgeDictionaryProvider(Provider):
             # Create entry object and append it to list if senses is not empty
             if len(senses) > 0:
                 entry = Entry(
+                    headword,
                     senses,
                     part_of_speech=pos,
                     pronunciations=pronunciations
@@ -263,6 +267,4 @@ class CambridgeDictionaryProvider(Provider):
             raise DefinitionParseError("Failed to parse definition")
 
         # Create the definition object
-        return Definition(
-            word, entries, audio_files=audio_files if audio_files else None
-        )
+        return Definition(entries, audio_files=audio_files if audio_files else None)

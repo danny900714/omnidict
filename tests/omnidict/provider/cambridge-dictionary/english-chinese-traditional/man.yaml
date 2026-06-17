@@ -386,7 +386,8 @@ audio_files:
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
     qqqqqqqq
 entries:
-- part_of_speech: noun
+- headword: man
+  part_of_speech: noun
   pronunciations:
   - audio_file_name: ukmammo003.mp3
     phonemic_transcription: /mæn/
@@ -469,7 +470,8 @@ entries:
     examples: []
     features: '[ C ]'
     translation: （西洋棋等遊戲中的）棋子
-- part_of_speech: verb [ T ]
+- headword: man
+  part_of_speech: verb [ T ]
   pronunciations:
   - audio_file_name: ukmammo003.mp3
     phonemic_transcription: /mæn/
@@ -487,7 +489,8 @@ entries:
       translation: 派人看著抽水機！
     features: null
     translation: 為…配備人手
-- part_of_speech: exclamation
+- headword: man
+  part_of_speech: exclamation
   pronunciations:
   - audio_file_name: ukmammo003.mp3
     phonemic_transcription: /mæn/
@@ -502,4 +505,3 @@ entries:
       translation: 嘿，我們昨晚真是盡興，喝了一夜的酒！
     features: informal
     translation: （用作感歎詞，尤用於表示強烈的感情）啊，呀，哈，嘿
-word: man

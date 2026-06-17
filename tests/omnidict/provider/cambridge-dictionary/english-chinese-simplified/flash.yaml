@@ -284,7 +284,8 @@ audio_files:
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 entries:
-- part_of_speech: verb
+- headword: flash
+  part_of_speech: verb
   pronunciations:
   - audio_file_name: ukflami014.mp3
     phonemic_transcription: /flæʃ/
@@ -343,7 +344,8 @@ entries:
       translation: 我突然想到，她不想来这里。
     features: '[ I + adv/prep ]'
     translation: （想法等）突然闪现
-- part_of_speech: noun
+- headword: flash
+  part_of_speech: noun
   pronunciations:
   - audio_file_name: ukflami014.mp3
     phonemic_transcription: /flæʃ/
@@ -387,7 +389,8 @@ entries:
       translation: 她屈身过来，我一眼瞥见了粉红色的内衣。
     features: '[ C ] humorous'
     translation: 飞快的一瞥
-- part_of_speech: adjective
+- headword: flash
+  part_of_speech: adjective
   pronunciations:
   - audio_file_name: ukflami014.mp3
     phonemic_transcription: /flæʃ/
@@ -402,4 +405,3 @@ entries:
       translation: 他穿的那套西服看上去十分昂贵。
     features: null
     translation: 昂贵的;奢华的
-word: flash

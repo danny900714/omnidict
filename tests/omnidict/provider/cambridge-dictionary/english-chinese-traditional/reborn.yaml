@@ -1659,7 +1659,8 @@ audio_files:
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 entries:
-- part_of_speech: adjective
+- headword: reborn
+  part_of_speech: adjective
   pronunciations:
   - audio_file_name: epd23822.mp3
     phonemic_transcription: /ˌriːˈbɔːn/
@@ -1681,4 +1682,3 @@ entries:
       translation: 重生的基督教徒
     features: null
     translation: （尤指在深度精神體驗後，決定接受某一派別的基督教）重生的
-word: reborn

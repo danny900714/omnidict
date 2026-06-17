@@ -475,7 +475,8 @@ audio_files:
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     VVVV
 entries:
-- part_of_speech: noun [ C ]
+- headword: corpus
+  part_of_speech: noun [ C ]
   pronunciations:
   - audio_file_name: ukcorps004.mp3
     phonemic_transcription: /ˈkɔː.pəs/
@@ -507,4 +508,3 @@ entries:
     examples: []
     features: medical specialized
     translation: 身體，軀體
-word: corpus

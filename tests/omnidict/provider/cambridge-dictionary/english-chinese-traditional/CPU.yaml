@@ -338,7 +338,8 @@ audio_files:
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 entries:
-- part_of_speech: noun [ C ]
+- headword: CPU
+  part_of_speech: noun [ C ]
   pronunciations:
   - audio_file_name: ukcowsh011.mp3
     phonemic_transcription: /ˌsiː.piːˈjuː/
@@ -352,4 +353,3 @@ entries:
     examples: []
     features: null
     translation: 中央處理器（central processing unit的縮寫）
-word: CPU
