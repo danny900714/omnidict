@@ -69,11 +69,13 @@ class Entry:
     """A single dictionary entry grouping senses that share a part of speech and pronunciation.
 
     Attributes:
+        headword: A word or term placed at the beginning of the entry
         senses: One or more meanings belonging to this entry.
         pronunciations: Optional list of pronunciations for this entry.
         part_of_speech: Optional part-of-speech label (e.g. "noun", "verb").
     """
 
+    headword: str
     senses: list[Sense]
     pronunciations: list[Pronunciation] | None = field(default_factory=None)
     part_of_speech: str | None = field(default_factory=None)
@@ -84,12 +86,10 @@ class Definition:
     """The complete dictionary result for a word.
 
     Attributes:
-        word: The looked-up word.
         entries: One or more dictionary entries for the word.
         audio_files: Optional mapping of filename to raw audio bytes.
     """
 
-    word: str
     entries: list[Entry]
     audio_files: dict[str, bytes] | None = field(default_factory=None)
 
@@ -132,7 +132,7 @@ class Definition:
         for entry in self.entries:
             header = soup.new_tag("div", attrs={"class": "header"})
             root.append(header)
-            header.append(soup.new_tag("b", string=self.word))
+            header.append(soup.new_tag("b", string=entry.headword))
 
             # Render pronunciations
             if entry.pronunciations is not None and (

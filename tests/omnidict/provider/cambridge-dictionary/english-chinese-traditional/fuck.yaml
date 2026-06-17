@@ -176,7 +176,8 @@ audio_files:
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
     VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 entries:
-- part_of_speech: verb [ I or T ]
+- headword: fuck
+  part_of_speech: verb [ I or T ]
   pronunciations:
   - audio_file_name: ukfruga030.mp3
     phonemic_transcription: /fʌk/
@@ -189,7 +190,8 @@ entries:
     examples: []
     features: offensive
     translation: 性交
-- part_of_speech: exclamation
+- headword: fuck
+  part_of_speech: exclamation
   pronunciations:
   - audio_file_name: ukfruga030.mp3
     phonemic_transcription: /fʌk/
@@ -209,7 +211,8 @@ entries:
       translation: 媽的她覺得自己是老幾呀，對我指手畫腳的？
     features: offensive
     translation: （用於表示極端的憤怒或惱火，或加重語氣）媽的，見鬼
-- part_of_speech: noun
+- headword: fuck
+  part_of_speech: noun
   pronunciations:
   - audio_file_name: ukfruga030.mp3
     phonemic_transcription: /fʌk/
@@ -226,4 +229,3 @@ entries:
     examples: []
     features: '[ C ] offensive'
     translation: 性夥伴，性交物件
-word: fuck

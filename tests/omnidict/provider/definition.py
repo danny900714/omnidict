@@ -18,7 +18,6 @@ def _definition_representer(dumper: DefinitionDumper, definition: Definition):
     return dumper.represent_mapping(
         "tag:yaml.org,2002:map",
         {
-            "word": definition.word,
             "entries": definition.entries,
             "audio_files": definition.audio_files,
         },

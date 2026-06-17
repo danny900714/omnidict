@@ -484,7 +484,8 @@ audio_files:
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 entries:
-- part_of_speech: verb [ T ]
+- headword: record
+  part_of_speech: verb [ T ]
   pronunciations:
   - audio_file_name: ukrecor002.mp3
     phonemic_transcription: /rɪˈkɔːd/
@@ -529,7 +530,8 @@ entries:
       translation: 溫度計顯示溫度是30攝氏度。
     features: null
     translation: （儀器）顯示，記錄，標明
-- part_of_speech: noun
+- headword: record
+  part_of_speech: noun
   pronunciations:
   - audio_file_name: ukrecor001.mp3
     phonemic_transcription: /ˈrek.ɔːd/
@@ -588,7 +590,8 @@ entries:
       translation: 她創造了歐洲跳高的新紀錄。
     features: '[ C ]'
     translation: 最高紀錄；最佳成績
-- part_of_speech: adjective
+- headword: record
+  part_of_speech: adjective
   pronunciations:
   - audio_file_name: ukrecor001.mp3
     phonemic_transcription: /ˈrek.ɔːd/
@@ -608,4 +611,3 @@ entries:
       translation: 我們以最短的時間完成了工作，這是以前從沒有過的。
     features: null
     translation: 創紀錄的；空前的
-word: record

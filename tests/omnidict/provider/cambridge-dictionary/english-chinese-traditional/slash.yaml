@@ -234,7 +234,8 @@ audio_files:
     qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
     qqqqqqqqqqqqqqqqqqqqqqqq
 entries:
-- part_of_speech: verb
+- headword: slash
+  part_of_speech: verb
   pronunciations:
   - audio_file_name: uksland017.mp3
     phonemic_transcription: /slæʃ/
@@ -259,7 +260,8 @@ entries:
       translation: 價格直降50%！
     features: '[ T ] informal'
     translation: 大幅削減，大幅減少（金錢、工作等）
-- part_of_speech: noun
+- headword: slash
+  part_of_speech: noun
   pronunciations:
   - audio_file_name: uksland017.mp3
     phonemic_transcription: /slæʃ/
@@ -301,4 +303,3 @@ entries:
     examples: []
     features: '[ S ] UK slang'
     translation: 撒尿
-word: slash
