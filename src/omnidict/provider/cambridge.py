@@ -1,4 +1,3 @@
-from enum import Enum
 from pathlib import Path
 from typing import cast
 from urllib.parse import unquote, urljoin, urlsplit
