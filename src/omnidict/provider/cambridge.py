@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import cast
 from urllib.parse import unquote, urljoin, urlsplit
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 from requests import Session
 
 from .common import (
@@ -19,10 +19,6 @@ from .common import (
 )
 
 ORIGIN = "https://dictionary.cambridge.org"
-
-
-def _url_to_filename(url: str) -> str:
-    return Path(unquote(urlsplit(url).path)).name
 
 
 class CambridgeDictionaryProvider(Provider):
@@ -103,31 +99,48 @@ class CambridgeDictionaryProvider(Provider):
         # ASSUMPTION: the basename of the url path is unique within the webpage
         audio_files: dict[str, bytes] = {}
 
-        # Limit the first entry to exclude prefix and sufix
-        entry_bodies = soup.select(".di-body > .entry:first-child .entry-body__el")
+        # The first selector is to select regular entry and phrasal verb
+        # The second selector is to select the inner idiom block
+        # The third selector is to select phrase block
+        entry_blocks = soup.select(
+            ".di-body :is(.entry .entry-body__el, .idiom-block .idiom-block, .phrase-di-block)"
+        )
         entries: list[Entry] = []
-        for entry in entry_bodies:
+        for entry_block in entry_blocks:
             # Parse headword of entry
-            headword_element = entry.select_one("span.headword span.hw")
+            headword_element = entry_block.select_one(".headword")
             headword = (
                 headword_element.get_text() if headword_element is not None else None
             )
-            if headword is None:
+            if headword is None or headword == "":
                 raise DefinitionParseError("Failed to parse entry headword")
 
-            # Parse part of speech
-            pos_element = entry.select_one(".pos-header > .posgram")
+            # Parse part of speech.
+            # When selecting entry pos, we select .posgram because there's a possible child (span.gram.dgram) contains the additional code.
+            # When selecting pos for other types, use :first-child to select the direct pos since phrasal verb also has another .pos.dpos for verb (see fuck around).
+            pos_element = entry_block.select_one(
+                ":is(.pos-header > .posgram, span.di-info span.pos.dpos:first-child)"
+            )
             pos = pos_element.get_text() if pos_element is not None else None
 
             # Parse entry usage, which will be appended to features of all senses
-            usage_element = entry.select_one(".pos-header > span.lab > span.usage")
+            # The first selector applies to entry.
+            #   The :not(.pv-block *) is used to exclude phrasal verb because it appends the verb usage, which is not what we want.
+            # The second selector applies to idiom and phrase.
+            usage_element = entry_block.select_one(
+                ":is(.pos-header > span.lab > span.usage:not(.pv-block *), span.di-info > span.lab > span.usage)"
+            )
             entry_features = (
                 usage_element.get_text() if usage_element is not None else None
             )
 
             # Parse pronunciations
+            # Select .pos-header > span.dpron-i to exclude plural pronunciation (see man).
+            # Apply :not(.pv-block *) to exclude phrasal verb pronunciations because they are the pronunciations of the verb.
+            pronunciation_spans = entry_block.select(
+                ".pos-header > span.dpron-i:not(.pv-block *)"
+            )
             pronunciations: list[Pronunciation] = []
-            pronunciation_spans = entry.select("span.dpron-i")
             for pronunciation_span in pronunciation_spans:
                 # Parse region
                 region_span = pronunciation_span.select_one("span.region")
@@ -163,7 +176,7 @@ class CambridgeDictionaryProvider(Provider):
                 # Download audio file if audio file not in audio_files map
                 audio_file_name: str | None = None
                 if audio_url is not None:
-                    audio_file_name: str = _url_to_filename(audio_url)
+                    audio_file_name: str = self._url_to_filename(audio_url)
                     if audio_file_name not in audio_files:
                         try:
                             audio = self._download_file(audio_url)
@@ -178,76 +191,17 @@ class CambridgeDictionaryProvider(Provider):
                 )
                 pronunciations.append(pronunciation)
 
-            # to exclude phrase block
-            def_blocks = entry.select(".sense-body > .def-block")
+            # Selects sense def-block
+            # The first selector is to match entry, phrasal verb, and idiom
+            # The second selector is to match phrase
+            # The reason why not directly select .def-block is to exclude phrase block, which has .phrase-block .def-vlock
+            def_blocks = entry_block.select(
+                ":is(.sense-body, span.phrase-di-body) > .def-block"
+            )
             senses: list[Sense] = []
             for def_block in def_blocks:
-                # Parse features
-                features: str | None = None
-                def_info = def_block.select_one("span.def-info")
-                if def_info is not None:
-                    # Exclude experience level capsule
-                    epp = def_info.select_one("span.epp-xref")
-                    if epp is not None:
-                        epp.decompose()
-
-                    # Exclude divider that will cause extra spaces
-                    divider = def_info.select_one(".ddivide")
-                    if divider is not None:
-                        divider.decompose()
-
-                    features = (
-                        def_info.get_text().strip().replace("\n", "")
-                    )  # Remove all \n that comes before divider
-                    features = features if features != "" else None
-
-                # Append entry features to features of all senses
-                if entry_features is not None:
-                    if features is not None:
-                        features += f" {entry_features}"
-                    else:
-                        features = entry_features
-
-                # Parse definition (required)
-                def_element = def_block.select_one("div.def")
-                if def_element is None:
-                    raise DefinitionParseError("Failed to parse definition")
-                definition = def_element.get_text()
-
-                # Parse translation
-                translation_element = def_block.select_one("span.trans")
-                translation = (
-                    translation_element.get_text()
-                    if translation_element is not None
-                    else None
-                )
-
-                # Parse examples
-                examples: list[Example] = []
-                example_elements = def_block.select(".examp")
-                for example_element in example_elements:
-                    sentence_element = example_element.select_one("span.eg")
-                    if sentence_element is not None:
-                        sentence = sentence_element.get_text()
-
-                        example_translation_element = example_element.select_one(
-                            "span.trans"
-                        )
-                        example_translation = (
-                            example_translation_element.get_text()
-                            if example_translation_element is not None
-                            else None
-                        )
-
-                        example = Example(sentence, translation=example_translation)
-                        examples.append(example)
-
-                # Create sense object and append it to list
-                sense = Sense(
-                    definition,
-                    features=features,
-                    translation=translation,
-                    examples=examples,
+                sense = self._parse_chinese_definition_def_block(
+                    def_block, entry_features
                 )
                 senses.append(sense)
 
@@ -268,3 +222,74 @@ class CambridgeDictionaryProvider(Provider):
 
         # Create the definition object
         return Definition(entries, audio_files=audio_files if audio_files else None)
+
+    @staticmethod
+    def _parse_chinese_definition_def_block(
+        def_block: Tag, entry_features: str | None
+    ) -> Sense:
+        # Parse features
+        features: str | None = None
+        def_info = def_block.select_one("span.def-info")
+        if def_info is not None:
+            # Exclude experience level capsule
+            epp = def_info.select_one("span.epp-xref")
+            if epp is not None:
+                epp.decompose()
+
+            # Exclude divider that will cause extra spaces
+            divider = def_info.select_one(".ddivide")
+            if divider is not None:
+                divider.decompose()
+
+            features = (
+                def_info.get_text().strip().replace("\n", "")
+            )  # Remove all \n that comes before divider
+            features = features if features != "" else None
+
+        # Append entry features to features of all senses
+        if entry_features is not None:
+            if features is not None:
+                features += f" {entry_features}"
+            else:
+                features = entry_features
+
+        # Parse definition (required)
+        def_element = def_block.select_one("div.def")
+        if def_element is None:
+            raise DefinitionParseError("Failed to parse definition")
+        definition = def_element.get_text()
+
+        # Parse translation
+        translation_element = def_block.select_one("span.trans")
+        translation = (
+            translation_element.get_text() if translation_element is not None else None
+        )
+
+        # Parse examples
+        examples: list[Example] = []
+        example_elements = def_block.select(".examp")
+        for example_element in example_elements:
+            sentence_element = example_element.select_one("span.eg")
+            if sentence_element is not None:
+                sentence = sentence_element.get_text()
+
+                example_translation_element = example_element.select_one("span.trans")
+                example_translation = (
+                    example_translation_element.get_text()
+                    if example_translation_element is not None
+                    else None
+                )
+
+                example = Example(sentence, translation=example_translation)
+                examples.append(example)
+
+        return Sense(
+            definition,
+            features=features,
+            translation=translation,
+            examples=examples,
+        )
+
+    @staticmethod
+    def _url_to_filename(url: str) -> str:
+        return Path(unquote(urlsplit(url).path)).name

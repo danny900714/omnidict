@@ -7,14 +7,15 @@ dictionaries:
       - slash   # additional information inside features that makes it two lines long ((UK also oblique (stroke)))
       - record  # features in part of speech ([ T ]); phrase block
       - fuck    # features in .pos-header (offensive)
-      - man     # suffix (-man)
+      - man     # contains suffix (-man) and plural (men)
       - reborn  # only phrase block in sense body (be reborn)
       - bug     # irreg-infls under phonemic transcription (-gg)
       - CPU     # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
-      - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized)
-      - word: back to square one # phrase containing spaces, Cambridge replace spaces with hyphens in URL. The entry is not found since it is an idiom.
-        error:
-          type: DefinitionParseError
+      - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized), plural (corpora)
+      - un      # prefix (un-) and four entries
+      - on the back of  # two idiom blocks
+      - back to back    # a phrase block and an entry block
+      - fuck around     # phrasal verb: two entry blocks (not phrase blocks) with pronunciation of fuck
       - word: asdf
         error:
           type: DefinitionNotFoundError
