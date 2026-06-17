@@ -1,0 +1,24 @@
+audio_files: null
+entries:
+- headword: fuck around
+  part_of_speech: phrasal verb
+  pronunciations: null
+  senses:
+  - definition: a rude phrase meaning to behave stupidly, or to waste time doing things
+      that are not important
+    examples:
+    - sentence: Stop fucking around!
+      translation: 別瞎鬧了！
+    features: null
+    translation: 瞎胡鬧；閒混
+- headword: fuck someone around
+  part_of_speech: phrasal verb
+  pronunciations: null
+  senses:
+  - definition: a rude phrase meaning to treat someone badly by wasting their time
+      or causing problems for them
+    examples:
+    - sentence: I'm warning you, don't fuck me about!
+      translation: 我警告你，別浪費我的時間！
+    features: UK
+    translation: 浪費（某人）的時間；粗暴對待（某人）

@@ -229,3 +229,14 @@ entries:
     examples: []
     features: '[ C ] offensive'
     translation: 性夥伴，性交物件
+- headword: fuck you/them/it
+  part_of_speech: idiom
+  pronunciations: null
+  senses:
+  - definition: an offensive way of saying that you do not like, respect, or care
+      about someone or something
+    examples:
+    - sentence: '"I won''t do it." "Fuck you, then."'
+      translation: 「我不會這樣做的」。「那就去死吧」。
+    features: offensive
+    translation: （用冒犯性的方式表示不喜歡、尊重或在意某人或某事）媽的，去死

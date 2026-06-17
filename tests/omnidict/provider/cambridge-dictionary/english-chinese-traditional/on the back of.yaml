@@ -1,0 +1,24 @@
+audio_files: null
+entries:
+- headword: on the back of something
+  part_of_speech: idiom
+  pronunciations: null
+  senses:
+  - definition: soon after an earlier success, and as a result of it
+    examples:
+    - sentence: The advertising agency secured the contract on the back of its previous
+        successful campaigns.
+      translation: 由於先期的宣傳工作富有成效，這家廣告公司最終獲得了該合約。
+    features: null
+    translation: 由於（不久前的某項成就）
+- headword: on the back of someone/something
+  part_of_speech: idiom
+  pronunciations: null
+  senses:
+  - definition: by using or taking advantage of someone or something else
+    examples:
+    - sentence: They have carried on their business operations by riding on the back
+        of established firms.
+      translation: 他們一直在叨知名企業的光做生意。
+    features: null
+    translation: 利用，叨…的光
