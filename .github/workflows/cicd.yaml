@@ -113,5 +113,5 @@ jobs:
           tags: dictionary AnkiDroid AnkiMobile Chinese Cambridge
           support-page: ${{ format('{0}/{1}', github.server_url, github.repository) }}
           description-file: DESCRIPTION.md
-          branches: 25.07-25.09.4+
+          branches: 25.07-26.05+
           addon-files: OmniDict.ankiaddon

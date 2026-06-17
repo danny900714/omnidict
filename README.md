@@ -2,7 +2,7 @@
 
 [![Latest release](https://badgen.net/github/release/danny900714/omnidict)](https://github.com/danny900714/omnidict/releases/latest)
 [![CI/CD](https://github.com/danny900714/omnidict/actions/workflows/cicd.yaml/badge.svg)](https://github.com/danny900714/omnidict/actions/workflows/cicd.yaml)
-[![Anki version](https://badgen.net/static/Anki/25.07-25.09.4+?icon=Anki)](https://github.com/ankitects/anki/releases)
+[![Anki version](https://badgen.net/static/Anki/25.07-26.05+?icon=Anki)](https://github.com/ankitects/anki/releases)
 [![License](https://badgen.net/github/license/danny900714/omnidict?color=purple)](https://github.com/danny900714/omnidict/blob/main/LICENSE)
 
 **Omnidict is the only Anki dictionary add-on you'll ever need.**
