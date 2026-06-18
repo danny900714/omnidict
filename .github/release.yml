@@ -1,0 +1,19 @@
+changelog:
+  exclude:
+    labels:
+      - dependencies
+      - documentation
+  categories:
+    - title: 🚨 Breaking Changes
+      labels:
+        - breaking changes
+    - title: 🎉 New Features
+      labels:
+        - feature
+    - title: 🐛 Bug Fixes
+      labels:
+        - bug
+    - title: ⚡️Improvements
+      labels:
+        - enhancement
+        - performance
