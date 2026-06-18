@@ -10,7 +10,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "aqt[qt]>=25.9.4",
+    "aqt[qt]>=25.7",
     "beautifulsoup4==4.14.3",
     "pytest>=9.0.3",
     "pyyaml>=6.0.3",
