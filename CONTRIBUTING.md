@@ -291,12 +291,16 @@ Follow the steps below to implement your own provider:
                 redirected_word: click
     ```
 
-5. If `mode` is set to `local-unless-ci` or `local`, generate the test data by running
-   `uv run pytest --generate-test-data <provider-id>`.
-   When `mode` is set to `local`, also commit the generated test data to git and add a `.gitignore` file in the
+5. Generate the test data by running `uv run pytest --generate-test-data=<provider-id>`.
+   When `mode` is set to `local`, also commit the test data to git and add a `.gitignore` file in the
    `tests/omnidict/provider/<provider-id>` directory.
 
 6. Run `uv run pytest` to test your provider.
+
+7. Add your dictionaries to [`src/omnidict/config.md`](src/omnidict/config.md) file.
+   Place `{provider-id}.{dictionary-id}` and the dictionary name to supported values under `editor.buttons`.
+
+   If your provider supports configuration, also place documentation here.
 
 For a complete example of how to implement a provider,
 please refer to the [Cambridge Dictionary provider](./src/omnidict/provider/cambridge.py) implementation
