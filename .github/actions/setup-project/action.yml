@@ -16,11 +16,11 @@ runs:
     - name: Sync dependencies
       run: uv sync --locked --all-extras
       shell: bash
-    - name: Export runtime dependencies
-      run: uv export --no-dev --format requirements.txt -o requirements_prod.txt
+    - name: Export provided dependencies that are excluded when installing runtime dependencies
+      run: uv export --only-group provided -o requirements_provided.txt
       shell: bash
     - name: Install runtime dependencies into add-on's vendor directory
-      run: uv pip install -r requirements_prod.txt -t src/omnidict/vendor
+      run: uv export --no-dev | uv pip install -r - --exclude requirements_provided.txt -t src/omnidict/vendor
       shell: bash
     - name: Compile gettext portable objects
       run: uv run scripts/compile_portable_objects.py

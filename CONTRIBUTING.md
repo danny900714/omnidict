@@ -197,9 +197,9 @@ This project is an Anki add-on that provides a dictionary lookup feature.
 
 1. [Fork](https://github.com/danny900714/omnidict/fork) and clone the repository.
 2. Install dependencies with `uv sync`.
-3. Export runtime dependencies with `uv export --no-dev --format requirements.txt -o requirements_prod.txt`.
+3. Export Anki provided dependencies with `uv export --only-group provided -o requirements_provided.txt`.
 4. Install runtime dependencies into the add-on's vendor directory with
-   `uv pip install -r requirements_prod.txt -t src/omnidict/vendor`.
+   `uv export --no-dev | uv pip install -r - --exclude requirements_provided.txt -t src/omnidict/vendor`.
 5. Compile gettext portable objects with `uv run scripts/compile_portable_objects.py`.
 6. Create a symbolic link in Anki's add-on directory that points to the `src/omnidict` directory.
 
