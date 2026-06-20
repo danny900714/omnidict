@@ -9,15 +9,22 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
+provided = [
     "aqt[qt]>=25.7",
-    "beautifulsoup4==4.14.3",
+    # Specify dependecies and their transitive dependencies that are also provided by Anki runtime
+    # The version specifiers should be the same as those provided by supported Anki versions
+    "beautifulsoup4>=4.13.4,<=4.14.3",
+    "click>=8.1.8,<=8.3.1",
+    "orjson>=3.10.8,<=3.11.8",
+    "requests>=2.32.4,<=2.33.1",
+]
+dev = [
     "pytest>=9.0.3",
     "pyyaml>=6.0.3",
-    "requests==2.33.1",
     "ruff>=0.15.16",
     "ty>=0.0.46",
     "vcrpy>=8.1.1",
+    { include-group = "provided" },
 ]
 
 [tool.pytest]
