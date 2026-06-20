@@ -24,6 +24,11 @@ dictionaries:
           type: DefinitionRedirectedError
           attributes:
             redirected_word: click
+      - word: the outset  # The "q" query parameter of redirection URL replaces space with dash.
+        error:
+          type: DefinitionRedirectedError
+          attributes:
+            redirected_word: outset
   english-chinese-simplified:
     words:
       - flash

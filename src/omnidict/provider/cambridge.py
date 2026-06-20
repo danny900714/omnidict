@@ -48,7 +48,9 @@ class CambridgeDictionaryProvider(Provider):
     def fetch_definition(
         self, dictionary_id: str, word: str, *, download_audio: bool
     ) -> Definition:
-        url = f"{ORIGIN}/dictionary/{dictionary_id}/{word.replace(' ', '-')}"  # Cambridge Dictionary replaces spaces with hyphens in URL
+        # Cambridge Dictionary replaces spaces with hyphens in URL
+        word_slug = word.replace(" ", "-")
+        url = f"{ORIGIN}/dictionary/{dictionary_id}/{word_slug}"
 
         # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
         response = self.session.get(url, allow_redirects=False)
@@ -60,7 +62,7 @@ class CambridgeDictionaryProvider(Provider):
                     raise DefinitionNotFoundError(f"No definition found for {word}")
                 elif (
                     location_url.path.startswith(f"/dictionary/{dictionary_id}/")
-                    and location_url.query == f"q={word}"
+                    and location_url.query == f"q={word_slug}"
                 ):
                     redirected_word = location_url.path.split("/")[-1]
 
