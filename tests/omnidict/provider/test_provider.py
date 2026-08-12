@@ -191,7 +191,7 @@ class TestProvider:
     @pytest.mark.generatetestdata
     def test_generate_test_cases(self, request: FixtureRequest, pytestconfig: Config):
         """
-        When saving definitions into JSON files, the generator will only save the file if it doesn't exist.
+        When saving definitions into YAML files, the generator will only save the file if it doesn't exist.
         This is to prevent overwriting the correct definition when generating test data after a problematic change.
 
         For the cached response data, the generator will always overrite the old ones.
