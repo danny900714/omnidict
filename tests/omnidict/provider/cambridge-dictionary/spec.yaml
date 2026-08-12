@@ -14,21 +14,32 @@ dictionaries:
       - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized), plural (corpora)
       - un      # prefix (un-) and four entries
       - on the back of  # two idiom blocks
-      - back to back    # a phrase block and an entry block
+      - back-to-back    # a phrase block and an entry block
       - fuck around     # phrasal verb: two entry blocks (not phrase blocks) with pronunciation of fuck
+      - creep up on someone # phrasal verb, url slug is "creep-up-on". see #13
       - word: asdf
         error:
           type: DefinitionNotFoundError
-      - word: clicked
-        error:
-          type: DefinitionRedirectedError
-          attributes:
-            redirected_word: click
-      - word: the outset  # The "q" query parameter of redirection URL replaces space with dash.
-        error:
-          type: DefinitionRedirectedError
-          attributes:
-            redirected_word: outset
+
+#      - word: have skin in the game # There's no entry in Chinese dictionary, it redirects to English one.
+#        error:
+#          type: DefinitionRedirectedError
+
+# There's no way to detect definition redirecting when using the search bar endpoint.
+#      - word: clicked
+#        error:
+#          type: DefinitionRedirectedError
+#          attributes:
+#            redirected_word: click
+#      - word: the outset  # The "q" query parameter of redirection URL replaces space with dash.
+#        error:
+#          type: DefinitionRedirectedError
+#          attributes:
+#            redirected_word: outset
+
+# Have a non-embedded entry but redirect to the embedded one
+#      - back to back     # when using the search bar endpoint, cambridge redirects to "back"
+
   english-chinese-simplified:
     words:
       - flash

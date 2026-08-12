@@ -1,6 +1,6 @@
 from pathlib import Path
 from typing import cast
-from urllib.parse import unquote, urljoin, urlsplit
+from urllib.parse import unquote, urlencode, urljoin, urlsplit
 
 from bs4 import BeautifulSoup, Tag
 from requests import Session
@@ -9,7 +9,6 @@ from .common import (
     Definition,
     DefinitionNotFoundError,
     DefinitionParseError,
-    DefinitionRedirectedError,
     DictionaryInfo,
     Entry,
     Example,
@@ -48,37 +47,45 @@ class CambridgeDictionaryProvider(Provider):
     def fetch_definition(
         self, dictionary_id: str, word: str, *, download_audio: bool
     ) -> Definition:
-        # Cambridge Dictionary replaces spaces with hyphens in URL
-        word_slug = word.replace(" ", "-")
-        url = f"{ORIGIN}/dictionary/{dictionary_id}/{word_slug}"
+        query = urlencode({"datasetsearch": dictionary_id, "q": word})
+        search_url = f"{ORIGIN}/search/direct/?{query}"
 
-        # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
-        response = self.session.get(url, allow_redirects=False)
-        if response.status_code == 302:
-            location = response.headers.get("location")
-            if location is not None:
-                location_url = urlsplit(location)
-                if location_url.path == f"/dictionary/{dictionary_id}/":
-                    raise DefinitionNotFoundError(f"No definition found for {word}")
-                elif (
-                    location_url.path.startswith(f"/dictionary/{dictionary_id}/")
-                    and location_url.query == f"q={word_slug}"
-                ):
-                    redirected_word = location_url.path.split("/")[-1]
+        response = self.session.get(search_url)
+        url = urlsplit(response.url)
+        if url.path == f"/spellcheck/{dictionary_id}/":
+            raise DefinitionNotFoundError(f"No definition found for {word}")
 
-                    # Check if the redirected word is the lowercase of the queried word due to weird redirection made by Cambridge Dictionary (CPU -> cpu)
-                    if word.lower() == redirected_word:
-                        return self.fetch_definition(
-                            dictionary_id,
-                            redirected_word,
-                            download_audio=download_audio,
-                        )
-
-                    raise DefinitionRedirectedError(redirected_word)
-
-            raise RuntimeError(
-                f"Unexpected redirect response: {vars(response.headers)}"
-            )
+        # # Cambridge Dictionary replaces spaces with hyphens in URL
+        # word_slug = word.replace(" ", "-")
+        # url = f"{ORIGIN}/dictionary/{dictionary_id}/{word_slug}"
+        #
+        # # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
+        # response = self.session.get(url, allow_redirects=False)
+        # if response.status_code == 302:
+        #     location = response.headers.get("location")
+        #     if location is not None:
+        #         location_url = urlsplit(location)
+        #         if location_url.path == f"/dictionary/{dictionary_id}/":
+        #             raise DefinitionNotFoundError(f"No definition found for {word}")
+        #         elif (
+        #             location_url.path.startswith(f"/dictionary/{dictionary_id}/")
+        #             and location_url.query == f"q={word_slug}"
+        #         ):
+        #             redirected_word = location_url.path.split("/")[-1]
+        #
+        #             # Check if the redirected word is the lowercase of the queried word due to weird redirection made by Cambridge Dictionary (CPU -> cpu)
+        #             if word.lower() == redirected_word:
+        #                 return self.fetch_definition(
+        #                     dictionary_id,
+        #                     redirected_word,
+        #                     download_audio=download_audio,
+        #                 )
+        #
+        #             raise DefinitionRedirectedError(redirected_word)
+        #
+        #     raise RuntimeError(
+        #         f"Unexpected redirect response: {vars(response.headers)}"
+        #     )
 
         response.raise_for_status()
 
