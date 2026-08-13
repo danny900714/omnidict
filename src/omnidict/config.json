@@ -9,5 +9,6 @@
     "buttons": [
       "cambridge-dictionary.english-chinese-traditional"
     ]
-  }
+  },
+  "debug": false
 }

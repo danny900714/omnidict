@@ -8,6 +8,8 @@ from anki.collection import Collection
 from browserforge.headers import HeaderGenerator
 from bs4 import BeautifulSoup
 
+from omnidict.logger import logger
+
 _header_generator = HeaderGenerator()
 
 
@@ -291,6 +293,12 @@ class Provider(ABC):
     _ICON: str | None = None
 
     config: dict | None
+
+    def __init_subclass__(cls, **kwargs) -> None:
+        super().__init_subclass__(**kwargs)
+        cls.logger = logger.getChild(
+            f"{cls.__module__.split('.', 1)[1]}{cls.__qualname__}"
+        )
 
     @staticmethod
     def browser_headers() -> dict[str, str]:
