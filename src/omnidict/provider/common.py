@@ -254,17 +254,25 @@ class DefinitionParseError(RuntimeError):
 
 
 class DefinitionRedirectedError(RuntimeError):
-    """This error should be raised when a dictionary redirects the user to another word.
+    """This error should be raised when a dictionary redirects the user to another word or dictionary.
 
     For example, Cambridge Dictionary redirects the user to the present form of the past tense verb (clicked -> click).
-    Under that circumstance, the dictionary should raise this error and pass "click" to the constructor.
+    Under that circumstance, the dictionary should raise this error and pass "click" to the `redirected_word` argument.
+
+    Cambridge Dictionary also redirects to English Dictionary as a fallback when definition is not found in other dictionaries.
+    The provider should also pass "english" to the `redirected_dictionary_id` argument.
     """
 
-    def __init__(self, redirected_word: str):
+    def __init__(
+        self, redirected_word: str, redirected_dictionary_id: str | None = None
+    ):
         if redirected_word is None:
             raise TypeError("redirected_word cannot be None")
-        super().__init__(f"Definition is redirected to '{redirected_word}.")
+        super().__init__(
+            f"Definition is redirected to '{redirected_word} {f'in {redirected_dictionary_id if redirected_dictionary_id is not None else ""}'}."
+        )
         self.redirected_word = redirected_word
+        self.redirected_dictionary_id = redirected_dictionary_id
 
 
 @dataclass
