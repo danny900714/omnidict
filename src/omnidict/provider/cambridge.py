@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from typing import cast
 from urllib.parse import unquote, urlencode, urljoin, urlsplit
@@ -37,6 +38,8 @@ class CambridgeDictionaryProvider(Provider):
         ),
     }
 
+    RESPONSE_URL_PATH_PATTERN = re.compile(r"^/dictionary/(?P<dictionary_id>\S*)/.*$")
+
     def __init__(self):
         self.session = Session()
         self.session.headers.update(self.browser_headers())
@@ -51,51 +54,30 @@ class CambridgeDictionaryProvider(Provider):
         search_url = f"{ORIGIN}/search/direct/?{query}"
 
         response = self.session.get(search_url)
+        self.logger.debug(f"Response URL: {response.url}")
+        response.raise_for_status()
+
         url = urlsplit(response.url)
         if url.path == f"/spellcheck/{dictionary_id}/":
             raise DefinitionNotFoundError(f"No definition found for {word}")
 
-        # # Cambridge Dictionary replaces spaces with hyphens in URL
-        # word_slug = word.replace(" ", "-")
-        # url = f"{ORIGIN}/dictionary/{dictionary_id}/{word_slug}"
-        #
-        # # Disable redirection because Cambridge Dictionary will redirect to phrase that contains the vocabulary if the vocabulary doesn't have a definition (letter -> air letter)
-        # response = self.session.get(url, allow_redirects=False)
-        # if response.status_code == 302:
-        #     location = response.headers.get("location")
-        #     if location is not None:
-        #         location_url = urlsplit(location)
-        #         if location_url.path == f"/dictionary/{dictionary_id}/":
-        #             raise DefinitionNotFoundError(f"No definition found for {word}")
-        #         elif (
-        #             location_url.path.startswith(f"/dictionary/{dictionary_id}/")
-        #             and location_url.query == f"q={word_slug}"
-        #         ):
-        #             redirected_word = location_url.path.split("/")[-1]
-        #
-        #             # Check if the redirected word is the lowercase of the queried word due to weird redirection made by Cambridge Dictionary (CPU -> cpu)
-        #             if word.lower() == redirected_word:
-        #                 return self.fetch_definition(
-        #                     dictionary_id,
-        #                     redirected_word,
-        #                     download_audio=download_audio,
-        #                 )
-        #
-        #             raise DefinitionRedirectedError(redirected_word)
-        #
-        #     raise RuntimeError(
-        #         f"Unexpected redirect response: {vars(response.headers)}"
-        #     )
+        match = self.RESPONSE_URL_PATH_PATTERN.match(url.path)
+        response_dictionary_id = match.group("dictionary_id") if match else None
+        self.logger.debug("response_dictionary_id: %s", response_dictionary_id)
 
-        response.raise_for_status()
-
-        if dictionary_id in [
+        if response_dictionary_id is None:
+            raise DefinitionParseError(f"Unexpected response URL: {response.url}")
+        elif response_dictionary_id != dictionary_id:
+            raise DefinitionNotFoundError(f"No definition found for {word}")
+        elif response_dictionary_id in [
             "english-chinese-simplified",
             "english-chinese-traditional",
         ]:
             return self._parse_chinese_definition(response.text, download_audio)
         else:
-            raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")
+            raise DefinitionParseError(
+                f"Unsupported dictionary id: {response_dictionary_id}"
+            )
 
     def _download_file(self, url: str) -> bytes:
         response = self.session.get(url)
