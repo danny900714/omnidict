@@ -69,8 +69,8 @@ def make_dictionary_button_clicked_handler(
                 elif isinstance(e, DefinitionParseError):
                     show_critical(
                         _(
-                            'Failed to parse the definition for "{word}". Please report this issue to the developer.'
-                        ).format(word=word)
+                            'Failed to parse the definition for "{word}". Please report this issue to the developer.\n{error}'
+                        ).format(word=word, error=e)
                     )
                 else:
                     show_critical(
