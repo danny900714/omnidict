@@ -7,9 +7,9 @@ from .common import (
 from .manager import ProviderManager
 
 __all__ = [
+    "DefinitionNotFoundError",
+    "DefinitionParseError",
+    "DefinitionRedirectedError",
     "Provider",
     "ProviderManager",
-    "DefinitionNotFoundError",
-    "DefinitionRedirectedError",
-    "DefinitionParseError",
 ]

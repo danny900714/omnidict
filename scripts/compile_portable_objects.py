@@ -22,7 +22,9 @@ def main():
                 mo_path = addon_lc_messages_dir.joinpath(f"{po_path.stem}.mo")
 
                 print(f"Compiling {po_path} to {mo_path}")
-                subprocess.run(["msgfmt", "-o", mo_path, po_path], timeout=10)
+                subprocess.run(
+                    ["msgfmt", "-o", mo_path, po_path], check=True, timeout=10
+                )
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 from yaml import Dumper, SafeLoader
 
-from omnidict.provider.common import Example, Sense, Entry, Pronunciation, Definition
+from omnidict.provider.common import Definition, Entry, Example, Pronunciation, Sense
 
 
 class DefinitionDumper(Dumper):

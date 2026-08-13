@@ -2,7 +2,7 @@ import inspect
 from dataclasses import dataclass
 
 from . import _providers
-from .common import Provider, DictionaryInfo
+from .common import DictionaryInfo, Provider
 
 
 @dataclass
@@ -29,11 +29,10 @@ class ProviderManager:
                 )
 
     def get_provider(self, provider_id: str) -> Provider | None:
-        if provider_id not in self._providers:
-            if provider_id in self._provider_catalog:
-                self._providers[provider_id] = self._instantiate_provider(
-                    self._provider_catalog[provider_id].klass
-                )
+        if provider_id not in self._providers and provider_id in self._provider_catalog:
+            self._providers[provider_id] = self._instantiate_provider(
+                self._provider_catalog[provider_id].klass
+            )
 
         return self._providers.get(provider_id)
 

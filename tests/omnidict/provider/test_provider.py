@@ -22,7 +22,7 @@ VCR_FILTER_HEADERS = ["authorization"]
 
 def _build_dictionary_specs(spec: dict[str, Any]) -> dict[str, dict[str, Any]]:
     dictionaries = spec.get("dictionaries", {})
-    for _, dictionary_spec in dictionaries.items():
+    for dictionary_spec in dictionaries.values():
         # Set mode and interval of dictionary scope to global settings
         dictionary_spec.setdefault("config", spec.get("config"))
         dictionary_spec.setdefault("mode", spec.get("mode", "online"))
@@ -48,9 +48,9 @@ def _build_test_cases(
 
 def _parse_word_spec(
     word_spec: Any,
-) -> tuple[str, type[type[Exception]], dict[str, Any] | None]:
+) -> tuple[str, tuple[type[Exception]] | tuple[()], dict[str, Any] | None]:
     # Parse word specs
-    expected_error: tuple[type[Exception]] | tuple[()] = tuple()
+    expected_error: tuple[type[Exception]] | tuple[()] = ()
     expected_error_attrs: dict[str, Any] | None = None
     if isinstance(word_spec, str):
         # short syntax
@@ -87,7 +87,7 @@ def pytest_generate_tests(metafunc: Metafunc):
 
             params = []
             ids = []
-            for provider_id, spec in specs.items():
+            for provider_id in specs:
                 for provider, dictionary_id, dictionary_spec in _build_test_cases(
                     provider_id, metafunc.config
                 ):
@@ -252,7 +252,7 @@ class TestProvider:
                                     attr_mismatch = True
                             if attr_mismatch:
                                 continue
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 should catch all errors that are not expected
                         # Catch all other errors and skip saving data for this word
                         warnings.warn(
                             f"[{dictionary_id}] ({word}) Unexpected error. The test data is not saved for that word\n{e}"

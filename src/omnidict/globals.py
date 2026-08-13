@@ -19,7 +19,6 @@ def on_config_updated(new_config: dict):
     config = new_config
 
     # Remove all instantiated provider so that providers get the updated config
-    global provider_manager
     provider_manager.clear_providers()
 
     toggle_addon_debug_logging_based_on_config()

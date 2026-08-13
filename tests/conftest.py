@@ -1,5 +1,5 @@
 import pytest
-from pytest import Parser, Config, Item
+from pytest import Config, Item, Parser
 
 
 def pytest_addoption(parser: Parser):

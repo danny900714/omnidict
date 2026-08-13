@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
+from typing import ClassVar
 
 from anki.collection import Collection
 from browserforge.headers import HeaderGenerator
@@ -244,13 +245,9 @@ class DefinitionNotFoundError(RuntimeError):
     For more general errors like malformed response or connection issues, please raise custom exceptions.
     """
 
-    pass
-
 
 class DefinitionParseError(RuntimeError):
     """This error should be raised when a dictionary gets the definition but unable to parse it."""
-
-    pass
 
 
 class DefinitionRedirectedError(RuntimeError):
@@ -297,7 +294,7 @@ class Provider(ABC):
 
     _ID: str = ""
     _NAME: str = ""
-    _DICTIONARIES: dict[str, DictionaryInfo] = {}
+    _DICTIONARIES: ClassVar[dict[str, DictionaryInfo]] = {}
     _ICON: str | None = None
 
     config: dict | None
@@ -347,7 +344,6 @@ class Provider(ABC):
             DefinitionRedirectedError: If the dictionary redirects to a different word.
             DefinitionParseError: If the response cannot be parsed.
         """
-        pass
 
     def get_dictionary_info(self, dictionary_id: str) -> DictionaryInfo | None:
         return self.supported_dictionaries().get(dictionary_id)

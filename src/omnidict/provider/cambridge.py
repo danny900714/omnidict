@@ -1,10 +1,11 @@
 import re
 from pathlib import Path
-from typing import cast
+from typing import ClassVar, cast
 from urllib.parse import unquote, urlencode, urljoin, urlsplit
 
 from bs4 import BeautifulSoup, Tag
 from requests import Session
+from requests.exceptions import RequestException
 
 from .common import (
     Definition,
@@ -29,7 +30,7 @@ class CambridgeDictionaryProvider(Provider):
         .parent.parent.joinpath("assets", "icons", "cambridge-dictionary.svg")
         .absolute()
     )
-    _DICTIONARIES = {
+    _DICTIONARIES: ClassVar[dict[str, DictionaryInfo]] = {
         "english-chinese-simplified": DictionaryInfo(
             "Cambridge English–Chinese (Simplified) Dictionary"
         ),
@@ -172,7 +173,7 @@ class CambridgeDictionaryProvider(Provider):
                         try:
                             audio = self._download_file(audio_url)
                             audio_files[audio_file_name] = audio
-                        except Exception as e:
+                        except RequestException as e:
                             print(f"Failed to download audio from {audio_url}:\n{e}")
 
                 pronunciation = Pronunciation(
