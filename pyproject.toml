@@ -1,6 +1,6 @@
 [project]
 name = "omnidict"
-version = "0.1.0"
+version = "0.1.3"
 description = "The only one Anki dictionary add-on you'll ever need."
 readme = "README.md"
 requires-python = ">=3.13"
