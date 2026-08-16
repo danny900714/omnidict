@@ -302,7 +302,7 @@ class Provider(ABC):
     def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
         cls.logger = logger.getChild(
-            f"{cls.__module__.split('.', 1)[1]}{cls.__qualname__}"
+            f"{cls.__module__.split('.', 1)[1]}.{cls.__qualname__}"
         )
 
     @staticmethod
