@@ -326,20 +326,20 @@ class Provider(ABC):
 
     @abstractmethod
     def fetch_definition(
-        self, dictionary_id: str, word: str, *, download_audio: bool
+        self, dictionary_id: str, term: str, *, download_audio: bool
     ) -> Definition:
         """Fetch the definition of a word from the specified dictionary.
 
         Args:
             dictionary_id: ID of the dictionary to query, must be a key in `supported_dictionaries()`.
-            word: The word to look up.
+            term: The word to look up.
             download_audio: Whether to download audio files and populate `Definition.audio_files`.
 
         Returns:
             A `Definition` containing all entries for the word.
 
         Raises:
-            DefinitionNotFoundError: If the dictionary has no entry for `word`.
+            DefinitionNotFoundError: If the dictionary has no entry for `term`.
             DefinitionRedirectedError: If the dictionary redirects to a different word.
             DefinitionParseError: If the response cannot be parsed.
         """
