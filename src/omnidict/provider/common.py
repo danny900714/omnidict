@@ -24,7 +24,7 @@ class Example:
     """
 
     sentence: str
-    translation: str | None = field(default_factory=None)
+    translation: str | None = field(default_factory=type(None))
 
 
 @dataclass
@@ -39,9 +39,9 @@ class Sense:
     """
 
     definition: str
-    features: str | None = field(default_factory=None)
-    translation: str | None = field(default_factory=None)
-    examples: list[Example] | None = field(default_factory=None)
+    features: str | None = field(default_factory=type(None))
+    translation: str | None = field(default_factory=type(None))
+    examples: list[Example] | None = field(default_factory=type(None))
 
 
 @dataclass
@@ -56,9 +56,9 @@ class Pronunciation:
         phonemic_transcription: Optional IPA or phonemic transcription string.
     """
 
-    region: str | None = field(default_factory=None)
-    audio_file_name: str | None = field(default_factory=None)
-    phonemic_transcription: str | None = field(default_factory=None)
+    region: str | None = field(default_factory=type(None))
+    audio_file_name: str | None = field(default_factory=type(None))
+    phonemic_transcription: str | None = field(default_factory=type(None))
 
     def __post_init__(self):
         if self.audio_file_name is None and self.phonemic_transcription is None:
@@ -80,8 +80,8 @@ class Entry:
 
     headword: str
     senses: list[Sense]
-    pronunciations: list[Pronunciation] | None = field(default_factory=None)
-    part_of_speech: str | None = field(default_factory=None)
+    pronunciations: list[Pronunciation] | None = field(default_factory=type(None))
+    part_of_speech: str | None = field(default_factory=type(None))
 
 
 @dataclass
@@ -94,7 +94,7 @@ class Definition:
     """
 
     entries: list[Entry]
-    audio_files: dict[str, bytes] | None = field(default_factory=None)
+    audio_files: dict[str, bytes] | None = field(default_factory=type(None))
 
     _saved_audio_files: dict[str, str] = field(default_factory=dict, init=False)
 
@@ -282,7 +282,7 @@ class DictionaryInfo:
     """
 
     name: str
-    icon: str | None = None
+    icon: str | None = field(default_factory=type(None))
 
 
 class Provider(ABC):
