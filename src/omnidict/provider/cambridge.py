@@ -63,24 +63,24 @@ class CambridgeDictionaryProvider(Provider):
         self.session.close()
 
     def fetch_definition(
-        self, dictionary_id: str, word: str, *, download_audio: bool
+        self, dictionary_id: str, term: str, *, download_audio: bool
     ) -> Definition:
-        query = urlencode({"datasetsearch": dictionary_id, "q": word})
+        query = urlencode({"datasetsearch": dictionary_id, "q": term})
         search_url = f"{ORIGIN}/search/direct/?{query}"
         return self._fetch_definition(
-            dictionary_id, word, search_url, download_audio=download_audio
+            dictionary_id, term, search_url, download_audio=download_audio
         )
 
     def _fetch_definition(
-        self, dictionary_id: str, word: str, url: str, *, download_audio: bool
+        self, dictionary_id: str, search_term: str, url: str, *, download_audio: bool
     ) -> Definition:
         response = self.session.get(url)
-        self.logger.debug(f'"{word}" queried. Response URL: {response.url}')
+        self.logger.debug(f'"{search_term}" queried. Response URL: {response.url}')
         response.raise_for_status()
 
         url = urlsplit(response.url)
         if url.path == f"/spellcheck/{dictionary_id}/":
-            raise DefinitionNotFoundError(f"No definition found for {word}")
+            raise DefinitionNotFoundError(f"No definition found for {search_term}")
 
         match = self._RESPONSE_URL_PATH_PATTERN.match(url.path)
         response_dictionary_id: str | None = (
@@ -90,13 +90,13 @@ class CambridgeDictionaryProvider(Provider):
         if response_dictionary_id is None:
             raise DefinitionParseError(f"Unexpected response URL: {response.url}")
         elif response_dictionary_id != dictionary_id:
-            raise DefinitionNotFoundError(f"No definition found for {word}")
+            raise DefinitionNotFoundError(f"No definition found for {search_term}")
         elif response_dictionary_id in [
             "english-chinese-simplified",
             "english-chinese-traditional",
         ]:
             return self._parse_chinese_definition(
-                dictionary_id, word, response.text, download_audio=download_audio
+                dictionary_id, search_term, response.text, download_audio=download_audio
             )
         else:
             raise DefinitionParseError(
