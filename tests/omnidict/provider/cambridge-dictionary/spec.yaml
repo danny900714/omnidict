@@ -13,10 +13,15 @@ dictionaries:
       - CPU     # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
       - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized), plural (corpora)
       - un      # prefix (un-) and four entries
-      - on the back of  # two idiom blocks
-      - back-to-back    # a phrase block and an entry block
-      - fuck around     # phrasal verb: two entry blocks (not phrase blocks) with pronunciation of fuck
+      - on the back of      # two idiom blocks
+      - back-to-back        # a phrase block and an entry block
+      - fuck around         # phrasal verb: two entry blocks (not phrase blocks) with pronunciation of fuck
       - creep up on someone # phrasal verb, url slug is "creep-up-on". see #13
+      - in a nutshell       # only have an embedded phrae block in entry. see #14
+      - back to back        # have a non-embedded entry but redirect to the embedded one. see #14
+      - get low             # test slash and parenthesis (be/get/run low (on something)). see #14
+      - make something of   # test comma and placeholder (make something, anything, etc. of sth/sb). see #14
+      - mired in            # test slash, parenthesis, and placeholder (be/become mired (down) in sth). see #14
       - word: asdf
         error:
           type: DefinitionNotFoundError

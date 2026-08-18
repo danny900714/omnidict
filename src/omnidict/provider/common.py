@@ -1,4 +1,3 @@
-# ty: ignore[no-matching-overload]
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import cache

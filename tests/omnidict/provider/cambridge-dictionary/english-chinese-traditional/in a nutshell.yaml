@@ -1,0 +1,12 @@
+audio_files: null
+entries:
+- headword: in a nutshell
+  part_of_speech: phrase
+  pronunciations: null
+  senses:
+  - definition: using as few words as possible
+    examples:
+    - sentence: Well, to put it in a nutshell, we're lost.
+      translation: 嗯，一句話，我們迷路了。
+    features: null
+    translation: 簡要地說，概括地說

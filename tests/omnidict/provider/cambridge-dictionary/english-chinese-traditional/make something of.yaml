@@ -1,0 +1,16 @@
+audio_files: null
+entries:
+- headword: make something, anything, etc. of sth/sb
+  part_of_speech: phrase
+  pronunciations: null
+  senses:
+  - definition: to have an impression or an understanding about something
+    examples:
+    - sentence: Can you make anything of this information?
+      translation: 你怎麼看這個消息？
+    - sentence: What do you make of the new boss? (= What is your impression of her?)
+      translation: 你認為新老闆如何？
+    - sentence: I don't know what to make of it.
+      translation: 我不知道如何理解它才對。
+    features: null
+    translation: 看待;理解

@@ -1,0 +1,21 @@
+audio_files: null
+entries:
+- headword: be/get/run low (on something)
+  part_of_speech: phrase
+  pronunciations: null
+  senses:
+  - definition: to have nearly finished a supply of something
+    examples:
+    - sentence: We're running low on milk - could you buy some more?
+      translation: 我們的牛奶快喝完了——你再去買一些來好嗎？
+    - sentence: The radio batteries are running low.
+      translation: 收音機的電池快用完了。
+    - sentence: Several hospitals are running low on the vaccine.
+      translation: null
+    - sentence: Tests revealed that she was low on vitamin B12.
+      translation: null
+    - sentence: I should have checked the oil but I didn't realize it was getting
+        low.
+      translation: null
+    features: null
+    translation: 幾乎用完了，快用光了
