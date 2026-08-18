@@ -1,0 +1,13 @@
+audio_files: null
+entries:
+- headword: be/become mired (down) in sth
+  part_of_speech: phrase
+  pronunciations: null
+  senses:
+  - definition: to be involved in a difficult situation, especially for a long period
+      of time
+    examples:
+    - sentence: The peace talks are mired in bureaucracy.
+      translation: 和平談判深陷於官僚主義的泥潭中。
+    features: null
+    translation: 深陷…中
