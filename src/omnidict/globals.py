@@ -27,7 +27,7 @@ def on_config_updated(new_config: dict):
 # translation
 localedir = Path(__file__).parent / "locales"
 translation = gettext.translation(
-    "dictionary", localedir, languages=[current_lang], fallback=True
+    "omnidict", localedir, languages=[current_lang], fallback=True
 )
 _ = translation.gettext
 

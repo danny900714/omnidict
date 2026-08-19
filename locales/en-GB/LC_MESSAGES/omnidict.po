@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 10:37+0800\n"
+"Report-Msgid-Bugs-To: danny900714@gmail.com\n"
+"POT-Creation-Date: 2026-08-13 14:14+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,12 +17,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/cambridge_dictionary/__init__.py:30
+#: src/omnidict/editor.py:40
+msgid "Click the next field to fetch definition."
+msgstr "Click the next field to fetch definition."
+
+#: src/omnidict/editor.py:45
+msgid "Please enter a word in the field above to proceed."
+msgstr "Please enter a word in the field above to proceed."
+
+#: src/omnidict/editor.py:57
 #, python-brace-format
 msgid "No definition found for \"{word}\""
 msgstr "No definition found for \"{word}\""
 
-#: src/cambridge_dictionary/__init__.py:34
+#: src/omnidict/editor.py:63
 #, python-brace-format
 msgid ""
 "\"{word}\" wasn't found. Would you like to use the definition for "
@@ -31,16 +39,18 @@ msgstr ""
 "\"{word}\" wasn't found. Would you like to use the definition for "
 "\"{redirected_word}\" instead?"
 
-#: src/cambridge_dictionary/__init__.py:40
+#: src/omnidict/editor.py:72
 #, python-brace-format
 msgid ""
 "Failed to parse the definition for \"{word}\". Please report this issue to "
-"the developer."
+"the developer.\n"
+"{error}"
 msgstr ""
 "Failed to parse the definition for \"{word}\". Please report this issue to "
-"the developer."
+"the developer.\n"
+"{error}"
 
-#: src/cambridge_dictionary/__init__.py:43
+#: src/omnidict/editor.py:77
 #, python-brace-format
 msgid ""
 "An unexpected error occurred:\n"
@@ -49,15 +59,7 @@ msgstr ""
 "An unexpected error occurred:\n"
 "{error}"
 
-#: src/cambridge_dictionary/__init__.py:61
-msgid "Click the next field to fetch definition."
-msgstr "Click the next field to fetch definition."
-
-#: src/cambridge_dictionary/__init__.py:67
-msgid "Please enter a word in the field above to proceed."
-msgstr "Please enter a word in the field above to proceed."
-
-#: src/cambridge_dictionary/__init__.py:71
+#: src/omnidict/editor.py:105
 msgid ""
 "Will overwrite existing content in the current field. Do you want to proceed?"
 msgstr ""
