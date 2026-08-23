@@ -11,6 +11,7 @@ from .common import (
     Definition,
     DefinitionNotFoundError,
     DefinitionParseError,
+    DefinitionRedirectedError,
     DictionaryInfo,
     Entry,
     Example,
@@ -37,10 +38,24 @@ class CambridgeDictionaryProvider(Provider):
         "english-chinese-traditional": DictionaryInfo(
             "Cambridge English-Chinese (Traditional) Dictionary"
         ),
+        "english-advanced-learner": DictionaryInfo(
+            "Cambridge Advanced Learner's Dictionary & Thesaurus"
+        ),
+        "english-academic-content": DictionaryInfo(
+            "Cambridge Academic Content Dictionary"
+        ),
+        "english-business-english": DictionaryInfo(
+            "Cambridge Business English Dictionary"
+        ),
     }
 
-    _RESPONSE_URL_PATH_PATTERN = re.compile(r"^/dictionary/(?P<dictionary_id>\S*)/.*$")
+    _RESPONSE_URL_PATH_PATTERN = re.compile(r"^/dictionary/(?P<dataset>\S*)/.*$")
 
+    _ENGLISH_DICTIONARY_DATA_ID: ClassVar[dict[str, str]] = {
+        "english-advanced-learner": "cald4",
+        "english-academic-content": "cacd",
+        "english-business-english": "cbed",
+    }
     _PLACEHOLDERS: ClassVar[set[str]] = {
         "someone",
         "somebody",
@@ -65,7 +80,10 @@ class CambridgeDictionaryProvider(Provider):
     def fetch_definition(
         self, dictionary_id: str, term: str, *, download_audio: bool
     ) -> Definition:
-        query = urlencode({"datasetsearch": dictionary_id, "q": term})
+        query = urlencode({
+            "datasetsearch": self._get_dataset(dictionary_id),
+            "q": term,
+        })
         search_url = f"{ORIGIN}/search/direct/?{query}"
         return self._fetch_definition(
             dictionary_id, term, search_url, download_audio=download_audio
@@ -78,43 +96,71 @@ class CambridgeDictionaryProvider(Provider):
         self.logger.debug(f'"{search_term}" queried. Response URL: {response.url}')
         response.raise_for_status()
 
+        dataset = self._get_dataset(dictionary_id)
         url = urlsplit(response.url)
-        if url.path == f"/spellcheck/{dictionary_id}/":
+        if url.path == f"/spellcheck/{dataset}/":
             raise DefinitionNotFoundError(f"No definition found for {search_term}")
 
         match = self._RESPONSE_URL_PATH_PATTERN.match(url.path)
-        response_dictionary_id: str | None = (
-            match.group("dictionary_id") if match else None
-        )
+        response_dataset: str | None = match.group("dataset") if match else None
+        self.logger.debug(f"Response dataset: {response_dataset}")
 
-        if response_dictionary_id is None:
+        if response_dataset is None:
             raise DefinitionParseError(f"Unexpected response URL: {response.url}")
-        elif response_dictionary_id != dictionary_id:
+        elif response_dataset != dataset:
+            # TODO: handle cross dictionary redirect
             raise DefinitionNotFoundError(f"No definition found for {search_term}")
-        elif response_dictionary_id in [
+        elif response_dataset in [
             "english-chinese-simplified",
             "english-chinese-traditional",
         ]:
             return self._parse_chinese_definition(
                 dictionary_id, search_term, response.text, download_audio=download_audio
             )
-        else:
-            raise DefinitionParseError(
-                f"Unsupported dictionary id: {response_dictionary_id}"
+        elif response_dataset == "english":
+            return self._parse_english_definition(
+                dictionary_id, search_term, response.text, download_audio=download_audio
             )
+        else:
+            raise DefinitionParseError(f"Unsupported dictionary id: {response_dataset}")
+
+    def _parse_english_definition(
+        self, dictionary_id: str, search_term: str, html: str, *, download_audio: bool
+    ) -> Definition:
+        soup = BeautifulSoup(html, "html.parser")
+
+        data_id = self._ENGLISH_DICTIONARY_DATA_ID.get(dictionary_id)
+        self.logger.debug(f"English dictionary data-id: {data_id}")
+        if data_id is None:
+            raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")
+
+        dictionaries = soup.select(".dictionary")
+        for d in dictionaries:
+            if d.get("data-id") == data_id:
+                dictionary = d
+                break
+        else:
+            if len(dictionaries) > 0:
+                alt_data_id = cast(str | None, dictionaries[0].get("data-id"))
+                for dict_id, data_id in self._ENGLISH_DICTIONARY_DATA_ID.items():
+                    if alt_data_id == data_id:
+                        raise DefinitionRedirectedError(search_term, dict_id)
+            raise DefinitionParseError(
+                f"Failed to parse dictionary's data-id from English dictionary:\n{dictionaries}"
+            )
+
+        return self._parse_dictionary_block(dictionary, download_audio=download_audio)
 
     def _parse_chinese_definition(
         self, dictionary_id: str, search_term: str, html: str, *, download_audio: bool
     ) -> Definition:
         soup = BeautifulSoup(html, "html.parser")
 
-        # ASSUMPTION: the basename of the url path is unique within the webpage
-        audio_files: dict[str, bytes] = {}
-        entries: list[Entry] = []
-
         # If the search term has multiple words, we assume it to be an embedded phrase.
         # We then check whether the search term matches any headword of the embedded phrase block.
         if search_term.count(" ", 0, -1) > 0:
+            entries: list[Entry] = []
+
             # Parse embedded phrase block
             phrase_blocks = soup.select(".dsense > .sense-body > .phrase-block")
             for phrase_block in phrase_blocks:
@@ -164,7 +210,7 @@ class CambridgeDictionaryProvider(Provider):
                                 f'Cannot parse embedded phrase def-block of "{phrase_title}".\nPhrase block:\n{phrase_block}'
                             )
 
-                        sense = self._parse_chinese_definition_def_block(def_block)
+                        sense = self._parse_def_block(def_block)
                         entry = Entry(phrase_title, [sense], part_of_speech="phrase")
                         entries.append(entry)
 
@@ -172,11 +218,20 @@ class CambridgeDictionaryProvider(Provider):
             if len(entries) > 0:
                 return Definition(entries)
 
+        return self._parse_dictionary_block(soup, download_audio=download_audio)
+
+    def _parse_dictionary_block(
+        self, dictionary_block: Tag, *, download_audio: bool
+    ) -> Definition:
+        # ASSUMPTION: the basename of the url path is unique within the webpage
+        audio_files: dict[str, bytes] = {}
+        entries: list[Entry] = []
+
         # The search term only contains a single word or doesn't match any embedded phrase block, we then parse the definition from the main entry blocks.
         # The first selector is to select regular entry and phrasal verb
         # The second selector is to select the inner idiom block
         # The third selector is to select phrase block
-        entry_blocks = soup.select(
+        entry_blocks = dictionary_block.select(
             ".di-body :is(.entry .entry-body__el, .idiom-block .idiom-block, .phrase-di-block)"
         )
         for entry_block in entry_blocks:
@@ -208,10 +263,11 @@ class CambridgeDictionaryProvider(Provider):
             )
 
             # Parse pronunciations
+            # Prepend :scope to exclude run-on pronunciations (see man: manliness in Cambridge Academic Content Dictionary)
             # Select .pos-header > span.dpron-i to exclude plural pronunciation (see man).
             # Apply :not(.pv-block *) to exclude phrasal verb pronunciations because they are the pronunciations of the verb.
             pronunciation_spans = entry_block.select(
-                ".pos-header > span.dpron-i:not(.pv-block *)"
+                ":scope > .pos-header > span.dpron-i:not(.pv-block *)"
             )
             pronunciations: list[Pronunciation] = []
             for pronunciation_span in pronunciation_spans:
@@ -273,9 +329,7 @@ class CambridgeDictionaryProvider(Provider):
             )
             senses: list[Sense] = []
             for def_block in def_blocks:
-                sense = self._parse_chinese_definition_def_block(
-                    def_block, entry_features
-                )
+                sense = self._parse_def_block(def_block, entry_features)
                 senses.append(sense)
 
             # Create entry object and append it to list if senses is not empty
@@ -297,9 +351,7 @@ class CambridgeDictionaryProvider(Provider):
         return Definition(entries, audio_files=audio_files if audio_files else None)
 
     @staticmethod
-    def _parse_chinese_definition_def_block(
-        def_block: Tag, entry_features: str | None = None
-    ) -> Sense:
+    def _parse_def_block(def_block: Tag, entry_features: str | None = None) -> Sense:
         # Parse features
         features: str | None = None
         def_info = def_block.select_one("span.def-info")
@@ -468,6 +520,16 @@ class CambridgeDictionaryProvider(Provider):
         response = self.session.get(url)
         response.raise_for_status()
         return response.content
+
+    @staticmethod
+    def _get_dataset(dictionary_id: str) -> str:
+        if dictionary_id in (
+            "english-advanced-learner",
+            "english-academic-content",
+            "english-business-english",
+        ):
+            return "english"
+        return dictionary_id
 
     @staticmethod
     def _url_to_filename(url: str) -> str:
