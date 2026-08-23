@@ -12,14 +12,18 @@ It contains several `div.pr.dictionary` dictionary blocks which have a unique `d
 | `cacd`    | Cambridge Academic Content Dictionary               |
 | `cbed`    | Cambridge Business English Dictionary               |
 
-This guide only describes `cald4`. The other dictionary blocks reuse the very same class names for their own content, so
-**every selector below must be resolved inside the `cald4` block first**, otherwise entries of the other two
-dictionaries leak into the result.
+This guide is written from `cald4`, but it transfers: `cacd` and `cbed` reuse the very same element structure, and
+every selector below resolves inside them too. The few places where their element trees actually differ are called out
+under the affected section; everything else holds identically for all three.
 
-A successfully loaded page does not necessarily contain a `cald4` block. `in a nutshell`, `bide your time`, `slack off`
-and `let something/someone slide` all return HTTP 200 while shipping only `cacd` and/or `cbed` blocks. A missing `cald4`
-block therefore has to be handled the same way as a definition that was not found. (Those terms may still exist in
-`cald4` as an embedded phrase of another headword, e.g. `in a nutshell` under `nutshell`.)
+A successfully loaded page does not necessarily contain a `cald4` block. `in a nutshell`, `bide your time`,
+`let something/someone slide`, `in the red`, `in the black` and `at arm's length` all return HTTP 200 while shipping a
+`cacd` block only; `slack off` ships `cacd` and `cbed` but no `cald4`. A missing `cald4` block therefore has to be
+handled the same way as a definition that was not found. (Those terms may still exist in `cald4` as an embedded phrase
+of another headword, e.g. `in a nutshell` under `nutshell`.)
+
+The reverse happens just as often — `fuck`, `fuck around`, `on the back of` and `back to square one` ship a `cald4`
+block only. No one of the three dictionaries is a superset of the others.
 
 Inside a dictionary block every entry lives under `div.link > div.pr.di.superentry > div.di-body`, whose only meaningful
 direct children are `div.entry` and `div.pr.idiom-block`.
@@ -41,6 +45,11 @@ direct children are `div.entry` and `div.pr.idiom-block`.
 4. Phrasal verb
 
    e.g.: fuck around
+
+*Other dictionaries:* the four types are not evenly distributed. `cacd` has idioms but no phrase entries, and `cbed`
+had neither idiom nor phrase blocks on any sampled page — business idioms such as `cash cow`, `golden handshake`,
+`loss leader` and `above board` appear there as regular word entries or as run-ons instead. `cacd` and `cbed` add a
+fifth structure of their own, the run-on block for derived forms (see [Entry block](#entry-block)).
 
 ### Entry block
 
@@ -71,6 +80,23 @@ direct children are `div.entry` and `div.pr.idiom-block`.
   Selecting regular words by `.entry-body__el` alone therefore yields empty entries on a phrasal verb page (see
   `fuck around`), so the regular word selector has to require a direct `.pos-header`/`.pos-body` child. A single page
   can also mix both kinds (see `make something of`).
+
+*Other dictionaries:* `cacd` and `cbed` add one container that `cald4` does not use — the run-on block, which hangs a derived form off the
+parent entry's `.pos-body`:
+
+```
+.pos-body > div.pr.runon.drunon
+              |-- div.cid
+              |-- span.runon-head.drunon-head   (holds span.runon-title, the derived word)
+              +-- div.runon-body.drunon-body > div.def-block.ddef_block.ddef_block-nos
+```
+
+e.g.: `manliness` under `man` in `cacd`, `above board` under `board` in `cbed`.
+
+A run-on's `.def-block` is an ordinary `.def-block`, so a loose descendant selector such as `.pos-body .def-block`
+swallows it as though it were a sense of the parent entry — on the `cacd` `man` page that returns 9 blocks where the
+correct answer is 7. It is also the one `.def-block` whose `.ddef_h` may hold a `span.def-info` but no `.def` at all
+(see `manliness` under `man`).
 
 ### Headword
 
@@ -149,6 +175,8 @@ e.g.: `flash` groups its verb senses under `(SHINE SUDDENLY)`, `(MOVE FAST)`, `(
 A sense group without a guideword uses `div.pr.dsense.dsense-noh` and has no `h3.dsense_h` at all. Idioms and phrasal
 verbs always use the `.dsense-noh` variant, and a phrase has no `.dsense` layer at all.
 
+> `cbed` has no guidewords at all: every one of its senses is `.dsense-noh`. `cacd` uses them like `cald4`.
+
 ### Sense block
 
 - Regular word: `.pos-body > .dsense > .sense-body > .def-block`
@@ -178,6 +206,9 @@ directly seems to redirect to its dedicated page.
 `div.lmt-10` + `span.var.dvar` pair which renders the variant on a second line (see `slash`, whose noun sense carries
 `(UK also oblique, oblique stroke)`).
 
+`span.lab.dlab > span.usage.dusage` may appear under `.ddef_h > .def` (see `man`). That information needs to be extracted
+and should not be included in the sense definition.
+
 ### Sense definition
 
 `.ddef_h > .def`
@@ -205,3 +236,6 @@ illustrates, e.g. `flash something in something`), `span.gram.dgram` or `span.la
 
 It is a direct child of `.phrase-block`, next to `.phrase-head` and `.phrase-body`. Its `href` is the path of the
 dedicated page of the embedded phrase (e.g. `/dictionary/english/for-the-record` on the `record` page).
+
+> `span.dbtn` is `cald4` only. `cacd` and `cbed` have embedded phrases, but their `.phrase-block` ends after
+> `.phrase-body`, so there is no button to follow.
