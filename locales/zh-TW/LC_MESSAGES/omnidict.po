@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: danny900714@gmail.com\n"
-"POT-Creation-Date: 2026-08-13 14:14+0800\n"
+"POT-Creation-Date: 2026-08-24 23:03+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,28 +25,36 @@ msgstr "點擊下一個欄位以取得釋義。"
 msgid "Please enter a word in the field above to proceed."
 msgstr "請在上面的欄位輸入單字。"
 
-#: src/omnidict/editor.py:57
+#: src/omnidict/editor.py:59
 #, python-brace-format
 msgid "No definition found for \"{word}\""
 msgstr "找不到「{word}」的釋義"
 
-#: src/omnidict/editor.py:63
+#: src/omnidict/editor.py:76
+#, python-brace-format
+msgid ""
+"\"{word}\" wasn't found in \"{dictionary_name}\". Would you like to search "
+"in \"{redirected_dictionary_name}\" instead?"
+msgstr "無法在「{dictionary_name}」中找到「{word}」。是否改用「{redirected_dictionary_name}」中的釋義？"
+
+#: src/omnidict/editor.py:97
 #, python-brace-format
 msgid ""
 "\"{word}\" wasn't found. Would you like to use the definition for "
 "\"{redirected_word}\" instead?"
 msgstr "找不到「{word}」。是否改用「{redirected_word}」的釋義？"
 
-#: src/omnidict/editor.py:72
+#: src/omnidict/editor.py:108
 #, python-brace-format
 msgid ""
 "Failed to parse the definition for \"{word}\". Please report this issue to "
 "the developer.\n"
 "{error}"
 msgstr ""
-"無法解析「{word}」的釋義。請將此問題回報給開發者。\n{error}"
+"無法解析「{word}」的釋義。請將此問題回報給開發者。\n"
+"{error}"
 
-#: src/omnidict/editor.py:77
+#: src/omnidict/editor.py:113
 #, python-brace-format
 msgid ""
 "An unexpected error occurred:\n"
@@ -55,7 +63,7 @@ msgstr ""
 "發生非預期的錯誤：\n"
 "{error}"
 
-#: src/omnidict/editor.py:105
+#: src/omnidict/editor.py:143
 msgid ""
 "Will overwrite existing content in the current field. Do you want to proceed?"
 msgstr "將會覆蓋掉目前欄位的內容。是否繼續？"

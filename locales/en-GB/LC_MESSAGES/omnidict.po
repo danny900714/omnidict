@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: danny900714@gmail.com\n"
-"POT-Creation-Date: 2026-08-13 14:14+0800\n"
+"POT-Creation-Date: 2026-08-24 23:03+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,12 +25,21 @@ msgstr "Click the next field to fetch definition."
 msgid "Please enter a word in the field above to proceed."
 msgstr "Please enter a word in the field above to proceed."
 
-#: src/omnidict/editor.py:57
+#: src/omnidict/editor.py:59
 #, python-brace-format
 msgid "No definition found for \"{word}\""
 msgstr "No definition found for \"{word}\""
 
-#: src/omnidict/editor.py:63
+#: src/omnidict/editor.py:76
+#, python-brace-format
+msgid ""
+"\"{word}\" wasn't found in \"{dictionary_name}\". Would you like to search "
+"in \"{redirected_dictionary_name}\" instead?"
+msgstr ""
+"\"{word}\" wasn't found in \"{dictionary_name}\". Would you like to search "
+"in \"{redirected_dictionary_name}\" instead?"
+
+#: src/omnidict/editor.py:97
 #, python-brace-format
 msgid ""
 "\"{word}\" wasn't found. Would you like to use the definition for "
@@ -39,7 +48,7 @@ msgstr ""
 "\"{word}\" wasn't found. Would you like to use the definition for "
 "\"{redirected_word}\" instead?"
 
-#: src/omnidict/editor.py:72
+#: src/omnidict/editor.py:108
 #, python-brace-format
 msgid ""
 "Failed to parse the definition for \"{word}\". Please report this issue to "
@@ -50,7 +59,7 @@ msgstr ""
 "the developer.\n"
 "{error}"
 
-#: src/omnidict/editor.py:77
+#: src/omnidict/editor.py:113
 #, python-brace-format
 msgid ""
 "An unexpected error occurred:\n"
@@ -59,7 +68,7 @@ msgstr ""
 "An unexpected error occurred:\n"
 "{error}"
 
-#: src/omnidict/editor.py:105
+#: src/omnidict/editor.py:143
 msgid ""
 "Will overwrite existing content in the current field. Do you want to proceed?"
 msgstr ""

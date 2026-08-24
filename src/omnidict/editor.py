@@ -51,21 +51,57 @@ def make_dictionary_button_clicked_handler(
                     editor.note.fields[current_field] = html
                 editor.loadNoteKeepingFocus()
 
-            def handle_fetch_definition_error(e: Exception, word: str) -> None:
+            def handle_fetch_definition_error(
+                e: Exception, dictionary_id: str, word: str
+            ) -> None:
                 if isinstance(e, DefinitionNotFoundError):
                     show_critical(
                         _('No definition found for "{word}"').format(word=word)
                     )
                 elif isinstance(e, DefinitionRedirectedError):
                     redirected_word = e.redirected_word
-                    ask_user(
-                        _(
-                            '"{word}" wasn\'t found. Would you like to use the definition for "{redirected_word}" instead?'
-                        ).format(word=word, redirected_word=redirected_word),
-                        callback=lambda ok: (
-                            fetch_definition(redirected_word) if ok else None
-                        ),
-                    )
+                    redirected_dictionary_id = e.redirected_dictionary_id
+
+                    if (
+                        redirected_dictionary_id is not None
+                        and redirected_dictionary_id != dictionary_id
+                    ):
+                        dictionary_info = provider.get_dictionary_info(dictionary_id)
+                        redirected_dictionary_info = provider.get_dictionary_info(
+                            redirected_dictionary_id
+                        )
+
+                        ask_user(
+                            _(
+                                '"{word}" wasn\'t found in "{dictionary_name}". Would you like to search in "{redirected_dictionary_name}" instead?'
+                            ).format(
+                                word=word,
+                                dictionary_name=dictionary_info.name
+                                if dictionary_info is not None
+                                else dictionary_id,
+                                redirected_dictionary_name=redirected_dictionary_info.name
+                                if redirected_dictionary_info is not None
+                                else redirected_dictionary_id,
+                            ),
+                            callback=lambda ok: (
+                                fetch_definition(
+                                    redirected_dictionary_id, redirected_word
+                                )
+                                if ok
+                                else None
+                            ),
+                        )
+                    else:
+                        ask_user(
+                            _(
+                                '"{word}" wasn\'t found. Would you like to use the definition for "{redirected_word}" instead?'
+                            ).format(word=word, redirected_word=redirected_word),
+                            callback=lambda ok: (
+                                fetch_definition(dictionary_id, redirected_word)
+                                if ok
+                                else None
+                            ),
+                        )
                 elif isinstance(e, DefinitionParseError):
                     show_critical(
                         _(
@@ -77,7 +113,9 @@ def make_dictionary_button_clicked_handler(
                         _("An unexpected error occurred:\n{error}").format(error=e)
                     )
 
-            def fetch_definition_op(col: Collection, word: str) -> str:
+            def fetch_definition_op(
+                col: Collection, dictionary_id: str, word: str
+            ) -> str:
                 definition = provider.fetch_definition(
                     dictionary_id,
                     word,
@@ -87,14 +125,14 @@ def make_dictionary_button_clicked_handler(
                     definition.save_audio_files(col)
                 return definition.render_html(**definition_config)
 
-            def fetch_definition(word: str) -> None:
+            def fetch_definition(dictionary_id: str, word: str) -> None:
                 op = QueryOp(
                     parent=editor.parentWindow,
-                    op=lambda col: fetch_definition_op(col, word),
+                    op=lambda col: fetch_definition_op(col, dictionary_id, word),
                     success=set_definition,
                 )
                 op.failure(
-                    lambda e: handle_fetch_definition_error(e, word)
+                    lambda e: handle_fetch_definition_error(e, dictionary_id, word)
                 ).with_progress().run_in_background()
 
             ########################### Callbacks End ###########################
@@ -104,11 +142,11 @@ def make_dictionary_button_clicked_handler(
                     _(
                         "Will overwrite existing content in the current field. Do you want to proceed?"
                     ),
-                    lambda ok: fetch_definition(word) if ok else None,
+                    lambda ok: fetch_definition(dictionary_id, word) if ok else None,
                 )
                 return
 
-            fetch_definition(word)
+            fetch_definition(dictionary_id, word)
 
         editor.call_after_note_saved(after_save)
 
