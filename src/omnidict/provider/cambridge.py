@@ -92,21 +92,31 @@ class CambridgeDictionaryProvider(Provider):
     def _fetch_definition(
         self, dictionary_id: str, search_term: str, url: str, *, download_audio: bool
     ) -> Definition:
+        self.logger.info(
+            f'Searching for "{search_term}" in "{dictionary_id}". Search URL: {url}'
+        )
         response = self.session.get(url)
-        self.logger.debug(f'"{search_term}" queried. Response URL: {response.url}')
+        self.logger.info(f'"{search_term}" queried. Response URL: {response.url}')
         response.raise_for_status()
 
         dataset = self._get_dataset(dictionary_id)
         url = urlsplit(response.url)
         if url.path == f"/spellcheck/{dataset}/":
+            self.logger.info(
+                f'No definition found for "{search_term}" in "{dataset}" dataset. Raise DefinitionNotFoundError.'
+            )
             raise DefinitionNotFoundError(f"No definition found for {search_term}")
 
         match = self._RESPONSE_URL_PATH_PATTERN.match(url.path)
         response_dataset: str | None = match.group("dataset") if match else None
-        self.logger.debug(f"Response dataset: {response_dataset}")
 
         if response_dataset is None:
-            raise DefinitionParseError(f"Unexpected response URL: {response.url}")
+            self.logger.warning(
+                f"Cannot parse dataset from unexpected response URL: {response.url}"
+            )
+            raise DefinitionParseError(
+                f"Cannot parse dataset from unexpected response URL: {response.url}"
+            )
         elif response_dataset != dataset:
             # TODO: handle cross dictionary redirect
             raise DefinitionNotFoundError(f"No definition found for {search_term}")
@@ -122,7 +132,8 @@ class CambridgeDictionaryProvider(Provider):
                 dictionary_id, search_term, response.text, download_audio=download_audio
             )
         else:
-            raise DefinitionParseError(f"Unsupported dictionary id: {response_dataset}")
+            self.logger.info(f"Unsupported dataset: {response_dataset}")
+            raise DefinitionParseError(f"Unsupported dataset: {response_dataset}")
 
     def _parse_english_definition(
         self, dictionary_id: str, search_term: str, html: str, *, download_audio: bool
@@ -130,8 +141,8 @@ class CambridgeDictionaryProvider(Provider):
         soup = BeautifulSoup(html, "html.parser")
 
         data_id = self._ENGLISH_DICTIONARY_DATA_ID.get(dictionary_id)
-        self.logger.debug(f"English dictionary data-id: {data_id}")
         if data_id is None:
+            self.logger.warning(f"Cannot get data-id for {dictionary_id}")
             raise DefinitionParseError(f"Unsupported dictionary id: {dictionary_id}")
 
         dictionaries = soup.select(".dictionary")
@@ -144,7 +155,12 @@ class CambridgeDictionaryProvider(Provider):
                 alt_data_id = cast(str | None, dictionaries[0].get("data-id"))
                 for dict_id, data_id in self._ENGLISH_DICTIONARY_DATA_ID.items():
                     if alt_data_id == data_id:
+                        self.logger.info(
+                            f'"{search_term}" is not found in "{dictionary_id}". Redirecting to "{dict_id}".'
+                        )
                         raise DefinitionRedirectedError(search_term, dict_id)
+
+            self.logger.warning("There's no dictionary or no supported data-id found.")
             raise DefinitionParseError(
                 f"Failed to parse dictionary's data-id from English dictionary:\n{dictionaries}"
             )
