@@ -118,7 +118,25 @@ class CambridgeDictionaryProvider(Provider):
                 f"Cannot parse dataset from unexpected response URL: {response.url}"
             )
         elif response_dataset != dataset:
-            # TODO: handle cross dictionary redirect
+            if response_dataset == "english":
+                # Cambridge Dictionary redirects search to english dataset (if it has an entry) if the search term is not found in other datasets.
+                # We parse the response page to get the first dictionary data-id and redirect the user to the corresponding dictionary_id.
+                soup = BeautifulSoup(response.text, "html.parser")
+                first_dict = soup.select_one(".dictionary")
+                first_dict_data_id = first_dict.get("data-id") if first_dict else None
+                for dict_id, data_id in self._ENGLISH_DICTIONARY_DATA_ID.items():
+                    if data_id == first_dict_data_id:
+                        self.logger.info(
+                            f'Cambridge Dictionary redirected search for "{search_term}" from "{dataset}" to "{response_dataset}". '
+                            f'Redirecting to "{dict_id}".'
+                        )
+                        raise DefinitionRedirectedError(search_term, dict_id)
+
+            # We cannot handle dataset other than english for now, so we just raise `DefinitionNotFoundError`.
+            self.logger.warning(
+                f'Cambridge Dictionary redirected search for "{search_term}" from "{dataset}" to "{response_dataset}", '
+                f"which we don't support for now."
+            )
             raise DefinitionNotFoundError(f"No definition found for {search_term}")
         elif response_dataset in [
             "english-chinese-simplified",
@@ -156,7 +174,7 @@ class CambridgeDictionaryProvider(Provider):
                 for dict_id, data_id in self._ENGLISH_DICTIONARY_DATA_ID.items():
                     if alt_data_id == data_id:
                         self.logger.info(
-                            f'"{search_term}" is not found in "{dictionary_id}". Redirecting to "{dict_id}".'
+                            f'"{search_term}" is not found in "{dictionary_id}". Redirecting to "{dict_id}" dictionary.'
                         )
                         raise DefinitionRedirectedError(search_term, dict_id)
 
