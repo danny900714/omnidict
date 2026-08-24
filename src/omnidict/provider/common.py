@@ -8,7 +8,7 @@ from anki.collection import Collection
 from browserforge.headers import HeaderGenerator
 from bs4 import BeautifulSoup
 
-from omnidict.logger import logger
+from ..logger import logger
 
 _header_generator = HeaderGenerator()
 
