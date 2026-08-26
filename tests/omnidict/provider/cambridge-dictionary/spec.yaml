@@ -30,21 +30,53 @@ dictionaries:
 #        error:
 #          type: DefinitionRedirectedError
 
-# There's no way to detect definition redirecting when using the search bar endpoint.
-#      - word: clicked
-#        error:
-#          type: DefinitionRedirectedError
-#          attributes:
-#            redirected_word: click
-#      - word: the outset  # The "q" query parameter of redirection URL replaces space with dash.
-#        error:
-#          type: DefinitionRedirectedError
-#          attributes:
-#            redirected_word: outset
-
-# Have a non-embedded entry but redirect to the embedded one
-#      - back to back     # when using the search bar endpoint, cambridge redirects to "back"
-
   english-chinese-simplified:
     words:
       - flash
+
+  english-advanced-learner:
+    words:
+      - record        # Multiple pronunciations, embedded phrase block (for the record), image in sense's def-block
+      - fuck          # Entry features in .pos-header (offensive), mixed idiom entry
+      - reborn        # only phrase block in sense body (be reborn)
+      - break the ice # idiom block
+      - back to back  # phrase block and regular entry
+      - fuck around   # phrasal verb
+      - bode well     # collocation (structed like regular entry)
+      - word: in a nutshell # Only has english-academic-content dictionary
+        error:
+          type: DefinitionRedirectedError
+          attributes:
+            redirected_word: in a nutshell
+            redirected_dictionary_id: english-academic-content
+      - word: asdf
+        error:
+          type: DefinitionNotFoundError
+
+  english-academic-content:
+    words:
+      - record        # Multiple pronunciations
+      - break the ice # idiom block
+#      - man           # runon block (manliness), plural (men), `.span.lab > span.usage` in sense definition, consider removing
+      - word: fuck    # Only has english-advanced-learner dictionary
+        error:
+          type: DefinitionRedirectedError
+          attributes:
+            redirected_word: fuck
+            redirected_dictionary_id: english-advanced-learner
+      - word: asdf
+        error:
+          type: DefinitionNotFoundError
+
+  english-business-english:
+    words:
+      - record      # Multiple pronunciations, embedded phrase blocks (be a matter of (public) record, etc.), domain in `.ddef_h > .def-info`
+      - word: fuck  # Only has english-advanced-learner dictionary
+        error:
+          type: DefinitionRedirectedError
+          attributes:
+            redirected_word: fuck
+            redirected_dictionary_id: english-advanced-learner
+      - word: asdf
+        error:
+          type: DefinitionNotFoundError

@@ -1,0 +1,20 @@
+audio_files: null
+entries:
+- headword: fuck around
+  part_of_speech: phrasal verb
+  pronunciations: null
+  senses:
+  - definition: a rude phrase meaning to behave stupidly, or to waste time doing things
+      that are not important
+    examples: []
+    features: null
+    translation: null
+- headword: fuck someone around
+  part_of_speech: phrasal verb
+  pronunciations: null
+  senses:
+  - definition: a rude phrase meaning to treat someone badly by wasting their time
+      or causing problems for them
+    examples: []
+    features: UK
+    translation: null
