@@ -25,10 +25,12 @@ dictionaries:
       - word: asdf
         error:
           type: DefinitionNotFoundError
-
-#      - word: have skin in the game # There's no entry in Chinese dictionary, it redirects to English one.
-#        error:
-#          type: DefinitionRedirectedError
+      - word: slack off     # There's no entry in Chinese dictionary, it redirects to Cambridge Academic Content Dictionary.
+        error:
+          type: DefinitionRedirectedError
+          attributes:
+            redirected_word: slack off
+            redirected_dictionary_id: english-academic-content
 
   english-chinese-simplified:
     words:
