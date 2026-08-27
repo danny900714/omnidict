@@ -722,7 +722,7 @@ entries:
     region: US
   senses:
   - definition: 'a piece of written information about something that is kept so that
-      people can refer to it later: '
+      people can refer to it later:'
     examples:
     - sentence: The records show that the company employed a staff of 300 in the 1990s.
       translation: null
@@ -736,7 +736,7 @@ entries:
       translation: null
     features: '[ C ]'
     translation: null
-  - definition: 'an achievement that is better than anything that has happened before: '
+  - definition: 'an achievement that is better than anything that has happened before:'
     examples:
     - sentence: Sales this year have broken all records.
       translation: null
@@ -744,7 +744,7 @@ entries:
       translation: null
     features: '[ C ]'
     translation: null
-  - definition: 'the previous behaviour and achievements of a person or an organization: '
+  - definition: 'the previous behaviour and achievements of a person or an organization:'
     examples:
     - sentence: When it comes to dealing with shareholders, his record is impressive.
       translation: null
@@ -764,7 +764,7 @@ entries:
     phonemic_transcription: /ˈrekərd/
     region: US
   senses:
-  - definition: 'at a higher level than ever achieved before: '
+  - definition: 'at a higher level than ever achieved before:'
     examples:
     - sentence: Inflation has reached record levels.
       translation: null
@@ -783,7 +783,7 @@ entries:
     region: US
   senses:
   - definition: 'to write down information about something so that people can refer
-      to it later: '
+      to it later:'
     examples:
     - sentence: Participants were asked to record their activities in a weekly diary.
       translation: null
@@ -791,7 +791,7 @@ entries:
       translation: null
     features: null
     translation: null
-  - definition: 'to experience or show a profit or loss, or a rise or fall in value: '
+  - definition: 'to experience or show a profit or loss, or a rise or fall in value:'
     examples:
     - sentence: The firm recorded pre-tax profits of over $10 million.
       translation: null

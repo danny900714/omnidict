@@ -167,8 +167,8 @@ entries:
     examples: []
     features: '[ C ]'
     translation: 小蟲子
-  - definition: 'an illness that is usually not serious and is caused by bacteria
-      or a virus '
+  - definition: an illness that is usually not serious and is caused by bacteria
+      or a virus
     examples:
     - sentence: I had a tummy/stomach bug last week.
       translation: 上週我的腸胃出了點小毛病。

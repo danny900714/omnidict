@@ -405,18 +405,27 @@ class CambridgeDictionaryProvider(Provider):
             )  # Remove all \n that comes before divider
             features = features if features != "" else None
 
+        # Parse definition (required)
+        def_element = def_block.select_one("div.def")
+        if def_element is None:
+            raise DefinitionParseError("Failed to parse definition")
+        # Extract any span.lab in definition and append it to features
+        def_lab = def_element.select_one("span.lab")
+        if def_lab is not None:
+            def_lab_text = def_lab.get_text()
+            if features is not None:
+                features += f" {def_lab_text}"
+            else:
+                features = def_lab_text
+            def_lab.decompose()
+        definition = def_element.get_text().strip()
+
         # Append entry features to features of all senses
         if entry_features is not None:
             if features is not None:
                 features += f" {entry_features}"
             else:
                 features = entry_features
-
-        # Parse definition (required)
-        def_element = def_block.select_one("div.def")
-        if def_element is None:
-            raise DefinitionParseError("Failed to parse definition")
-        definition = def_element.get_text()
 
         # Parse translation
         translation_element = def_block.select_one("span.trans")

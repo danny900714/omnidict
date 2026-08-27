@@ -10,7 +10,7 @@ dictionaries:
       - man     # contains suffix (-man) and plural (men)
       - reborn  # only phrase block in sense body (be reborn)
       - bug     # irreg-infls under phonemic transcription (-gg)
-      - CPU     # .lab .usage inside div.def (abbreviation for), but this is the result of a redirected page
+      - CPU     # .lab .usage inside div.def (abbreviation for)
       - corpus  # .ddivide cause extra spaces inside features (MEDICAL   specialized), plural (corpora)
       - un      # prefix (un-) and four entries
       - on the back of      # two idiom blocks
@@ -57,7 +57,7 @@ dictionaries:
     words:
       - record        # Multiple pronunciations
       - break the ice # idiom block
-#      - man           # runon block (manliness), plural (men), `.span.lab > span.usage` in sense definition, consider removing
+      - man           # runon block (manliness), plural (men), `.span.lab > span.usage` in sense definition
       - word: fuck    # Only has english-advanced-learner dictionary
         error:
           type: DefinitionRedirectedError

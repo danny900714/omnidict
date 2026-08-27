@@ -295,7 +295,7 @@ entries:
   part_of_speech: phrase
   pronunciations: null
   senses:
-  - definition: 'close together and facing in opposite directions: '
+  - definition: 'close together and facing in opposite directions:'
     examples:
     - sentence: The office was full of computers, and we had to sit back to back in
         long rows.
@@ -312,7 +312,7 @@ entries:
       translation: null
     features: null
     translation: null
-  - definition: 'happening one after another, without interruption: '
+  - definition: 'happening one after another, without interruption:'
     examples:
     - sentence: Coming up after the break, three Rolling Stones classics back to back.
       translation: null
@@ -340,14 +340,14 @@ entries:
     phonemic_transcription: /ˌbæk.təˈbæk/
     region: US
   senses:
-  - definition: 'happening one after another, without interruption: '
+  - definition: 'happening one after another, without interruption:'
     examples:
     - sentence: Hamilton is celebrating back-to-back victories in the German and British
         Grands Prix.
       translation: null
     features: null
     translation: null
-  - definition: 'close together and facing in opposite directions: '
+  - definition: 'close together and facing in opposite directions:'
     examples:
     - sentence: back-to-back terraced houses
       translation: null

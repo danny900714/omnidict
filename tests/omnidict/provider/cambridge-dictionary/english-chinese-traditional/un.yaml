@@ -834,13 +834,13 @@ entries:
     phonemic_transcription: /ˌjuːˈen/
     region: US
   senses:
-  - definition: 'abbreviation for the United Nations: an international organization
+  - definition: 'the United Nations: an international organization
       that was established in 1945 and aims to solve world problems in a peaceful
       way'
     examples:
     - sentence: The UN has decided to impose sanctions.
       translation: 聯合國已決定實施制裁。
-    features: null
+    features: abbreviation for
     translation: 聯合國（the United Nations的縮寫）
 - headword: un-
   part_of_speech: prefix
