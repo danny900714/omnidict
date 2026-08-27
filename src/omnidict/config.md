@@ -28,3 +28,6 @@ A list of dictionary identifiers. Each entry adds one button to the editor toolb
 
 - `cambridge-dictionary.english-chinese-traditional`: Cambridge English–Chinese (Traditional) Dictionary
 - `cambridge-dictionary.english-chinese-simplified`: Cambridge English–Chinese (Simplified) Dictionary
+- `cambridge-dictionary.english-advanced-learner`: Cambridge Advanced Learner's Dictionary & Thesaurus
+- `cambridge-dictionary.english-academic-content`: Cambridge Academic Content Dictionary
+- `cambridge-dictionary.english-business-english`: Cambridge Business English Dictionary

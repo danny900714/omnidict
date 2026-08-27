@@ -24,6 +24,9 @@ Cards created by this add-on work on all platforms.
   - Cambridge Dictionary
     - Cambridge English–Chinese (Simplified) Dictionary
     - Cambridge English-Chinese (Traditional) Dictionary
+    - Cambridge Advanced Learner's Dictionary & Thesaurus
+    - Cambridge Academic Content Dictionary
+    - Cambridge Business English Dictionary
   - more to come, contributions welcomed!
 
 ## Installation
