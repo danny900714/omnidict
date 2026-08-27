@@ -239,3 +239,15 @@ dedicated page of the embedded phrase (e.g. `/dictionary/english/for-the-record`
 
 > `span.dbtn` is `cald4` only. `cacd` and `cbed` have embedded phrases, but their `.phrase-block` ends after
 > `.phrase-body`, so there is no button to follow.
+
+
+## Some words need to be considered
+
+### Non-embedded entry that only contains embedded content
+
+- on fleek
+- be/become mired (down) in sth
+
+### Non-embedded entry that only contains embedded content PLUS regular entry
+
+- make something, anything, etc. of sth/sb

@@ -43,6 +43,7 @@ dictionaries:
       - back to back  # phrase block and regular entry
       - fuck around   # phrasal verb
       - bode well     # collocation (structed like regular entry)
+      - make of       # Embedded phrase block (make something, anything, etc. of sth/sb) PLUS regular entry (make something of someone)
       - word: in a nutshell # Only has english-academic-content dictionary
         error:
           type: DefinitionRedirectedError
@@ -56,7 +57,7 @@ dictionaries:
   english-academic-content:
     words:
       - record        # Multiple pronunciations
-      - break the ice # idiom block
+      - break the ice # Idiom block
       - man           # runon block (manliness), plural (men), `.span.lab > span.usage` in sense definition
       - word: fuck    # Only has english-advanced-learner dictionary
         error:

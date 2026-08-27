@@ -183,20 +183,41 @@ class CambridgeDictionaryProvider(Provider):
                 f"Failed to parse dictionary's data-id from English dictionary:\n{dictionaries}"
             )
 
-        return self._parse_dictionary_block(dictionary, download_audio=download_audio)
+        return self._parse_dictionary_block(
+            dictionary_id, search_term, dictionary, download_audio=download_audio
+        )
 
     def _parse_chinese_definition(
         self, dictionary_id: str, search_term: str, html: str, *, download_audio: bool
     ) -> Definition:
         soup = BeautifulSoup(html, "html.parser")
+        return self._parse_dictionary_block(
+            dictionary_id, search_term, soup, download_audio=download_audio
+        )
 
-        # If the search term has multiple words, we assume it to be an embedded phrase.
-        # We then check whether the search term matches any headword of the embedded phrase block.
+    def _parse_dictionary_block(
+        self,
+        dictionary_id: str,
+        search_term: str,
+        dictionary_block: Tag,
+        *,
+        download_audio: bool,
+    ) -> Definition:
+        # ASSUMPTION: the basename of the url path is unique within the webpage
+        audio_files: dict[str, bytes] = {}
+        entries: list[Entry] = []
+
+        # Cambridge Dictionary can redirect the search to a page with embedded phrases matching the search term.
+        # We cannot have a perfect matching algorithm to tell which embedded phrase is the one that causes the redirect, or the redirect isn't due to embedded phrases at all.
+        # In case we filtered out valid regular entries due to our imperfect matching algorithm, we adopt the following strategies:
+        # If the search term has multiple words, we extract all embedded phrases and check whether the search term matches any headword of them.
+        # If there is any match, we then check whether regular entries' headwords match the search term (like "make something of someone" in Advanced Learner's Dictionary).
+        # Otherwise, we assume this redirect is not due to embedded phrases and parse regular entries as usual.
         if search_term.count(" ", 0, -1) > 0:
-            entries: list[Entry] = []
-
             # Parse embedded phrase block
-            phrase_blocks = soup.select(".dsense > .sense-body > .phrase-block")
+            phrase_blocks = dictionary_block.select(
+                ".dsense > .sense-body > .phrase-block"
+            )
             for phrase_block in phrase_blocks:
                 # Parse embedded phrase title
                 phrase_title_element = phrase_block.select_one(
@@ -217,7 +238,8 @@ class CambridgeDictionaryProvider(Provider):
                         phrase_title,
                     )
 
-                    # Follow the see more button if it exists to go to the dedicated page for embedded phrase
+                    # Embedded phrase blocks in Chinese Dictionary might have an optional "See more" button that links to a dedicated page.
+                    # Follow the see more button if it exists to go to the dedicated page for the embedded phrase
                     see_more_button = phrase_block.select_one("span.dbtn > a.hbtn.bh")
                     phrase_page_url = cast(
                         str | None,
@@ -248,20 +270,10 @@ class CambridgeDictionaryProvider(Provider):
                         entry = Entry(phrase_title, [sense], part_of_speech="phrase")
                         entries.append(entry)
 
-            # If the search term matches any embedded phrase block not having a "See more" button, return the entries parse from embedded phrase blocks
-            if len(entries) > 0:
-                return Definition(entries)
+        matches_embedded_phrase = len(entries) > 0
 
-        return self._parse_dictionary_block(soup, download_audio=download_audio)
-
-    def _parse_dictionary_block(
-        self, dictionary_block: Tag, *, download_audio: bool
-    ) -> Definition:
-        # ASSUMPTION: the basename of the url path is unique within the webpage
-        audio_files: dict[str, bytes] = {}
-        entries: list[Entry] = []
-
-        # The search term only contains a single word or doesn't match any embedded phrase block, we then parse the definition from the main entry blocks.
+        # We'll parse all entries if the search term only contains a single word or doesn't match any embedded phrase block.
+        # If the search term matches any embedded phrase block, we only parse entries whose headword matches the search term.
         # The first selector is to select regular entry and phrasal verb
         # The second selector is to select the inner idiom block
         # The third selector is to select phrase block
@@ -276,6 +288,11 @@ class CambridgeDictionaryProvider(Provider):
             )
             if headword is None or headword == "":
                 raise DefinitionParseError("Failed to parse entry headword")
+            # Only include entry that matches search term if the search term has matched any embedded phrase
+            if matches_embedded_phrase and not self._is_phrase_title_match(
+                search_term, headword
+            ):
+                continue
 
             # Parse part of speech.
             # When selecting entry pos, we select .posgram because there's a possible child (span.gram.dgram) contains the additional code.
@@ -492,24 +509,38 @@ class CambridgeDictionaryProvider(Provider):
         pti = 0
 
         # Only traverse the search term to include all phrases containing the search term
-        while sti < len(search_term_words):
-            st_variants = search_term_words[sti].split("/")
-            pt_variants = phrase_title_words[pti].split("/")
+        while sti < len(search_term_words) or pti < len(phrase_title_words):
+            st_variants = (
+                search_term_words[sti].split("/")
+                if sti < len(search_term_words)
+                else None
+            )
+            pt_variants = (
+                phrase_title_words[pti].split("/")
+                if pti < len(phrase_title_words)
+                else None
+            )
 
             # If one of the variants of search term and phrase title matches, then move to the next search term and phrase title
-            if set(st_variants) & set(pt_variants):
+            if (
+                st_variants is not None
+                and pt_variants is not None
+                and set(st_variants) & set(pt_variants)
+            ):
                 sti += 1
                 pti += 1
             else:
                 # If search term is placeholder or is parenthesized, then move to the next search term
                 if (
-                    set(st_variants) & CambridgeDictionaryProvider._PLACEHOLDERS
+                    st_variants is not None
+                    and set(st_variants) & CambridgeDictionaryProvider._PLACEHOLDERS
                     or sti in parenthesized_st_idx
                 ):
                     sti += 1
                 # If phrase title is placeholder or is parenthesized, then move to the next phrase title
                 elif (
-                    set(pt_variants) & CambridgeDictionaryProvider._PLACEHOLDERS
+                    pt_variants is not None
+                    and set(pt_variants) & CambridgeDictionaryProvider._PLACEHOLDERS
                     or pti in parenthesized_pt_idx
                 ):
                     pti += 1

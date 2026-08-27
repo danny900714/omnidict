@@ -1,0 +1,29 @@
+audio_files: null
+entries:
+- headword: make something, anything, etc. of sth/sb
+  part_of_speech: phrase
+  pronunciations: null
+  senses:
+  - definition: 'to have an impression or an understanding about something:'
+    examples:
+    - sentence: Can you make anything of this information?
+      translation: null
+    - sentence: What do you make of the new boss? (= What is your impression of her?)
+      translation: null
+    - sentence: I don't know what to make of it.
+      translation: null
+    features: null
+    translation: null
+- headword: make something of someone
+  part_of_speech: collocation
+  pronunciations: null
+  senses:
+  - definition: 'to help or cause someone to become a particular thing:'
+    examples:
+    - sentence: Her new trainer has promised to make an Olympic athlete of her.
+      translation: null
+    - sentence: His mother hoped that sending him to boarding school would make a
+        man of him.
+      translation: null
+    features: null
+    translation: null

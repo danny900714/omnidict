@@ -196,7 +196,7 @@ We listed some common patterns we found in headwords and the search word below:
 - take a dive
 - flip the script
 - get/have your ducks in a row
-- go to hell in the handcart
+- go to hell in a handcart
 - up a/the creek without a paddle
 - the icing on the cake
 - up the creek without a puddle
