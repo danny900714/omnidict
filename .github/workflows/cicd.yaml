@@ -110,7 +110,7 @@ jobs:
           password: ${{ secrets.ANKIWEB_PASSWORD }}
           addon-id: ${{ vars.ANKIWEB_ADDON_ID }}
           title: OmniDict - All Dictionaries in one add-on
-          tags: dictionary AnkiDroid AnkiMobile Chinese Cambridge
+          tags: dictionary AnkiDroid AnkiMobile Chinese English Cambridge
           support-page: ${{ format('{0}/{1}', github.server_url, github.repository) }}
           description-file: DESCRIPTION.md
           branches: 25.07-26.08.1+
