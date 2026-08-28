@@ -56,7 +56,8 @@ def make_dictionary_button_clicked_handler(
             ) -> None:
                 if isinstance(e, DefinitionNotFoundError):
                     show_critical(
-                        _('No definition found for "{word}"').format(word=word)
+                        _('No definition found for "{word}"').format(word=word),
+                        parent=editor.parentWindow,
                     )
                 elif isinstance(e, DefinitionRedirectedError):
                     redirected_word = e.redirected_word
@@ -73,7 +74,7 @@ def make_dictionary_button_clicked_handler(
 
                         ask_user(
                             _(
-                                '"{word}" wasn\'t found in "{dictionary_name}". Would you like to search in "{redirected_dictionary_name}" instead?'
+                                '"{word}" wasn\'t found in "{dictionary_name}". Would you like to search in "{redirected_dictionary_name}" instead?',
                             ).format(
                                 word=word,
                                 dictionary_name=dictionary_info.name
@@ -90,6 +91,7 @@ def make_dictionary_button_clicked_handler(
                                 if ok
                                 else None
                             ),
+                            parent=editor.parentWindow,
                         )
                     else:
                         ask_user(
@@ -101,16 +103,19 @@ def make_dictionary_button_clicked_handler(
                                 if ok
                                 else None
                             ),
+                            parent=editor.parentWindow,
                         )
                 elif isinstance(e, DefinitionParseError):
                     show_critical(
                         _(
                             'Failed to parse the definition for "{word}". Please report this issue to the developer.\n{error}'
-                        ).format(word=word, error=e)
+                        ).format(word=word, error=e),
+                        parent=editor.parentWindow,
                     )
                 else:
                     show_critical(
-                        _("An unexpected error occurred:\n{error}").format(error=e)
+                        _("An unexpected error occurred:\n{error}").format(error=e),
+                        parent=editor.parentWindow,
                     )
 
             def fetch_definition_op(
