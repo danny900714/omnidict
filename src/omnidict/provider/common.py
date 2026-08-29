@@ -300,9 +300,14 @@ class Provider(ABC):
 
     def __init_subclass__(cls, **kwargs) -> None:
         super().__init_subclass__(**kwargs)
-        cls.logger = logger.getChild(
+
+        # Temporarily fix the duplicate logger handler issue (https://github.com/danny900714/omnidict/issues/19).
+        # Wait for Anki's bug (https://github.com/ankitects/anki/issues/5487) resolve to roll back.
+        provider_logger = logger.getChild(
             f"{cls.__module__.split('.', 1)[1]}.{cls.__qualname__}"
         )
+        provider_logger.handlers.clear()
+        cls.logger = provider_logger
 
     @staticmethod
     def browser_headers() -> dict[str, str]:
